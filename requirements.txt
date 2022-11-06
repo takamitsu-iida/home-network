@@ -1,0 +1,24 @@
+#
+# pyats関連
+#
+pyats[full]
+rest.connector
+yang.connector
+
+# 表形式
+tabulate
+
+# テンプレート利用時に
+jinja2
+
+# データ保管用
+tinydb
+
+# YAMLファイル読み込み用
+# pyatsと依存関係にあるのでpyatsを先に入れたら不要
+# pyyaml
+
+#
+# ip-apiのAPIサービス利用時に
+#
+requests
