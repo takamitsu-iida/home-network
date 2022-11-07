@@ -20,9 +20,6 @@ db_file = 'db.json'
 db_path = os.path.join(db_dir, db_file)
 
 
-
-
-
 if __name__ == '__main__':
 
     import argparse
