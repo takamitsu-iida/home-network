@@ -21,21 +21,21 @@ devices:
 
   # must be hostname, same as prompt
   c3560c-12pc-s:
-    alias: uut
-
+    # alias: uut
 
     # supported platform
     # https://pubhub.devnetcloud.com/media/unicon/docs/user_guide/supported_platforms.html
     os: ios
-    platform: C3560C
     type: switch
 
     connections:
       defaults:
         class: 'unicon.Unicon'
       vty:
+        # protocol: ssh -oKexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
         protocol: ssh
         ip: 192.168.122.254
+        port: 22
         settings:
           GRACEFUL_DISCONNECT_WAIT_SEC: 1     # default 10
           POST_DISCONNECT_WAIT_SEC: 1         # default 10
@@ -63,19 +63,24 @@ devices:
           init_config_commands: []
 
   c2960cx-8pc:
+    alias: uut
     os: ios
-    platform: C2960CX
     type: switch
     connections:
       defaults:
         class: 'unicon.Unicon'
-      settings:
-        GRACEFUL_DISCONNECT_WAIT_SEC: 1     # default 10
-        POST_DISCONNECT_WAIT_SEC: 1         # default 10
-        EXEC_TIMEOUT: 20                    # default 60
-        CONFIG_TIMEOUT: 20                  # default 60
-      arguments:
-        init_exec_commands:
-          - term length 0
-          - term width 0
-        init_config_commands: []
+      vty:
+        # protocol: ssh -oKexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
+        protocol: ssh
+        ip: 192.168.122.252
+        port: 22
+        settings:
+          GRACEFUL_DISCONNECT_WAIT_SEC: 1     # default 10
+          POST_DISCONNECT_WAIT_SEC: 1         # default 10
+          EXEC_TIMEOUT: 20                    # default 60
+          CONFIG_TIMEOUT: 20                  # default 60
+        arguments:
+          init_exec_commands:
+            - term length 0
+            - term width 0
+          init_config_commands: []

@@ -1,40 +1,78 @@
-<html>
+<!DOCTYPE html>
+<html lang="jp">
+
 <head>
-<link rel="stylesheet" href="/static/site/css/styles.css">
+  <meta charset="utf-8">
+  <title>mac address</title>
+
+  <!-- <link rel="stylesheet" href="/static/site/css/styles.css"> -->
+  <style>
+    .mac-table {
+      border-collapse: collapse;
+      margin: 25px 0;
+      font-size: 0.9em;
+      font-family: sans-serif;
+      min-width: 600px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .mac-table thead tr {
+      background-color: #009879;
+      color: #ffffff;
+      text-align: left;
+    }
+
+    .mac-table th,
+    .mac-table td {
+      padding: 12px 15px;
+    }
+
+    .mac-table tbody tr {
+      border-bottom: 1px solid #dddddd;
+    }
+
+    .mac-table tbody tr:nth-of-type(even) {
+      background-color: #f3f3f3;
+    }
+
+    .mac-table tbody tr:last-of-type {
+      border-bottom: 2px solid #009879;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>MAC Address</h1>
+  <h1>MAC Address</h1>
 
-<table class="mac-table">
-  <thead>
-  <tr>
-    <th>VLAN</th>
-    <th>MAC Address</th>
-    <th>Interface</th>
-    <th>Entry Type</th>
-  </tr>
-  </thead>
-
-  <tbody>
-    {%- set vlans=parsed.vlans | d([]) -%}
-    {%- for vlan in vlans -%}
+  <table class="mac-table">
+    <thead>
+      <tr>
+        <th>VLAN</th>
+        <th>MAC Address</th>
+        <th>Interface</th>
+        <th>Entry Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- set vlans=parsed.vlans | d([]) -%}
+      {%- for vlan in vlans -%}
         {%- set mac_addrs=vlans[vlan].mac_addresses | d([]) -%}
         {%- for mac in mac_addrs -%}
-            {%- set interfaces=mac_addrs[mac].interfaces | d([]) -%}
-            {%- for intf in interfaces -%}
-                <tr>
-                    <td>{{ vlan }}</td>
-                    <td>{{ mac }}</td>
-                    <td>{{ intf }}</td>
-                    <td>{{ interfaces[intf].entry_type }}</td>
-                </tr>
-            {%- endfor -%}
+          {%- set interfaces=mac_addrs[mac].interfaces | d([]) -%}
+          {%- for intf in interfaces -%}
+            <tr>
+              <td>{{ vlan }}</td>
+              <td>{{ mac }}</td>
+              <td>{{ intf }}</td>
+              <td>{{ interfaces[intf].entry_type }}</td>
+            </tr>
+          {%- endfor -%}
         {%- endfor -%}
-    {%- endfor -%}
-  </tbody>
+      {%- endfor -%}
+    </tbody>
 
-</table>
+  </table>
 </body>
+
 </html>
