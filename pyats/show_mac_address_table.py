@@ -5,30 +5,20 @@
 #
 
 import logging
-import os
 
+from datetime import datetime
 from pprint import pprint
 
 # import pyATS module
 from genie.testbed import load
+from unicon.core.errors import TimeoutError, StateMachineError, ConnectionError
+from unicon.core.errors import SubCommandFailure
+from genie.metaparser.util.exceptions import SchemaEmptyParserError
 
-# import tinydb module
-from tinydb import TinyDB, Query
+# import tinydb utility
+from db_util import insert_mac_address_table
 
 logger = logging.getLogger(__name__)
-
-#
-# tinydb
-#
-db_dir = os.path.join(os.path.dirname(__file__), 'tinydb')
-db_file = os.path.join(db_dir, 'db.json')
-
-# ディレクトリを作成
-os.makedirs(db_dir, exist_ok=True)
-
-# dbをロード
-db = TinyDB(db_file)
-
 
 if __name__ == '__main__':
 
@@ -38,29 +28,64 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--testbed', dest='testbed', help='testbed YAML file', type=str, default='testbed.yaml')
+    parser.add_argument('--testbed', dest='testbed', help='testbed YAML file', type=str, default='home.yaml')
     args, _ = parser.parse_known_args()
 
     logger.info(f'testbed file: args.testbed')
 
-    def main():
 
-        testbed = load(args.testbed)
-
-        uut = testbed.devices['uut']
-
+    def parse_command(dev, command):
         # connect
-        uut.connect(via='vty')
+        if not dev.is_connected():
+            try:
+                dev.connect()
+            except (TimeoutError, StateMachineError, ConnectionError) as e:
+                logger.error(str(e))
+                return None
 
-        parsed = uut.parse('show version')
-        pprint(parsed)
-
-        parsed = uut.parse('show mac address-table')
-        pprint(parsed)
+        # parse
+        try:
+            parsed = dev.parse(command)
+        except (SubCommandFailure, SchemaEmptyParserError) as e:
+            logger.error(str(e))
+            return None
 
         # disconnect
-        if uut.is_connected():
-            uut.disconnect()
+        if dev.is_connected():
+            dev.disconnect()
+
+        return parsed
+
+
+    def parse_mac_address_table(testbed_file):
+
+        # parse_mac_address_table()を実行した時点の共通のタイムスタンプ
+        timestamp = datetime.now().timestamp()
+
+        testbed = load(testbed_file)
+
+        result = {}
+
+        for name, dev in testbed.devices.items():
+            if dev.type != 'switch':
+                continue
+
+            parsed = parse_command(dev, 'show mac address-table')
+            if parsed is not None:
+                result[name] = parsed
+
+                # データベースにタイムスタンプとともに保存
+                insert_mac_address_table(name, parsed, timestamp)
+
+        return result
+
+
+
+    def main():
+        parsed = parse_mac_address_table(args.testbed)
+        pprint(parsed)
+
+
 
         return 0
 

@@ -4,9 +4,6 @@
 # testbed file for home network
 #
 
-# to validate the testbed file
-#   pyats validate testbed [file]
-
 testbed:
   name: home network
 
@@ -19,7 +16,6 @@ testbed:
 
 devices:
 
-  # must be hostname, same as prompt
   c3560c-12pc-s:
     # alias: uut
 
@@ -31,7 +27,8 @@ devices:
     connections:
       defaults:
         class: 'unicon.Unicon'
-      vty:
+        via: cli
+      cli:
         # protocol: ssh -oKexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
         protocol: ssh
         ip: 192.168.122.254
@@ -69,7 +66,7 @@ devices:
     connections:
       defaults:
         class: 'unicon.Unicon'
-      vty:
+      cli:
         # protocol: ssh -oKexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
         protocol: ssh
         ip: 192.168.122.252
