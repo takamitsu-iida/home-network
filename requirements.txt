@@ -15,7 +15,7 @@ jinja2
 tinydb
 
 # YAMLファイル読み込み用
-# pyatsと依存関係にあるのでpyatsを先に入れたら不要
+# pyatsと依存関係にあるのでpyatsを先に入れることで不要になる
 # pyyaml
 
 #
