@@ -55,8 +55,9 @@ if __name__ == '__main__':
         with TinyDB(db_path) as db:
             q = Query()
 
-            pprint(db.search(
+            searched = db.search(
                 (q.macPrefix == '00:00:0C')
-            ))
+            )
+            pprint(searched)
 
     sys.exit(main())
