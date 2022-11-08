@@ -4,18 +4,17 @@
 # testbed file for lab
 #
 
-# to validate the testbed file
-#   pyats validate testbed [file]
+## validate the testbed file
+# pyats validate testbed [file]
 
-# NOTE
-# hostname 装置のhostname設定と一致させないといけません
-# alias 任意の名前で構いませんがuutがよいでしょう UUT = Unit Under Test
-# os: 必須です。プラグインの識別に使いますので ios iosxe iosxr nxos、等から選びます
-# platform: 任意です。装置のプラットフォーム名、cat3850、cat9300、等を指定します
-# type: 任意です。router もしくは switch を指定します
+## encode password
+# pyats secret encode --string MySecretPassword
 
-# 機種に対応したプラグインを判定する優先順位はこのようになっています
-# chassis_type > os > platform > model
+## decode encoded password
+# pyats secret decode ...
+
+## supported platforms
+# https://pubhub.devnetcloud.com/media/unicon/docs/user_guide/supported_platforms.html
 
 testbed:
   name: iida-pyats on eve-ng
@@ -30,39 +29,18 @@ testbed:
 
 devices:
 
-  # this host does NOT exist now
-  fumidai:
-    os: linux
-    type: linux
-    credentials:
-      # ~/.ssh/configは読まないのでユーザ名はここで指定する
-      default:
-        username: bastion
-    connections:
-      vty:
-        protocol: ssh
-        ip: 10.38.220.46
-
-
-  # must be hostname, same as prompt
   r1:
     alias: 'uut'
 
-    # os
     # ios, iosxe, iosxr, nxos, junos
-    # https://pubhub.devnetcloud.com/media/unicon/docs/user_guide/supported_platforms.html
     os: iosxe
-
-    # optional
-    platform: CSR1000v
+    platform: csr1000v
     type: router
-
-    # in case of stacked device
-    # chassis_type: stack
 
     connections:
       defaults:
         class: 'unicon.Unicon'
+        via: console
       console:
         protocol: telnet
         ip: "%ENC{gAAAAABjTmMl7WqODelgN_ZmcibKiTetdkTuYC3Qpt-rsT6TP1Ps2WcFKHYIRiJwhW5kJXzzY07oU3iaUnMa3NzCQyq-zJJtb_nwJF5lxofO-ftStaDcknc=}"
@@ -73,8 +51,6 @@ devices:
           EXEC_TIMEOUT: 20                    # default 60
           CONFIG_TIMEOUT: 20                  # default 60
         arguments:
-          # dev.connect()に渡す引数
-          # ここでの指定の方が優先度が高く強い
           connection_timeout: 10              # default 60
           # osがiosxeの場合、接続と同時に以下のコマンドが投入される
           #  - term length 0
@@ -93,36 +69,14 @@ devices:
           # init_config_commandsに空のリストを渡せば設定変更を抑止できる
           init_config_commands: []
 
-      # SSHで踏み台を経由する場合
-      vty:
-        proxy: fumidai
-        protocol: ssh -oKexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1
-        ip: 192.168.0.11
-        port: -p 22
-        settings:
-          GRACEFUL_DISCONNECT_WAIT_SEC: 1
-          POST_DISCONNECT_WAIT_SEC: 1
-          EXEC_TIMEOUT: 20
-          CONFIG_TIMEOUT: 20
-        arguments:
-          connection_timeout: 10
-          init_exec_commands:
-            - term length 0
-            - term width 0
-          init_config_commands: []
-
-      # モックを使う場合（モックデバイスの作り方はjob05_mockを参照）
-      a:
-        command: mock_device_cli --os iosxe --mock_data_dir r1 --state connect
-        protocol: unknown
-
   r2:
     os: iosxe
-    platform: CSR1000v
+    platform: csr1000v
     type: router
     connections:
       defaults:
         class: 'unicon.Unicon'
+        via: console
       console:
         protocol: telnet
         ip: "%ENC{gAAAAABjTmMl7WqODelgN_ZmcibKiTetdkTuYC3Qpt-rsT6TP1Ps2WcFKHYIRiJwhW5kJXzzY07oU3iaUnMa3NzCQyq-zJJtb_nwJF5lxofO-ftStaDcknc=}"
@@ -139,11 +93,12 @@ devices:
 
   r3:
     os: iosxe
-    platform: CSR1000v
+    platform: csr1000v
     type: router
     connections:
       defaults:
         class: 'unicon.Unicon'
+        via: console
       console:
         protocol: telnet
         ip: "%ENC{gAAAAABjTmMl7WqODelgN_ZmcibKiTetdkTuYC3Qpt-rsT6TP1Ps2WcFKHYIRiJwhW5kJXzzY07oU3iaUnMa3NzCQyq-zJJtb_nwJF5lxofO-ftStaDcknc=}"
@@ -160,11 +115,12 @@ devices:
 
   r4:
     os: iosxe
-    platform: CSR1000v
+    platform: csr1000v
     type: router
     connections:
       defaults:
         class: 'unicon.Unicon'
+        via: console
       console:
         protocol: telnet
         ip: "%ENC{gAAAAABjTmMl7WqODelgN_ZmcibKiTetdkTuYC3Qpt-rsT6TP1Ps2WcFKHYIRiJwhW5kJXzzY07oU3iaUnMa3NzCQyq-zJJtb_nwJF5lxofO-ftStaDcknc=}"
@@ -181,11 +137,12 @@ devices:
 
   sw1:
     os: ios
-    platform: IOL
+    platform: iol
     type: switch
     connections:
       defaults:
         class: 'unicon.Unicon'
+        via: console
       console:
         protocol: telnet
         ip: "%ENC{gAAAAABjTmMl7WqODelgN_ZmcibKiTetdkTuYC3Qpt-rsT6TP1Ps2WcFKHYIRiJwhW5kJXzzY07oU3iaUnMa3NzCQyq-zJJtb_nwJF5lxofO-ftStaDcknc=}"
@@ -202,11 +159,12 @@ devices:
 
   sw2:
     os: ios
-    platform: IOL
+    platform: iol
     type: switch
     connections:
       defaults:
         class: 'unicon.Unicon'
+        via: console
       console:
         protocol: telnet
         ip: "%ENC{gAAAAABjTmMl7WqODelgN_ZmcibKiTetdkTuYC3Qpt-rsT6TP1Ps2WcFKHYIRiJwhW5kJXzzY07oU3iaUnMa3NzCQyq-zJJtb_nwJF5lxofO-ftStaDcknc=}"
@@ -223,11 +181,12 @@ devices:
 
   sw3:
     os: ios
-    platform: IOL
+    platform: iol
     type: switch
     connections:
       defaults:
         class: 'unicon.Unicon'
+        via: console
       console:
         protocol: telnet
         ip: "%ENC{gAAAAABjTmMl7WqODelgN_ZmcibKiTetdkTuYC3Qpt-rsT6TP1Ps2WcFKHYIRiJwhW5kJXzzY07oU3iaUnMa3NzCQyq-zJJtb_nwJF5lxofO-ftStaDcknc=}"
@@ -244,11 +203,12 @@ devices:
 
   sw4:
     os: ios
-    platform: IOL
+    platform: iol
     type: switch
     connections:
       defaults:
         class: 'unicon.Unicon'
+        via: console
       console:
         protocol: telnet
         ip: "%ENC{gAAAAABjTmMl7WqODelgN_ZmcibKiTetdkTuYC3Qpt-rsT6TP1Ps2WcFKHYIRiJwhW5kJXzzY07oU3iaUnMa3NzCQyq-zJJtb_nwJF5lxofO-ftStaDcknc=}"
@@ -262,116 +222,3 @@ devices:
             - term length 0
             - term width 0
           init_config_commands: []
-
-#topology:
-#
-#  fumidai:
-#    interfaces:
-#      pnet0:
-#        type: ethernet
-#
-#  r1:
-#    interfaces:
-#      GigabitEthernet1:
-#        ipv4: 192.168.12.1/24
-#        link: r1-r2
-#        type: ethernet
-#      GigabitEthernet2:
-#        ipv4: 192.168.13.1/24
-#        link: r1-r3
-#        type: ethernet
-#      Loopback0:
-#        ipv4: 192.168.255.1/32
-#        link: r1_Loopback0
-#        type: loopback
-#
-#  r2:
-#    interfaces:
-#      GigabitEthernet1:
-#        ipv4: 192.168.12.2/24
-#        link: r1-r2
-#        type: ethernet
-#      GigabitEthernet2:
-#        ipv4: 192.168.24.2/24
-#        link: r2-r4
-#        type: ethernet
-#      Loopback0:
-#        ipv4: 192.168.255.2/32
-#        link: r2_Loopback0
-#        type: loopback
-#
-#  r3:
-#    interfaces:
-#      GigabitEthernet1:
-#        ipv4: 192.168.34.3/24
-#        link: r3-r4
-#        type: ethernet
-#      GigabitEthernet2:
-#        ipv4: 192.168.13.3/24
-#        link: r1-r3
-#        type: ethernet
-#      Loopback0:
-#        ipv4: 192.168.255.3/32
-#        link: r3_Loopback0
-#        type: loopback
-#
-#  r4:
-#    interfaces:
-#      GigabitEthernet1:
-#        ipv4: 192.168.34.4/24
-#        link: r3-r4
-#        type: ethernet
-#      GigabitEthernet2:
-#        ipv4: 192.168.24.4/24
-#        link: r2-r4
-#        type: ethernet
-#      Loopback0:
-#        ipv4: 192.168.255.4/32
-#        link: r4_Loopback0
-#        type: loopback
-#
-#
-#  sw1:
-#    interfaces:
-#      Ethernet0/0:
-#        link: sw1-sw2
-#        type: ethernet
-#      Ethernet0/1:
-#        link: sw1-sw3
-#        type: ethernet
-#      Ethernet0/2:
-#        link: sw2-sw4
-#        type: ethernet
-#  sw2:
-#    interfaces:
-#      Ethernet0/0:
-#        link: sw1-sw2
-#        type: ethernet
-#      Ethernet0/1:
-#        link: sw2-sw4
-#        type: ethernet
-#      Ethernet0/2:
-#        link: sw2-sw3
-#        type: ethernet
-#  sw3:
-#    interfaces:
-#      Ethernet0/0:
-#        link: sw3-sw4
-#        type: ethernet
-#      Ethernet0/1:
-#        link: sw1-sw3
-#        type: ethernet
-#      Ethernet0/2:
-#        link: sw2-sw3
-#        type: ethernet
-#  sw4:
-#    interfaces:
-#      Ethernet0/0:
-#        link: sw3-sw4
-#        type: ethernet
-#      Ethernet0/1:
-#        link: sw2-sw4
-#        type: ethernet
-#      Ethernet0/2:
-#        link: sw1-sw4
-#        type: ethernet

@@ -38,7 +38,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--testbed', dest='testbed', help='testbed YAML file', type=str, default='testbed.yaml')
+    parser.add_argument('--testbed', dest='testbed', help='testbed YAML file', type=str, default='labo.yaml')
     args, _ = parser.parse_known_args()
 
     logger.info(f'testbed file: args.testbed')
@@ -50,12 +50,9 @@ if __name__ == '__main__':
         uut = testbed.devices['uut']
 
         # connect
-        uut.connect(via='vty')
+        uut.connect()
 
         parsed = uut.parse('show version')
-        pprint(parsed)
-
-        parsed = uut.parse('show mac address-table')
         pprint(parsed)
 
         # disconnect
