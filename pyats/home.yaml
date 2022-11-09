@@ -4,6 +4,18 @@
 # testbed file for home network
 #
 
+## validate the testbed file
+# pyats validate testbed [file]
+
+## encode password '%ENC{.....}'
+# pyats secret encode --string MySecretPassword
+
+## decode encoded password
+# pyats secret decode ...
+
+## supported platforms
+# https://pubhub.devnetcloud.com/media/unicon/docs/user_guide/supported_platforms.html
+
 testbed:
   name: home network
 
@@ -19,11 +31,8 @@ devices:
   c3560c-12pc-s:
     # alias: uut
 
-    # supported platform
-    # https://pubhub.devnetcloud.com/media/unicon/docs/user_guide/supported_platforms.html
     os: ios
     type: switch
-
     connections:
       defaults:
         class: 'unicon.Unicon'
@@ -33,6 +42,12 @@ devices:
         protocol: ssh
         ip: 192.168.122.254
         port: 22
+        credentials:
+          default:
+            username: '%ENC{w5PDosOUw5fDog==}'
+            password: '%ENC{w5PDosOUw5fDog==}'
+          enable:
+            password: '%ENC{w5PDosOUw5fDog==}'
         settings:
           GRACEFUL_DISCONNECT_WAIT_SEC: 1     # default 10
           POST_DISCONNECT_WAIT_SEC: 1         # default 10
@@ -61,16 +76,24 @@ devices:
 
   c2960cx-8pc:
     alias: uut
+
     os: ios
     type: switch
     connections:
       defaults:
         class: 'unicon.Unicon'
+        via: cli
       cli:
         # protocol: ssh -oKexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
         protocol: ssh
         ip: 192.168.122.252
         port: 22
+        credentials:
+          default:
+            username: '%ENC{w5PDosOUw5fDog==}'
+            password: '%ENC{w5PDosOUw5fDog==}'
+          enable:
+            password: '%ENC{w5PDosOUw5fDog==}'
         settings:
           GRACEFUL_DISCONNECT_WAIT_SEC: 1     # default 10
           POST_DISCONNECT_WAIT_SEC: 1         # default 10
@@ -81,3 +104,112 @@ devices:
             - term length 0
             - term width 0
           init_config_commands: []
+
+
+  #
+  # pyatsでは接続しない装置
+  #
+  softbank-router:
+    os: unknown
+    type: unknown
+    connections:
+      defaults:
+        via: http
+      http:
+        protocol: http
+        ip: 192.168.122.1
+        port: 80
+        credentials:
+          default:
+            username: '%ENC{w6XDrMOGw6Y=}'
+            password: '%ENC{w6XDrMOGw6Y=}'
+
+
+
+  wlc:
+    os: ios
+    platform: ap
+    connections:
+      defaults:
+        via: cli
+      cli:
+        protocol: ssh
+        ip: 192.168.122.253
+        port: 22
+        credentials:
+          default:
+            username: '%ENC{w5PDosOUw5fDog==}'
+            password: '%ENC{wrPDosOUw5fDosKQwpbCmA==}'
+
+  living-ap:
+    os: ios
+    platform: ap
+    connections:
+      defaults:
+        via: cli
+      cli:
+        protocol: ssh
+        ip: 192.168.122.249
+        port: 22
+        credentials:
+          default:
+            username: '%ENC{w5nDosOFw5U=}'
+            password: '%ENC{wrbDo8KawqjCo8KPwpXClg==}'
+
+  taka-ap:
+    os: ios
+    platform: ap
+    connections:
+      defaults:
+        via: cli
+      cli:
+        protocol: ssh
+        ip: 192.168.122.248
+        port: 22
+        credentials:
+          default:
+            username: '%ENC{w5nDosOFw5U=}'
+            password: '%ENC{wrbDo8KawqjCo8KPwpXClg==}'
+
+  ayane-ap:
+    os: ios
+    platform: ap
+    connections:
+      defaults:
+        via: cli
+      cli:
+        protocol: ssh
+        ip: 192.168.122.247
+        port: 22
+        credentials:
+          default:
+            username: '%ENC{w5nDosOFw5U=}'
+            password: '%ENC{wrbDo8KawqjCo8KPwpXClg==}'
+
+  atem-mini:
+    os: unknown
+    connections:
+      defaults:
+        via: https
+      https:
+        protocol: https
+        ip: 192.168.122.240
+        port: 443
+        credentials:
+          default:
+            username: ''
+            password: ''
+
+  qnap-ts-220:
+    os: unknown
+    connections:
+      defaults:
+        via: https
+      https:
+        protocol: https
+        ip: 192.168.122.220
+        port: 443
+        credentials:
+          default:
+            username: '%ENC{w5HDncOOw53DoQ==}'
+            password: '%ENC{w5bDo8KawqjCo8KPwpXClg==}'

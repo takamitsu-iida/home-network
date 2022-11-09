@@ -22,3 +22,7 @@ tinydb
 # ip-apiのAPIサービス利用時に
 #
 requests
+
+#
+# Softbank BBの光ルータはブラウザでのアクセスしか手段がないのでスクレイピングする
+beautifulsoup4
