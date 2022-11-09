@@ -5,6 +5,7 @@
 #
 
 import logging
+import os
 import sys
 
 from datetime import datetime
@@ -14,8 +15,11 @@ from pprint import pprint
 from pyats_util import get_testbed_devices
 from pyats_util import parse_command
 
-# import tinydb utility
-from db_util import insert_mac_address_table
+db_dir = os.path.join(os.path.dirname(__file__), '../db')
+
+# tinydb
+# ../db/util.pyをインポートする
+from ..db.util import insert_mac_address_table
 
 logger = logging.getLogger(__name__)
 
