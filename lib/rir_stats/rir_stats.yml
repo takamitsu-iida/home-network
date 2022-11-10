@@ -1,0 +1,21 @@
+---
+
+ARIN:
+  url: https://ftp.arin.net/pub/stats/arin/
+  file: delegated-arin-extended-latest
+
+RIPE:
+  url: https://ftp.ripe.net/ripe/stats/
+  file: delegated-ripencc-latest
+
+AFRINIC:
+  url: https://ftp.afrinic.net/pub/stats/afrinic/
+  file: delegated-afrinic-latest
+
+APNIC:
+  url: https://ftp.apnic.net/stats/apnic/
+  file: delegated-apnic-latest
+
+LACNIC:
+  url: https://ftp.lacnic.net/pub/stats/lacnic/
+  file: delegated-lacnic-latest

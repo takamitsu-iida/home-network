@@ -1,0 +1,214 @@
+---
+
+#
+# testbed file for home network
+#
+
+## validate the testbed file
+# pyats validate testbed [file]
+
+## encode password '%ENC{.....}'
+# pyats secret encode --string MySecretPassword
+
+## decode encoded password
+# pyats secret decode ...
+
+## supported platforms
+# https://pubhub.devnetcloud.com/media/unicon/docs/user_guide/supported_platforms.html
+
+testbed:
+  name: home network
+
+  credentials:
+    default:
+      username: 'cisco'
+      password: 'cisco'
+    enable:
+      password: 'cisco'
+
+devices:
+
+  c3560c-12pc-s:
+    # alias: uut
+
+    os: ios
+    type: switch
+    connections:
+      defaults:
+        class: 'unicon.Unicon'
+        via: cli
+      cli:
+        # protocol: ssh -oKexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
+        protocol: ssh
+        ip: 192.168.122.254
+        port: 22
+        credentials:
+          default:
+            username: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+            password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+          enable:
+            password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+        settings:
+          GRACEFUL_DISCONNECT_WAIT_SEC: 1     # default 10
+          POST_DISCONNECT_WAIT_SEC: 1         # default 10
+          EXEC_TIMEOUT: 20                    # default 60
+          CONFIG_TIMEOUT: 20                  # default 60
+        arguments:
+          # dev.connect()に渡す引数
+          # ここでの指定の方が優先度が高く強い
+          connection_timeout: 10              # default 60
+          # osがiosxeの場合、接続と同時に以下のコマンドが投入される
+          #  - term length 0
+          #  - term width 0
+          #  - show version
+          # init_exec_commandsに空のリストを渡せば何も実行されなくなる
+          # init_exec_commands: []
+          init_exec_commands:
+            - term length 0
+            - term width 0
+          # osがiosxeの場合、接続と同時に以下の設定変更を行う
+          # - no logging console
+          # - line console 0
+          # - exec-timeout 0
+          # - end
+          # init_config_commandsに空のリストを渡せば設定変更を抑止できる
+          init_config_commands: []
+
+  c2960cx-8pc:
+    alias: uut
+
+    os: ios
+    type: switch
+    connections:
+      defaults:
+        class: 'unicon.Unicon'
+        via: cli
+      cli:
+        # protocol: ssh -oKexAlgorithms=+diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
+        protocol: ssh
+        ip: 192.168.122.252
+        port: 22
+        credentials:
+          default:
+            username: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+            password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+          enable:
+            password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+        settings:
+          GRACEFUL_DISCONNECT_WAIT_SEC: 1     # default 10
+          POST_DISCONNECT_WAIT_SEC: 1         # default 10
+          EXEC_TIMEOUT: 20                    # default 60
+          CONFIG_TIMEOUT: 20                  # default 60
+        arguments:
+          init_exec_commands:
+            - term length 0
+            - term width 0
+          init_config_commands: []
+
+
+  #
+  # pyatsでは接続しない装置
+  #
+  softbank-router:
+    os: unknown
+    type: unknown
+    connections:
+      defaults:
+        via: http
+      http:
+        protocol: http
+        ip: 192.168.122.1
+        port: 80
+        credentials:
+          default:
+            username: '%ENC{gAAAAABjbIhXCazd4ueYNQXgDw6deUa9i6Wro8PjRqD_ywyxgdtZ4g9Q-fr4RAphEl-GntZHiRrlgEy7nGf4CM5AswMTy9KOVA==}'
+            password: '%ENC{gAAAAABjbIhXCazd4ueYNQXgDw6deUa9i6Wro8PjRqD_ywyxgdtZ4g9Q-fr4RAphEl-GntZHiRrlgEy7nGf4CM5AswMTy9KOVA==}'
+
+
+  wlc:
+    os: ios
+    platform: ap
+    connections:
+      defaults:
+        via: cli
+      cli:
+        protocol: ssh
+        ip: 192.168.122.253
+        port: 22
+        credentials:
+          default:
+            username: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+            password: '%ENC{gAAAAABjbIi4_MyG56sBQzYn2TeJk_JshU6p9Fw_gpcg2Hv3HNUpRDuxjgnfpKg6rF7E0WOlLcslUJWoZztBzOGGIx-MMel7hQ==}'
+
+  living-ap:
+    os: ios
+    platform: ap
+    connections:
+      defaults:
+        via: cli
+      cli:
+        protocol: ssh
+        ip: 192.168.122.249
+        port: 22
+        credentials:
+          default:
+            username: '%ENC{gAAAAABjbIjLJ9FgUx30e1UVm6to6mVzCSYANcuuLNIiZ76jJ09-Kmp4HcHzhJIjAW60WNQ_27u4jeF9EEL_vHEAHB8wEQpXUA==}'
+            password: '%ENC{gAAAAABjbIjc2gj8tOgOYLSIzAqOnf-Y97cpRik7DT5wblcaR4msykf8JYQp9MUQRjnOkYj_PvlgxnlUvmulI-j1fVzc8xi4-w==}'
+
+  taka-ap:
+    os: ios
+    platform: ap
+    connections:
+      defaults:
+        via: cli
+      cli:
+        protocol: ssh
+        ip: 192.168.122.248
+        port: 22
+        credentials:
+          default:
+            username: '%ENC{gAAAAABjbIjLJ9FgUx30e1UVm6to6mVzCSYANcuuLNIiZ76jJ09-Kmp4HcHzhJIjAW60WNQ_27u4jeF9EEL_vHEAHB8wEQpXUA==}'
+            password: '%ENC{gAAAAABjbIjc2gj8tOgOYLSIzAqOnf-Y97cpRik7DT5wblcaR4msykf8JYQp9MUQRjnOkYj_PvlgxnlUvmulI-j1fVzc8xi4-w==}'
+
+  ayane-ap:
+    os: ios
+    platform: ap
+    connections:
+      defaults:
+        via: cli
+      cli:
+        protocol: ssh
+        ip: 192.168.122.247
+        port: 22
+        credentials:
+          default:
+            username: '%ENC{gAAAAABjbIjLJ9FgUx30e1UVm6to6mVzCSYANcuuLNIiZ76jJ09-Kmp4HcHzhJIjAW60WNQ_27u4jeF9EEL_vHEAHB8wEQpXUA==}'
+            password: '%ENC{gAAAAABjbIjc2gj8tOgOYLSIzAqOnf-Y97cpRik7DT5wblcaR4msykf8JYQp9MUQRjnOkYj_PvlgxnlUvmulI-j1fVzc8xi4-w==}'
+
+  atem-mini:
+    os: unknown
+    connections:
+      defaults:
+        via: https
+      https:
+        protocol: https
+        ip: 192.168.122.240
+        port: 443
+        credentials:
+          default:
+            username: ''
+            password: ''
+
+  qnap-ts-220:
+    os: unknown
+    connections:
+      defaults:
+        via: https
+      https:
+        protocol: https
+        ip: 192.168.122.220
+        port: 443
+        credentials:
+          default:
+            username: '%ENC{gAAAAABjbIkW8QKaKdY7fj3At62HBCQV11Enlt3lu13GZ1KapMPNCmRO2kTsxuB1Ny8DM9RK1LBVT90pwoeC2-XrnS42rPNbKA==}'
+            password: '%ENC{gAAAAABjbIkMr7ZIarhyrmBnCWanHk_qnYnOtyKk4WGbvOw1XxGRtVQv6y8dTarMZgIrXveVrjo2aXJwAv9PaW2qnw4wDhKYew==}'
