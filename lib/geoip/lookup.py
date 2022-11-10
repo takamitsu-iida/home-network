@@ -6,8 +6,9 @@ ip-apiのサービスを利用してIPアドレスからGPS座標を得る。
 https://ip-api.com/
 
 
-無料で利用できるのは45 req/minまで。それを超えるとHTTP 429が戻る。
-スロットルする場合には過去の実行履歴を保存する必要があり、面倒なので実装しない。
+無料で利用できるのは45 req/minまで。
+それを超えるとHTTP 429が戻る。
+API実行回数をスロットルするには過去の実行履歴を保存する必要があり、面倒なので実装しない。
 """
 
 import logging
@@ -15,7 +16,7 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-def parse_response(r):
+def parse_response(r:requests.models.Response):
     if 'json' in r.headers.get('Content-Type'):
         data = r.json()
     else:
