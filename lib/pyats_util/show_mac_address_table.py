@@ -20,7 +20,7 @@ if lib_dir not in sys.path:
 #
 # lib/db_util/db_util.py
 #
-from db_util import insert_mac_address_table
+from db_util import insert_device_mac_address_table
 
 #
 # lib/pyats_util/pyats_util.py
@@ -50,7 +50,7 @@ def parse_mac_address_table(testbed_file:str):
             result[name] = parsed
 
             # データベースにタイムスタンプとともに保存
-            insert_mac_address_table(name, parsed, timestamp)
+            insert_device_mac_address_table(name, parsed, timestamp)
 
     return result
 
