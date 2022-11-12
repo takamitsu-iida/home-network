@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-# MACアドレスのベンダーコードのJSONデータを取得する
+# MACアドレスのベンダーコードのJSONデータを取得してtinydbに格納する
 #
+# 参照
 # https://maclookup.app/downloads/json-database
 #
 

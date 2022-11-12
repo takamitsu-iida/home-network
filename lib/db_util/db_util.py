@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+import logging
 import os
+
 from datetime import datetime
 
 #
@@ -15,6 +17,8 @@ TABLE_PYATS = 'PYATS'
 TABLE_MAC_VENDORS = 'MAC_VENDORS'
 
 DEFAULT_MAX_HISTORY = 10
+
+logger = logging.getLogger(__name__)
 
 def insert_device_data(device_name:str, doc_type:str, doc_data:dict, timestamp:float, max_history=DEFAULT_MAX_HISTORY):
     """
@@ -190,7 +194,7 @@ def get_device_intf_info(device_name:str):
     return get_device_documents(device_name, 'intf_info')
 
 
-def insert_mac_vendors(mac_vendors_list:list, timestamp:float):
+def insert_mac_vendors(mac_vendors_list:list, timestamp:float, table_name=TABLE_MAC_VENDORS):
     """
     データを'TABLE_MAC_VENDORS'テーブルに保存する。
 
@@ -205,10 +209,10 @@ def insert_mac_vendors(mac_vendors_list:list, timestamp:float):
     """
     with TinyDB(DB_PATH) as db:
         # すでにテーブルが存在する場合は破棄
-        db.drop_table(TABLE_MAC_VENDORS)
+        db.drop_table(table_name)
 
         # テーブルを取得
-        table = db.table(TABLE_MAC_VENDORS)
+        table = db.table(table_name)
 
         # タイムスタンプの情報を格納
         table.insert({'timestamp': timestamp})
@@ -216,16 +220,17 @@ def insert_mac_vendors(mac_vendors_list:list, timestamp:float):
         # macベンダーのリストを一括で挿入
         table.insert_multiple(mac_vendors_list)
 
-def delete_mac_vendors():
+
+def delete_mac_vendors_table(table_name=TABLE_MAC_VENDORS):
     with TinyDB(DB_PATH) as db:
-        db.drop_table(TABLE_MAC_VENDORS)
+        db.drop_table(table_name)
 
 
-def get_mac_vendors_timestamp():
+def get_mac_vendors_timestamp(table_name=TABLE_MAC_VENDORS):
     q = Query()
 
     with TinyDB(DB_PATH) as db:
-        table = db.table(TABLE_MAC_VENDORS)
+        table = db.table(table_name)
 
         searched = table.get(q.timestamp.exists())
         if searched is None:
@@ -233,61 +238,174 @@ def get_mac_vendors_timestamp():
         return searched['timestamp']
 
 
-def get_mac_vendors_all():
+def get_mac_vendors_all(table_name=TABLE_MAC_VENDORS) -> list:
     q = Query()
 
     with TinyDB(DB_PATH) as db:
-        table = db.table(TABLE_MAC_VENDORS)
+        table = db.table(table_name)
 
-        # {'timestamp': ...}を除くすべて
+        # {'timestamp': ...}を除くすべて、を返却
         # return table.search(~ (q.timestamp.exists()))
 
-        # {'macPrefix': ...}を含むすべて
+        # {'macPrefix': ...}を含むすべて、を返却
         return table.search(q.macPrefix.exists())
 
-def search_mac_vendors(mac_address:str):
+
+# radix treeを使えば簡単に検索できるけど、ここでは力技で検索
+# このやり方は効率が悪くて遅いので廃止
+def _search_mac_vendors(mac_address:str, table_name=TABLE_MAC_VENDORS) -> list:
+
+    # 前提はAA:AA:AA:AA:AA:AAの形式
+
+    # 大文字に変換
+    mac_address = mac_address.upper()
+
     q = Query()
 
     with TinyDB(DB_PATH) as db:
-        table = db.table(TABLE_MAC_VENDORS)
-        return table.get(q.macPrefix == mac_address)
+
+        table = db.table(table_name)
+
+        # MA-S 36ビットのベンダーコードを検索
+        # コロン表記で13文字
+        if len(mac_address) >= 13:
+            searched = table.search(q.macPrefix == mac_address[:13])
+            if len(searched) > 0:
+                return searched
+
+        # MA-M 28ビットのベンダーコードを検索
+        # コロン表記で10文字
+        if len(mac_address) >= 10:
+            searched = table.search(q.macPrefix == mac_address[:10])
+            if len(searched) > 0:
+                return searched
+
+        # MA-L 24ビットのベンダーコードを検索
+        # コロン表記で8文字
+        if len(mac_address) >= 8:
+            searched = table.search(q.macPrefix == mac_address[:8])
+            if len(searched) > 0:
+                return searched
+
+    return []
+
+
+def search_mac_vendors(mac_address:str, table_name=TABLE_MAC_VENDORS) -> list:
+
+    # 前提はAA:AA:AA:AA:AA:AAの形式
+
+    # 大文字に変換
+    mac_address = mac_address.upper()
+
+    q = Query()
+
+    with TinyDB(DB_PATH) as db:
+        table = db.table(table_name)
+        # str.find()で一致するかテスト、一致しなければ-1、一致すればその場所が帰ってくる
+        return table.search(q.macPrefix.test(lambda s: mac_address.find(s) == 0))
+
+
+def _dump_mac_vendors(table_name=TABLE_MAC_VENDORS):
+    mac_vendors = get_mac_vendors_all()
+    # MA-L = 8, MA-M = 10, MA-S = 13
+    for prefix_len in [8, 10, 13]:
+        for d in mac_vendors:
+            prefix = d.get('macPrefix')
+            if len(prefix) == prefix_len:
+                print(d)
 
 
 if __name__ == '__main__':
 
     import sys
 
+    logging.basicConfig(level=logging.INFO)
+
     def test_mac_vendors_table():
 
+        table_name = 'TEST_MAC_VENDORS'
+
         mac_vendors_list = [
+            # MA-L
+            {'macPrefix': '98:86:8B', 'vendorName': 'Juniper Networks'},
+            {'macPrefix': '90:31:4B', 'vendorName': 'AltoBeam Inc.'},
+            {'macPrefix': 'D8:63:8C', 'vendorName': 'Shenzhen Dttek Technology Co., Ltd.'},
+
+            # MA-M
             {'macPrefix': '8C:5D:B2:9', 'vendorName': 'ISSENDORFF KG'},
             {'macPrefix': '8C:5D:B2:8', 'vendorName': 'Guangzhou Phimax Electronic Technology Co.,Ltd'},
             {'macPrefix': '8C:5D:B2:3', 'vendorName': 'Yuzhou Zhongnan lnformation Technology Co.,Ltd'},
+
+            # MA-S
             {'macPrefix': '8C:1F:64:A5:E', 'vendorName': 'XTIA Ltd'},
             {'macPrefix': '8C:1F:64:FD:C', 'vendorName': 'Nuphoton Technologies'},
             {'macPrefix': '8C:1F:64:43:D', 'vendorName': 'Solid State Supplies Ltd'}
         ]
 
+        # 既存のテスト用テーブルを破棄
+        delete_mac_vendors_table(table_name=table_name)
+
+        # 現在時刻を取得
         timestamp = datetime.now().timestamp()
 
-        delete_mac_vendors()
+        # テストデータを挿入
+        insert_mac_vendors(mac_vendors_list, timestamp, table_name=table_name)
 
-        insert_mac_vendors(mac_vendors_list, timestamp)
+        assert timestamp == get_mac_vendors_timestamp(table_name=table_name)
+        logger.info('test timestamp: pass')
 
-        assert timestamp == get_mac_vendors_timestamp()
+        assert mac_vendors_list == get_mac_vendors_all(table_name=table_name)
+        logger.info('test mac_vendors_all() pass')
 
-        assert mac_vendors_list == get_mac_vendors_all()
+        for d in mac_vendors_list:
+            prefix = d.get('macPrefix')
+            assert [d] == search_mac_vendors(prefix, table_name=table_name)
+            if len(prefix) == 13:
+                mac_address = prefix + '0:00'
+            if len(prefix) == 10:
+                mac_address = prefix + '0:00:00'
+            if len(prefix) == 8:
+                mac_address = prefix + '00:00:00'
+            assert [d] == search_mac_vendors(mac_address, table_name=table_name)
 
-        assert mac_vendors_list[0] == search_mac_vendors('8C:5D:B2:9')
-        assert mac_vendors_list[1] == search_mac_vendors('8C:5D:B2:8')
-        assert mac_vendors_list[2] == search_mac_vendors('8C:5D:B2:3')
-        assert mac_vendors_list[3] == search_mac_vendors('8C:1F:64:A5:E')
-        assert mac_vendors_list[4] == search_mac_vendors('8C:1F:64:FD:C')
-        assert mac_vendors_list[5] == search_mac_vendors('8C:1F:64:43:D')
+        logger.info('test existent prefix search pass')
 
-        assert None == search_mac_vendors('ab:cd:ef')
+        assert [] == search_mac_vendors('AB:CD:EF', table_name=table_name), f"expect: [], got: {search_mac_vendors('AB:CD:EF', table_name=table_name)}"
+        logger.info('test non-existent prefix search pass')
 
-        delete_mac_vendors()
+        # 既存のテスト用テーブルを破棄
+        delete_mac_vendors_table(table_name=table_name)
+        assert None == get_mac_vendors_timestamp(table_name=table_name)
+
+
+    def test_mac_vendors_search():
+        mac_list = [
+                    '28:84:fa:ea:5f:0c',
+                    '04:03:d6:d8:57:5f',
+                    '3c:22:fb:7b:85:0e',
+                    '2e:14:db:b8:9b:d8',
+                    'fe:dd:b8:3f:de:59',
+                    '4c:34:88:93:80:87',
+                    '44:65:0d:da:2a:f5',
+                    '68:84:7e:87:04:be',
+                    'ee:e7:80:e3:c3:b2',
+                    '7e:87:0b:67:17:e2',
+                    '20:df:b9:b4:bc:79',
+                    '38:1a:52:5b:42:15',
+                    'a4:5e:60:e4:1a:dd',
+                    'c6:78:ad:69:2d:fd',
+                    '12:87:66:76:e7:7d',
+                    '26:67:ca:be:bc:c9',
+                    '90:9a:4a:d6:bb:b9',
+                    '08:97:98:04:22:e4',
+                    'f6:ff:cc:5f:51:68',
+                    '50:eb:f6:95:8b:37']
+        for mac in mac_list:
+            searched = search_mac_vendors(mac)
+            if searched:
+                print(f'{mac} : {searched[0]}')
+            else:
+                print(f'{mac} not found.')
 
 
     def test_insert_device_data():
@@ -309,8 +427,10 @@ if __name__ == '__main__':
 
 
     def main():
-        test_mac_vendors_table()
-        test_insert_device_data()
+        # test_mac_vendors_table()
+        test_mac_vendors_search()
+        #_dump_mac_vendors()
+        # test_insert_device_data()
         return 0
 
     sys.exit(main())
