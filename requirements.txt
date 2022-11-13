@@ -5,7 +5,7 @@ pyats[full]
 rest.connector
 yang.connector
 
-# 表形式
+# 表形式にするのに便利
 tabulate
 
 # テンプレート利用時に
@@ -14,15 +14,14 @@ jinja2
 # データ保管用
 tinydb
 
-# YAMLファイル読み込み用
 # pyatsと依存関係にあるのでpyatsを先に入れることで不要になる
 # pyyaml
 
-#
-# ip-apiのAPIサービス利用時に
-#
+# ip-apiのAPIサービス利用時、ソフトバンク光ルータからのスクレイピング時に利用
 requests
 
-#
-# Softbank BBの光ルータはブラウザでのアクセスしか手段がないのでスクレイピングする
-beautifulsoup4
+# デーモン化
+python-daemon
+
+# 定期実行
+schedule

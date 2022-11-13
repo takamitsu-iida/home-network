@@ -1,25 +1,35 @@
 #!/usr/bin/env python
 
 import logging
+import os
+import sys
 import re
 
-#
-# import requests
-#
+from datetime import datetime
+
 import requests
 from requests.auth import HTTPBasicAuth
 
 #
-# import BeautifulSoup
+# libディレクトリをパスに加える
 #
-from bs4 import BeautifulSoup
+app_dir = os.path.join(os.path.dirname(__file__), '../..')
+lib_dir = os.path.join(app_dir, 'lib')
+
+if lib_dir not in sys.path:
+    sys.path.append(lib_dir)
+
+# データベース操作関数 lib/db_util/db_util.py
+from db_util import insert_dhcp_clients
+
+# pyats操作関数 lib/pyats_util/pyats_util.py
+from pyats_util import get_inventory
 
 logger = logging.getLogger(__name__)
 
 
-def get_dhcp_clients(ip:str, username:str, password:str):
-    """
-    ソフトバンク光ルータからDHCPクライアントリストを取得する。
+def get_html(ip:str, username:str, password:str) -> str:
+    """_summary_
 
     Args:
         ip (str): ソフトバンク光ルータのIPアドレス
@@ -27,9 +37,8 @@ def get_dhcp_clients(ip:str, username:str, password:str):
         password (str): 接続パスワード
 
     Returns:
-        list: 辞書型を格納したリスト。例 [{'ip': '192.168.122.106', 'mac': '28:84:fa:ea:5f:0c'}, {}, {}...]
+        str: HTMLコンテンツ
     """
-
     # ベーシック認証情報を作成
     auth = HTTPBasicAuth(username, password)
 
@@ -42,22 +51,35 @@ def get_dhcp_clients(ip:str, username:str, password:str):
     # 200以外は例外を出して終了
     r.raise_for_status()
 
-    # bs4にHTMLコンテンツを渡す
-    soup = BeautifulSoup(r.content, 'html.parser')
+    # 画面表示で確認
+    # print(r.text)
 
-    #
-    # 注意
-    # DHCPの払い出し情報はjavascriptでレンダリングしているので、HTMLタグの中に情報は埋め込まれていない
-    # <SCRIPT>タグの中のjavascriptのコードをスクレイピングする
-    #
+    # ファイルに保存して確認
+    # r.encoding = r.apparent_encoding
+    # html_file = os.path.join(os.path.dirname(__file__), 'scraped.html')
+    # with open(html_file, mode='w') as f:
+    #     f.write(r.text)
 
-    # <SCRIPT>タグを全て取り出して結合する
-    scripts = soup.find_all('script')
-    script = '\n'.join([str(s) for s in scripts])
+    return r.text
 
-    # print(script)
+
+def scrape_html(html_content: str) -> list:
+    """
+    HTMLコンテンツをスクレイピングしてDHCPクライアント情報を取り出す
+
+    注意
+    DHCPの払い出し情報はjavascriptでレンダリングしているので、HTMLタグの中に情報は埋め込まれていない。
+    <SCRIPT>タグの中のjavascriptのコードをスクレイピングする。
+
+    Args:
+        html_content (str): requestsで取得したHTMLコンテンツ
+
+    Returns:
+        list: 辞書型を格納したリスト。例 [{'ip': '192.168.122.106', 'mac': '28:84:fa:ea:5f:0c'}, {}, {}...]
+    """
+
+    # このjavascriptの関数から正規表現を使ってほしい部分を取り出す
     #
-    # 正規表現を使ってほしい部分を取り出す
     # function PrintInfo()
     # {
     #         var cf = document.forms[0];
@@ -77,13 +99,13 @@ def get_dhcp_clients(ip:str, username:str, password:str):
     re_mac = re.compile(r'cf\.MAC\.value = "(.*)";', re.MULTILINE)
 
     ip_list = []
-    match = re.search(re_ip, script)
+    match = re.search(re_ip, html_content)
     if match:
         ip = match.group(1)
         ip_list = ip.split()
 
     mac_list = []
-    match = re.search(re_mac, script)
+    match = re.search(re_mac, html_content)
     if match:
         mac = match.group(1)
         mac_list = mac.split()
@@ -92,53 +114,81 @@ def get_dhcp_clients(ip:str, username:str, password:str):
     for ip, mac in zip(ip_list, mac_list):
         result_list.append({
             'ip': ip,
-            'mac': mac
+            'mac': mac.upper()
         })
 
     # pprint(result_list)
     #
-    #[{'ip': '192.168.122.106', 'mac': '28:84:fa:ea:5f:0c'},
-    # {'ip': '192.168.122.107', 'mac': '04:03:d6:d8:57:5f'},
-    # {'ip': '192.168.122.109', 'mac': '3c:22:fb:7b:85:0e'},
-    # {'ip': '192.168.122.111', 'mac': '2e:14:db:b8:9b:d8'},
+    # [{'ip': '192.168.122.106', 'mac': '28:84:FA:EA:5F:0C'},
+    #  {'ip': '192.168.122.107', 'mac': '04:03:D6:D8:57:5F'},
+    #  {'ip': '192.168.122.109', 'mac': '3C:22:FB:7B:85:0E'},
+    #  {'ip': '192.168.122.111', 'mac': '2E:14:DB:B8:9B:D8'},
 
     return result_list
 
 
+def update_db():
+
+    # pyATSのテストベッドからソフトバンク光ルータに関する情報を取得
+    inventory = get_inventory('home.yaml', 'softbank-router')
+    if inventory is None:
+        return
+
+    ip = inventory.get('ip')
+    username = inventory.get('username')
+    password = inventory.get('password')
+
+    # 現在時刻
+    timestamp = datetime.now().timestamp()
+
+    # HTMLを取得する
+    html_content = get_html(ip=ip, username=username, password=password)
+
+    # 取得したHTMLをスクレイピング
+    dhcp_clients = scrape_html(html_content=html_content)
+
+    # データベースに格納
+    insert_dhcp_clients(dhcp_clients_list=dhcp_clients, timestamp=timestamp)
+
+    return dhcp_clients
+
+
+
 if __name__ == '__main__':
 
-    import os
-    import sys
+    import argparse
+    import time
     from pprint import pprint
 
-    #
-    # ソフトバンク光ルータのインベントリはpyatsのテストベッドファイルに格納されている
-    #
-    app_dir = os.path.join(os.path.dirname(__file__), '../..')
-    lib_dir = os.path.join(app_dir, 'lib')
-    if lib_dir not in sys.path:
-        sys.path.append(lib_dir)
-
-    # lib/pyats_util/pyats_util.py
-    from pyats_util import get_inventory
+    import daemon
+    import schedule
 
     logging.basicConfig(level=logging.INFO)
 
+    parser = argparse.ArgumentParser(description='dhcp_clients.py')
+    parser.add_argument('-d', '--daemon', action='store_true', default=False, help='Daemon')
+
+    args = parser.parse_args()
+
     def main():
 
-        # テストベッドからソフトバンク光ルータに関する情報を取得
-        inventory = get_inventory('home.yaml', 'softbank-router')
-        if inventory is None:
-            return 0
+        if args.daemon:
 
-        ip = inventory.get('ip')
-        username = inventory.get('username')
-        password = inventory.get('password')
+            # 毎時update_db()を実行する
+            schedule.every(1).hours.do(update_db)
 
-        # スクレイピングしてDHCPクライアント情報を取得する
-        dhcp_clients = get_dhcp_clients(ip=ip, username=username, password=password)
+            # デーモンを作成して、
+            with daemon.DaemonContext(stdout=sys.stdout):
+                while True:
+                    schedule.run_pending()
+                    time.sleep(1)
 
-        pprint(dhcp_clients)
+        else:
+            # データベースをアップデートして、
+            dhcp_clients = update_db()
+
+            # 戻り値を画面表示して終了
+            pprint(dhcp_clients)
 
         return 0
 

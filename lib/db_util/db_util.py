@@ -13,14 +13,26 @@ from tinydb import Query, TinyDB
 DB_DIR = os.path.dirname(__file__)
 DB_PATH = os.path.join(DB_DIR, 'db.json')
 
+# テーブルの種類
 TABLE_PYATS = 'PYATS'
 TABLE_MAC_VENDORS = 'MAC_VENDORS'
+TABLE_DHCP_CLIENTS = 'DHCP_CLIENTS'
 
-DEFAULT_MAX_HISTORY = 10
+DEFAULT_DEVICE_MAX_HISTORY = 10
+DEFAULT_DHCP_MAX_HISTORY = 720  # 1時間に1回実行して30日分
 
 logger = logging.getLogger(__name__)
 
-def insert_device_data(device_name:str, doc_type:str, doc_data:dict, timestamp:float, max_history=DEFAULT_MAX_HISTORY):
+
+def drop_table(table_name:str):
+    with TinyDB(DB_PATH) as db:
+        db.drop_table(table_name)
+
+#
+# pyATS取得情報
+#
+
+def insert_device_data(device_name:str, doc_type:str, doc_data:dict, timestamp:float, max_history=DEFAULT_DEVICE_MAX_HISTORY):
     """
     データを'PYATS'テーブルに保存する。
 
@@ -142,7 +154,7 @@ def get_device_document_dates(device_name:str, doc_type:str):
     return dates
 
 
-def insert_device_mac_address_table(device_name:str, mac_address_table:dict, timestamp:float, max_history=DEFAULT_MAX_HISTORY):
+def insert_device_mac_address_table(device_name:str, mac_address_table:dict, timestamp:float, max_history=DEFAULT_DEVICE_MAX_HISTORY):
     """
     parse('show mac address-table')をデータベースに保存する。
 
@@ -193,8 +205,11 @@ def get_device_intf_info(device_name:str):
     """
     return get_device_documents(device_name, 'intf_info')
 
+#
+# MACベンダー情報
+#
 
-def insert_mac_vendors(mac_vendors_list:list, timestamp:float, table_name=TABLE_MAC_VENDORS):
+def insert_mac_vendors(mac_vendors_list:list, timestamp:float, table_name:str=TABLE_MAC_VENDORS):
     """
     データを'TABLE_MAC_VENDORS'テーブルに保存する。
 
@@ -221,12 +236,7 @@ def insert_mac_vendors(mac_vendors_list:list, timestamp:float, table_name=TABLE_
         table.insert_multiple(mac_vendors_list)
 
 
-def delete_mac_vendors_table(table_name=TABLE_MAC_VENDORS):
-    with TinyDB(DB_PATH) as db:
-        db.drop_table(table_name)
-
-
-def get_mac_vendors_timestamp(table_name=TABLE_MAC_VENDORS):
+def get_mac_vendors_timestamp(table_name:str=TABLE_MAC_VENDORS):
     q = Query()
 
     with TinyDB(DB_PATH) as db:
@@ -238,7 +248,7 @@ def get_mac_vendors_timestamp(table_name=TABLE_MAC_VENDORS):
         return searched['timestamp']
 
 
-def get_mac_vendors_all(table_name=TABLE_MAC_VENDORS) -> list:
+def get_mac_vendors_all(table_name:str=TABLE_MAC_VENDORS) -> list:
     q = Query()
 
     with TinyDB(DB_PATH) as db:
@@ -253,7 +263,7 @@ def get_mac_vendors_all(table_name=TABLE_MAC_VENDORS) -> list:
 
 # radix treeを使えば簡単に検索できるけど、ここでは力技で検索
 # このやり方は効率が悪くて遅いので廃止
-def _search_mac_vendors(mac_address:str, table_name=TABLE_MAC_VENDORS) -> list:
+def _search_mac_vendors(mac_address:str, table_name:str=TABLE_MAC_VENDORS) -> list:
 
     # 前提はAA:AA:AA:AA:AA:AAの形式
 
@@ -290,9 +300,17 @@ def _search_mac_vendors(mac_address:str, table_name=TABLE_MAC_VENDORS) -> list:
     return []
 
 
-def search_mac_vendors(mac_address:str, table_name=TABLE_MAC_VENDORS) -> list:
+def search_mac_vendors(mac_address:str, table_name:str=TABLE_MAC_VENDORS) -> list:
+    """
+    MACアドレスをキーとしてベンダーを検索する。
 
-    # 前提はAA:AA:AA:AA:AA:AAの形式
+    Args:
+        mac_address (str): AA:AA:AA:AA:AA:AAの形式の文字列
+        table_name (str, optional): _description_. Defaults to TABLE_MAC_VENDORS.
+
+    Returns:
+        list: 検索結果。一致したものがなければ空のリスト。
+    """
 
     # 大文字に変換
     mac_address = mac_address.upper()
@@ -301,11 +319,11 @@ def search_mac_vendors(mac_address:str, table_name=TABLE_MAC_VENDORS) -> list:
 
     with TinyDB(DB_PATH) as db:
         table = db.table(table_name)
-        # str.find()で一致するかテスト、一致しなければ-1、一致すればその場所が帰ってくる
+        # str.find()で一致するかテストする
         return table.search(q.macPrefix.test(lambda s: mac_address.find(s) == 0))
 
 
-def _dump_mac_vendors(table_name=TABLE_MAC_VENDORS):
+def _dump_mac_vendors(table_name:str=TABLE_MAC_VENDORS):
     mac_vendors = get_mac_vendors_all()
     # MA-L = 8, MA-M = 10, MA-S = 13
     for prefix_len in [8, 10, 13]:
@@ -314,12 +332,122 @@ def _dump_mac_vendors(table_name=TABLE_MAC_VENDORS):
             if len(prefix) == prefix_len:
                 print(d)
 
+#
+# DHCPクライアント情報
+#
+
+def insert_dhcp_clients(dhcp_clients_list:list, timestamp:float, max_history:int=DEFAULT_DHCP_MAX_HISTORY, table_name:str=TABLE_DHCP_CLIENTS):
+
+    # 格納するドキュメント
+    doc = {}
+
+    # タイムスタンプを付与
+    doc['timestamp'] = timestamp
+
+    # ドキュメントデータを付与
+    doc['doc_data'] = dhcp_clients_list
+
+    # テーブルに格納
+    with TinyDB(DB_PATH) as db:
+        table = db.table(table_name)
+        table.insert(doc)
+
+    # max_historyを超えた古いものを削除
+    delete_old_dhcp_clients(max_history)
+
+
+def delete_old_dhcp_clients(max_history:int, table_name:str=TABLE_DHCP_CLIENTS):
+
+    q = Query()
+
+    with TinyDB(DB_PATH) as db:
+        table = db.table(table_name)
+
+        # timestampキーの一覧を取り出す
+        timestamps = [doc['timestamp'] for doc in table.all()]
+
+        # 新しい順（降順）にソート
+        timestamps.sort(reverse=True)
+
+        # max_historyを超えたものを削除
+        if len(timestamps) > max_history:
+            should_be_deleted = timestamps[max_history:]
+            for ts in should_be_deleted:
+                table.remove(q.timestamp == ts)
+
+
+def get_dhcp_clients_documents(table_name:str=TABLE_DHCP_CLIENTS):
+    """
+    全てのドキュメントをタイムスタンプでソートして返却
+
+    Args:
+        table_name (str, optional): テーブル名. Defaults to TABLE_DHCP_CLIENTS.
+
+    Returns:
+        list: ドキュメントのリスト
+    """
+    with TinyDB(DB_PATH) as db:
+        table = db.table(table_name)
+        return sorted(table.all(), key=lambda d: d['timestamp'], reverse=True)
+
+
+def get_dhcp_clients_by_mac(mac_address:str, table_name:str=TABLE_DHCP_CLIENTS):
+
+    # 大文字に変換
+    mac_address = mac_address.upper()
+
+    results = []
+
+    with TinyDB(DB_PATH) as db:
+        table = db.table(table_name)
+        # tinydbではドキュメントの一部を取り出すのは困難なので全てのドキュメントを確認する
+        for doc in table.all():
+            timestamp = doc['timestamp']
+            dhcp_clients_list = doc['doc_data']
+            filtered = list(filter(lambda d: d['mac'] == mac_address, dhcp_clients_list))
+            if filtered:
+                # 先頭一つを取り出す
+                filtered = filtered[0]
+                filtered.update({'timestamp': timestamp})
+                results.append(filtered)
+
+    return results
+
 
 if __name__ == '__main__':
 
     import sys
 
     logging.basicConfig(level=logging.INFO)
+
+
+    def test_dhcp_clients_table():
+        table_name = 'TEST_DHCP_CLIENTS'
+
+        dhcp_clients_list = [
+            {'ip': '192.168.122.106', 'mac': '28:84:FA:EA:5F:0C'},
+            {'ip': '192.168.122.107', 'mac': '04:03:D6:D8:57:5F'},
+            {'ip': '192.168.122.109', 'mac': '3C:22:FB:7B:85:0E'}
+        ]
+
+        drop_table(table_name=table_name)
+
+        timestamp = datetime.now().timestamp()
+        insert_dhcp_clients(dhcp_clients_list=dhcp_clients_list, timestamp=timestamp, max_history=100, table_name=table_name)
+
+        timestamp = datetime.now().timestamp()
+        insert_dhcp_clients(dhcp_clients_list=dhcp_clients_list, timestamp=timestamp, max_history=100, table_name=table_name)
+
+        docs = get_dhcp_clients_documents(table_name=table_name)
+
+        assert 2 == len(docs)
+
+        searched = get_dhcp_clients_by_mac(mac_address='28:84:FA:EA:5F:0C', table_name=table_name)
+        print(searched)
+
+
+        drop_table(table_name=table_name)
+
 
     def test_mac_vendors_table():
 
@@ -329,21 +457,16 @@ if __name__ == '__main__':
             # MA-L
             {'macPrefix': '98:86:8B', 'vendorName': 'Juniper Networks'},
             {'macPrefix': '90:31:4B', 'vendorName': 'AltoBeam Inc.'},
-            {'macPrefix': 'D8:63:8C', 'vendorName': 'Shenzhen Dttek Technology Co., Ltd.'},
-
             # MA-M
             {'macPrefix': '8C:5D:B2:9', 'vendorName': 'ISSENDORFF KG'},
             {'macPrefix': '8C:5D:B2:8', 'vendorName': 'Guangzhou Phimax Electronic Technology Co.,Ltd'},
-            {'macPrefix': '8C:5D:B2:3', 'vendorName': 'Yuzhou Zhongnan lnformation Technology Co.,Ltd'},
-
             # MA-S
             {'macPrefix': '8C:1F:64:A5:E', 'vendorName': 'XTIA Ltd'},
             {'macPrefix': '8C:1F:64:FD:C', 'vendorName': 'Nuphoton Technologies'},
-            {'macPrefix': '8C:1F:64:43:D', 'vendorName': 'Solid State Supplies Ltd'}
         ]
 
         # 既存のテスト用テーブルを破棄
-        delete_mac_vendors_table(table_name=table_name)
+        drop_table(table_name=table_name)
 
         # 現在時刻を取得
         timestamp = datetime.now().timestamp()
@@ -370,11 +493,11 @@ if __name__ == '__main__':
 
         logger.info('test existent prefix search pass')
 
-        assert [] == search_mac_vendors('AB:CD:EF', table_name=table_name), f"expect: [], got: {search_mac_vendors('AB:CD:EF', table_name=table_name)}"
+        assert [] == search_mac_vendors('AB:CD:EF:00:00:00', table_name=table_name)
         logger.info('test non-existent prefix search pass')
 
         # 既存のテスト用テーブルを破棄
-        delete_mac_vendors_table(table_name=table_name)
+        drop_table(table_name=table_name)
         assert None == get_mac_vendors_timestamp(table_name=table_name)
 
 
@@ -403,9 +526,10 @@ if __name__ == '__main__':
         for mac in mac_list:
             searched = search_mac_vendors(mac)
             if searched:
-                print(f'{mac} : {searched[0]}')
+                vendor_name = searched[0]['vendorName']
             else:
-                print(f'{mac} not found.')
+                vendor_name = 'not found'
+            print(f'{mac} = {vendor_name}')
 
 
     def test_insert_device_data():
@@ -417,7 +541,7 @@ if __name__ == '__main__':
 
         timestamp = datetime.now().timestamp()
 
-        insert_device_data(device_name=device_name, doc_type='test', doc_data=doc_data, timestamp=timestamp, max_history=DEFAULT_MAX_HISTORY)
+        insert_device_data(device_name=device_name, doc_type='test', doc_data=doc_data, timestamp=timestamp, max_history=DEFAULT_DEVICE_MAX_HISTORY)
 
         docs = get_device_documents(device_name=device_name, doc_type='test')
 
@@ -425,10 +549,14 @@ if __name__ == '__main__':
         for doc in docs:
             print(doc)
 
+    #
+    # main
+    #
 
     def main():
+        test_dhcp_clients_table()
         # test_mac_vendors_table()
-        test_mac_vendors_search()
+        # test_mac_vendors_search()
         #_dump_mac_vendors()
         # test_insert_device_data()
         return 0

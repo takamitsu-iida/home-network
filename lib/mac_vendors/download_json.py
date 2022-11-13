@@ -134,6 +134,7 @@ def update_db():
         # ダウンロードして
         mac_vendors_list = get_mac_vendors_list(URL, requests_options=requests_options)
 
+        # データベースに格納する
         insert_mac_vendors(mac_vendors_list=mac_vendors_list, timestamp=timestamp)
 
 
