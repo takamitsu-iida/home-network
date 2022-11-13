@@ -7,10 +7,12 @@
 ## validate the testbed file
 # pyats validate testbed [file]
 
-## encode password '%ENC{.....}'
+## '%ENC{.....}' means encoded string
+
+## to encode
 # pyats secret encode --string MySecretPassword
 
-## decode encoded password
+## to decode
 # pyats secret decode ...
 
 ## supported platforms
@@ -109,6 +111,9 @@ devices:
   #
   # pyatsでは接続しない装置
   #
+
+  # show_testbed.py
+
   softbank-router:
     os: unknown
     type: unknown
@@ -123,7 +128,6 @@ devices:
           default:
             username: '%ENC{gAAAAABjbIhXCazd4ueYNQXgDw6deUa9i6Wro8PjRqD_ywyxgdtZ4g9Q-fr4RAphEl-GntZHiRrlgEy7nGf4CM5AswMTy9KOVA==}'
             password: '%ENC{gAAAAABjbIhXCazd4ueYNQXgDw6deUa9i6Wro8PjRqD_ywyxgdtZ4g9Q-fr4RAphEl-GntZHiRrlgEy7nGf4CM5AswMTy9KOVA==}'
-
 
   wlc:
     os: ios

@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 def parse_mac_address_table(testbed_file:str):
 
-    # parse_mac_address_table()を実行した時点の共通のタイムスタンプ
+    # これを実行した時点のタイムスタンプ
     timestamp = datetime.now().timestamp()
 
     devices = get_testbed_devices(testbed_file)
@@ -80,6 +80,7 @@ def get_mac_addresses(parse_result:dict):
             # macアドレスの形式をxx:xx:xx形式にする
             mac = mac_addr.replace('.', '')
             mac = ':'.join(mac[i:i+2] for i in range(0,12,2))
+            mac = mac.upper()
             result = {
                 'mac_address': mac,
                 'device': device,
@@ -92,11 +93,15 @@ def get_mac_addresses(parse_result:dict):
     #
     # [{'device': 'c3560c-12pc-s',
     #   'interface': 'FastEthernet0/7',
-    #   'mac_address': '00:00:5e:00:01:01',
+    #   'mac_address': '00:00:5E:00:01:01',
     #   'vlan': '1'},
     #  {'device': 'c3560c-12pc-s',
     #   'interface': 'GigabitEthernet0/2',
-    #   'mac_address': '00:2c:c8:8b:60:b8',
+    #   'mac_address': '00:2C:C8:8B:60:B8',
+    #   'vlan': '1'},
+    #  {'device': 'c3560c-12pc-s',
+    #   'interface': 'GigabitEthernet0/2',
+    #   'mac_address': '00:B1:E3:D4:3C:01',
     #   'vlan': '1'},
 
     return result_list
