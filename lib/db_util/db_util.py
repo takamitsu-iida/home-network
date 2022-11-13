@@ -414,6 +414,27 @@ def get_dhcp_clients_by_mac(mac_address:str, table_name:str=TABLE_DHCP_CLIENTS):
     return results
 
 
+def get_dhcp_clients_dates(table_name:str=TABLE_DHCP_CLIENTS):
+
+    with TinyDB(DB_PATH) as db:
+        table = db.table(table_name)
+
+        # timestampキーの一覧を取り出す
+        timestamps = [doc['timestamp'] for doc in table.all()]
+
+        # 降順にソートする
+        timestamps.sort(reverse=True)
+
+        # datetimeオブジェクトに変換
+        datetimes = [datetime.fromtimestamp(ts) for ts in timestamps]
+
+        # 分かりやすく日付の文字列に変換
+        dates = [dt.strftime("%Y-%m-%d %H:%M:%S") for dt in datetimes]
+
+        return dates
+
+
+
 if __name__ == '__main__':
 
     import sys
@@ -554,7 +575,11 @@ if __name__ == '__main__':
     #
 
     def main():
-        test_dhcp_clients_table()
+        from pprint import pprint
+        pprint(get_dhcp_clients_dates())
+
+
+        # test_dhcp_clients_table()
         # test_mac_vendors_table()
         # test_mac_vendors_search()
         #_dump_mac_vendors()
