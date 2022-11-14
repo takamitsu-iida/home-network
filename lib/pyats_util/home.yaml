@@ -130,7 +130,7 @@ devices:
             password: '%ENC{gAAAAABjbIhXCazd4ueYNQXgDw6deUa9i6Wro8PjRqD_ywyxgdtZ4g9Q-fr4RAphEl-GntZHiRrlgEy7nGf4CM5AswMTy9KOVA==}'
 
   wlc:
-    os: ios
+    os: aireos
     platform: ap
     connections:
       defaults:
