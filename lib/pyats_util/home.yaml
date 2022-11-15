@@ -119,6 +119,7 @@ devices:
     type: unknown
     connections:
       defaults:
+        class: 'unicon.Unicon'
         via: http
       http:
         protocol: http
@@ -130,25 +131,29 @@ devices:
             password: '%ENC{gAAAAABjbIhXCazd4ueYNQXgDw6deUa9i6Wro8PjRqD_ywyxgdtZ4g9Q-fr4RAphEl-GntZHiRrlgEy7nGf4CM5AswMTy9KOVA==}'
 
   wlc:
-    os: aireos
-    platform: ap
+    os: linux
     connections:
       defaults:
+        class: 'unicon.Unicon'
         via: cli
       cli:
-        protocol: ssh
+        protocol: telnet
         ip: 192.168.122.253
-        port: 22
+        port: 23
         credentials:
           default:
             username: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
             password: '%ENC{gAAAAABjbIi4_MyG56sBQzYn2TeJk_JshU6p9Fw_gpcg2Hv3HNUpRDuxjgnfpKg6rF7E0WOlLcslUJWoZztBzOGGIx-MMel7hQ==}'
+        arguments:
+          learn_hostname: True
+          prompt_recovery: True
 
   living-ap:
     os: ios
     platform: ap
     connections:
       defaults:
+        class: 'unicon.Unicon'
         via: cli
       cli:
         protocol: ssh
@@ -164,6 +169,7 @@ devices:
     platform: ap
     connections:
       defaults:
+        class: 'unicon.Unicon'
         via: cli
       cli:
         protocol: ssh
@@ -179,6 +185,7 @@ devices:
     platform: ap
     connections:
       defaults:
+        class: 'unicon.Unicon'
         via: cli
       cli:
         protocol: ssh

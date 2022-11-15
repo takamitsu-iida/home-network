@@ -24,6 +24,16 @@ def get_testbed_devices(testbed_filename:str):
 
 
 def get_inventory(testbed_filename:str, device_name:str):
+    """
+    pyATSのテストベッドからインベントリ情報を返却する
+
+    Args:
+        testbed_filename (str): _description_
+        device_name (str): _description_
+
+    Returns:
+        dict: 'ip', 'username', 'password'が格納されたdict
+    """
 
     devices = get_testbed_devices(testbed_filename=testbed_filename)
     if devices is None:

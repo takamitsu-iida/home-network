@@ -5,6 +5,10 @@ pyats[full]
 rest.connector
 yang.connector
 
+
+# pyATSはMobility ExpressのWLCに接続できないのでparamikoを利用
+netmiko
+
 # 表形式にするのに便利
 tabulate
 
