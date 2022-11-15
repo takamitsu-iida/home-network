@@ -32,7 +32,7 @@ class DaemonUtil:
             stdout=sys.stdout,
             stderr=sys.stderr,
             umask=0o002,
-            working_directory=pid_dir,  # 注意：pidファイルの作成場所に移動必要
+            working_directory=self.pid_dir,  # 注意：pidファイルの作成場所に移動必要
             pidfile=pidfile
         )
 

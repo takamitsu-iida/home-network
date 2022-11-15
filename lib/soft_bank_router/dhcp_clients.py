@@ -28,7 +28,7 @@ from pyats_util import get_inventory
 logger = logging.getLogger(__name__)
 
 
-def get_html(ip:str, username:str, password:str) -> str:
+def get_html(ip: str, username: str, password: str) -> str:
     """_summary_
 
     Args:
@@ -112,10 +112,7 @@ def scrape_html(html_content: str) -> list:
 
     result_list = []
     for ip, mac in zip(ip_list, mac_list):
-        result_list.append({
-            'ip': ip,
-            'mac': mac.upper()
-        })
+        result_list.append({'ip': ip, 'mac': mac.upper()})
 
     # pprint(result_list)
     #
@@ -127,7 +124,7 @@ def scrape_html(html_content: str) -> list:
     return result_list
 
 
-def update_db():
+def update_db():  ############# 引数にip, username, passwordを渡すように変更
 
     # pyATSのテストベッドからソフトバンク光ルータに関する情報を取得
     inventory = get_inventory('home.yaml', 'softbank-router')
@@ -153,7 +150,6 @@ def update_db():
     return dhcp_clients
 
 
-
 if __name__ == '__main__':
 
     import argparse
@@ -166,7 +162,11 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(description='dhcp_clients.py')
-    parser.add_argument('-d', '--daemon', action='store_true', default=False, help='Daemon')
+    parser.add_argument('-d',
+                        '--daemon',
+                        action='store_true',
+                        default=False,
+                        help='Daemon')
 
     args = parser.parse_args()
 
