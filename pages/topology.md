@@ -1,30 +1,32 @@
 ---
 markmap:
   colorFreezeLevel: 2
+  maxWidth: 300
+  embedAssets: true
 ---
 
 # (internet) ONU
 
 ## SoftBankルータ
 
-### Cat3560
+### WS-C3560C-12PC-S
 
-#### (PoE)Aironet AP1
+#### (PoE)Aironet CAP702i
 
-#### (PoE)Aironet AP2
+#### (PoE)Aironet AP1815m
 
 #### (100M)テレビ
 
-#### (100M)任天堂スイッチ
+#### WS-C2960CX-8PC-L
 
-#### Cat2960CG
-
-##### (PoE)AP3
+##### (PoE)Aironet AP1815i
 
 ##### FM-V
 
-##### ATEM mini
-
 ##### 自作PC
 
-##### NAS
+##### QNAP TS220
+
+##### ATEM mini
+
+##### RaspberryPi 3B
