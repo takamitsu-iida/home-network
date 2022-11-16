@@ -1,1 +1,1 @@
-from .netmiko_util import *
+from .netmiko_util import CiscoWlcHandler

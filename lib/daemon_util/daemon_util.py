@@ -12,15 +12,14 @@ import daemon.pidfile
 logger = logging.getLogger(__name__)
 
 
-class DaemonUtil:
+class SingleDaemon:
 
-    def __init__(self, pid_dir:str, pid_file:str) -> None:
+    def __init__(self, pid_dir: str, pid_file: str) -> None:
         self.pid_dir = pid_dir
         self.pid_file = pid_file
         self.pid_path = os.path.join(pid_dir, pid_file)
 
-
-    def start_daemon(self, func:callable):
+    def start_daemon(self, func: callable, *args, **kwargs):
 
         pidfile = daemon.pidfile.PIDLockFile(self.pid_path)
         if pidfile.is_locked():
@@ -29,21 +28,19 @@ class DaemonUtil:
 
         # デーモンコンテキストを作成
         context = daemon.DaemonContext(
-            stdout=sys.stdout,
-            stderr=sys.stderr,
+            # stdout=sys.stdout,
+            # stderr=sys.stderr,
             umask=0o002,
             working_directory=self.pid_dir,  # 注意：pidファイルの作成場所に移動必要
-            pidfile=pidfile
-        )
+            pidfile=pidfile)
 
         context.signal_map = {
-            signal.SIGTERM: 'terminate', # kill -TERM で停止
+            signal.SIGTERM: 'terminate',  # kill -TERM で停止
             signal.SIGHUP: 'terminate',  # kill -HUP で停止
         }
 
         with context:
-            func()
-
+            func(*args, **kwargs)
 
     def stop_daemon(self):
         print('stop_daemon')
@@ -56,7 +53,6 @@ class DaemonUtil:
 
         if pid:
             os.kill(pid, signal.SIGTERM)
-
 
     def clear(self):
         if os.path.exists(self.pid_path):
@@ -71,25 +67,18 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
 
-    def dummy():
+    def dummy(*args, **kwargs):
+        print(args)
+        print(kwargs)
         print('done')
 
-    def run_schedule():
+    def run_schedule(*args, **kwargs):
+        # schedule.every(1).minutes.do(dummy, args, kwargs)  # 毎分実行
+        # schedule.every(1).hours.do(dummy)                  # 毎時実行
+        # schedule.every().hour.at(':30').do(dummy)          # 毎時30分時点で実行
+        # schedule.every().minute.at(':30').do(dummy)        # 毎分30秒時点で実行
+        # schedule.every().day.at('12:10').do(dummy)         # 毎日12時10分時点で実行
 
-        # 毎分実行
-        # schedule.every(1).minutes.do(dummy)
-
-        # 毎時実行
-        # schedule.every(1).hours.do(dummy)
-
-        # 毎時30分時点で実行
-        # schedule.every().hour.at(':30').do(dummy)
-
-        # 毎分30秒時点で実行
-        schedule.every().minute.at(':30').do(dummy)
-
-        # 毎日12時10分時点で実行
-        # schedule.every().day.at('12:10').do(dummy)
         while True:
             try:
                 schedule.run_pending()
@@ -100,24 +89,41 @@ if __name__ == '__main__':
                 logger.info(e)
 
     def main():
-        parser = argparse.ArgumentParser(description='test script to run daemon')
-        parser.add_argument('-d', '--daemon', action='store_true', default=False, help='Daemon')
-        parser.add_argument('-k', '--kill', action='store_true', default=False, help='Kill')
-        parser.add_argument('-c', '--clear', action='store_true', default=False, help='Clear junk pid file')
+        parser = argparse.ArgumentParser(
+            description='test script to run daemon')
+        parser.add_argument('-d',
+                            '--daemon',
+                            action='store_true',
+                            default=False,
+                            help='Daemon')
+        parser.add_argument('-k',
+                            '--kill',
+                            action='store_true',
+                            default=False,
+                            help='Kill')
+        parser.add_argument('-c',
+                            '--clear',
+                            action='store_true',
+                            default=False,
+                            help='Clear junk pid file')
 
         args = parser.parse_args()
 
         pid_dir = os.path.dirname(__file__)
         pid_file = __file__ + '.pid'
 
-        d = DaemonUtil(pid_dir=pid_dir, pid_file=pid_file)
+        d = SingleDaemon(pid_dir=pid_dir, pid_file=pid_file)
 
         if args.clear:
             d.clear()
             return 0
 
         if args.daemon:
-            d.start_daemon(run_schedule)
+            d.start_daemon(run_schedule,
+                           'arg1',
+                           'arg2',
+                           kwarg1='kwarg1',
+                           kwarg2='kwarg2')
             return 0
 
         if args.kill:

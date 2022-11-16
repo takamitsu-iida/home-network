@@ -1,0 +1,775 @@
+<HTML>
+<HEAD>
+<META http-equiv=Content-Type content="text/html; charset=shift_jis">
+<TITLE>セットアップメニュー</TITLE>
+<SCRIPT language=javascript src="share.js"></SCRIPT>
+<SCRIPT language=javascript>
+<!--
+var screenwidth=screen.width-21;
+var msg="overflow:hidden;width:+screenwidth";
+document.write("<DIV style="+msg+">");
+//-->	
+</SCRIPT>
+
+<SCRIPT language="JavaScript">
+
+function ip_format(str)
+{	
+	var len = str.length;
+	var temp;
+	var buf = "";
+
+	if(len < 15)
+	{
+		temp = str.split(".");
+		
+		// parse (1)
+		switch(temp[0].length)
+		{
+			case 1:	
+					buf = "  " + temp[0];
+					break;		
+			case 2:
+					buf = " " + temp[0];
+					break;					
+			case 3:
+					buf = temp[0];
+					break;
+		}
+
+		// parse (2)
+		switch(temp[1].length)
+		{
+			case 1:	
+					buf += "." + "  " +  temp[1];
+					break;
+			
+			
+			case 2:
+					buf += "." + " " +  temp[1];
+					break;
+					
+			case 3:
+					buf += "." + temp[1];
+					break;
+		}
+
+		// parse (3)
+		switch(temp[2].length)
+		{
+			case 1:	
+					buf += "." + "  " +  temp[2];
+					break;		
+			case 2:
+					buf += "." + " " +  temp[2];
+					break;
+					
+			case 3:
+					buf += "." + temp[2];
+					break;
+		}
+
+		// parse (4)
+		switch(temp[3].length)
+		{
+			case 1:	
+					buf += "." + "  " +  temp[3];
+					break;			
+			case 2:
+					buf += "." + " " +  temp[3];
+					break;
+					
+			case 3:
+					buf += "." + temp[3];
+					break;
+		}
+
+	}
+	else
+		buf = str;
+
+	return buf;
+}
+
+
+function mac_format(str)
+{
+	var len = str.length;
+	var temp;
+	var buf = "";
+
+	if(len < 17)
+	{
+		temp = str.split(":");
+
+		switch(temp[0].length)
+		{
+			case 1:
+					buf = "0" + temp[0];
+					break;	
+			case 2:
+					buf = temp[0];
+					break;			
+		}
+		switch(temp[1].length)
+		{
+			case 1:
+					buf += ":" + "0" + temp[1];
+					break;	
+			case 2:
+					buf += ":" + temp[1];
+					break;				
+		}
+		switch(temp[2].length)
+		{
+			case 1:
+					buf += ":" + "0" + temp[2];
+					break;		
+			case 2:
+					buf += ":" + temp[2];
+					break;				
+		}
+		switch(temp[3].length)
+		{
+			case 1:
+					buf += ":" + "0" + temp[3];
+					break;		
+			case 2:
+					buf += ":" + temp[3];
+					break;			
+		}
+		switch(temp[4].length)
+		{
+			case 1:
+					buf += ":" + "0" + temp[4];
+					break;			
+			case 2:
+					buf += ":" + temp[4];
+					break;				
+		}
+		switch(temp[5].length)
+		{
+			case 1:
+					buf += ":" + "0" + temp[5];
+					break;			
+			case 2:
+					buf += ":" + temp[5];
+					break;					
+		}
+	}
+	else
+		buf = str;
+
+	return buf;
+}
+
+function PrintInfo()
+{
+	var cf = document.forms[0];
+	var i=0, j=0, m=0, n=0;
+	//foxconn add start by sunny,2009/03/20
+	var space_count;
+	//foxconn add end by sunny,2009/03/20
+	var past_length_ip, past_length_mac;
+	var counter_ip=0, counter_mac=0;
+
+	cf.infoarea.value = "";
+
+	cf.IP.value = "192.168.122.106 192.168.122.107 192.168.122.109 192.168.122.111 192.168.122.112 192.168.122.113 192.168.122.114 192.168.122.116 192.168.122.118 192.168.122.119 192.168.122.156 192.168.122.120 192.168.122.121 192.168.122.122 192.168.122.123 192.168.122.169 192.168.122.159 192.168.122.160 192.168.122.172 192.168.122.174";
+	cf.MAC.value = "28:84:fa:ea:5f:0c 04:03:d6:d8:57:5f 3c:22:fb:7b:85:0e 2e:14:db:b8:9b:d8 fe:dd:b8:3f:de:59 4c:34:88:93:80:87 44:65:0d:da:2a:f5 ee:e7:80:e3:c3:b2 7e:87:0b:67:17:e2 20:df:b9:b4:bc:79 38:1a:52:5b:42:15 a4:5e:60:e4:1a:dd c6:78:ad:69:2d:fd 12:87:66:76:e7:7d 26:67:ca:be:bc:c9 84:5c:f3:48:ff:30 90:9a:4a:d6:bb:b9 08:97:98:04:22:e4 f6:ff:cc:5f:51:68 50:eb:f6:95:8b:37";
+
+	if((cf.IP.value=="") || (cf.MAC.value==""))	// have no ip or mac 
+		return;
+
+	if(cf.IP.value.indexOf(" ")==-1)	// if have one ip only, we also will know that it must have one mac 
+	{
+		if(cf.MAC.value!="00:00:00:00:00:00")
+		{
+		cf.infoarea.value += "IPアドレス:  ";
+		//cf.infoarea.value += ip_format(cf.IP.value);
+		cf.infoarea.value += cf.IP.value;	
+		cf.infoarea.value += "        ";
+		//foxconn add start by sunny,2009/03/20
+		for(space_count=0;space_count<(15-cf.IP.value.length);space_count++)
+		cf.infoarea.value += " ";
+		//foxconn add end by sunny,2009/03/20
+		cf.infoarea.value += "MACアドレス:  ";
+		cf.infoarea.value += mac_format(cf.MAC.value); 
+		cf.infoarea.value += "\n";
+	}
+	}
+	else // more than one ip and mac. we will display the the ip and mac only when they have the same number  
+	{
+		past_length_ip = i= cf.IP.value.indexOf(" "); // when find no, i is -1
+		past_length_mac = m = cf.MAC.value.indexOf(" ");
+		counter_ip++; counter_mac++;
+
+		while(1)
+		{
+			if(counter_ip == counter_mac)
+			{
+				if(cf.MAC.value.substring(n, m) !="00:00:00:00:00:00")
+			  {
+				cf.infoarea.value += "IPアドレス:  ";
+				//cf.infoarea.value += ip_format(cf.IP.value.substring(j,i)); 
+				cf.infoarea.value += cf.IP.value.substring(j,i);
+				cf.infoarea.value += "        ";
+				//foxconn add start by sunny,2009/03/20
+				for(space_count=0;space_count<(15-cf.IP.value.substring(j,i).length);space_count++)
+				cf.infoarea.value += " ";
+				//foxconn add end by sunny,2009/03/20
+				cf.infoarea.value += "MACアドレス:  ";
+				cf.infoarea.value += mac_format(cf.MAC.value.substring(n, m)); 
+				cf.infoarea.value += "\n";
+			}
+			}
+			if((i=cf.IP.value.indexOf(" ",i+1)) != -1)
+			{
+				j = past_length_ip + 1;
+				past_length_ip = i;
+				counter_ip++;
+			}
+			if((m=cf.MAC.value.indexOf(" ", m+1)) != -1)
+			{
+				n = past_length_mac + 1;
+				past_length_mac = m;
+				counter_mac++;
+			}
+			if((i==-1) || (m==-1))
+				break;
+		}
+
+		if(counter_ip == counter_mac)
+		{
+			if(cf.MAC.value.substring(past_length_mac + 1) !="00:00:00:00:00:00")
+			{
+			cf.infoarea.value += "IPアドレス:  ";
+			//cf.infoarea.value += ip_format(cf.IP.value.substring(past_length_ip + 1)); 
+			cf.infoarea.value += cf.IP.value.substring(past_length_ip + 1);
+			cf.infoarea.value += "        ";
+			//foxconn add start by sunny,2009/03/20
+		        for(space_count=0;space_count<(15-cf.IP.value.substring(past_length_ip + 1).length);space_count++)
+			cf.infoarea.value += " ";
+			//foxconn add end by sunny,2009/03/20
+			cf.infoarea.value += "MACアドレス:  ";
+			cf.infoarea.value += mac_format(cf.MAC.value.substring(past_length_mac + 1)); 
+			cf.infoarea.value += "\n";
+		}
+	}
+	}
+
+}
+/*
+function PrintInfo3()
+{
+	var cf = document.forms[0];
+	var i=0, j=0, m=0, n=0;
+	var space_count;
+	var past_length_ip, past_length_mac;
+	var counter_ip=0, counter_mac=0;
+
+	cf.ReservedMAC.value = "- - - - - - - -";
+	cf.ReservedIP.value = "- - - - - - - -";
+         if(cf.ReservedIP.value !="")
+{
+	var tempIP=cf.ReservedIP.value.split(" ");
+	var tempMAC=cf.ReservedMAC.value.split(" ");
+	for(i=0;i<8;i++)
+	{
+		if(tempIP[i]!="-")
+		{
+		cf.tempip.value=tempIP[i];
+		cf.infoarea.value += "IPアドレス:  ";		
+		cf.infoarea.value += tempIP[i];
+		cf.infoarea.value += "        ";				
+		for(space_count=0;space_count<(15-cf.tempip.value.length);space_count++)
+				cf.infoarea.value += " ";	
+		cf.infoarea.value += "MACアドレス:  ";
+		cf.infoarea.value += tempMAC[i];
+		cf.infoarea.value += "\n"; 
+		}
+	}
+}
+<BODY onLoad="JavaScript:PrintInfo();PrintInfo3()" bgColor="#FFFFFF" leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
+}*/
+</SCRIPT>
+
+
+<!--css---------->
+<STYLE type="text/css">
+<!--
+.help{cursor : help;}
+-->
+</STYLE>
+<!--end css------->
+</HEAD>
+
+
+<BODY onLoad="JavaScript:PrintInfo()" bgColor="#FFFFFF" leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
+<FORM method="post" name="MENU" action="COMM_REBOOT_CGI">
+	<!-- Main Window Layout Start -->
+	<TABLE width="100%" border=0 cellSpacing=0 cellPadding=0>
+		
+		<!-- This is Banner Cell Start -->
+		<TR>
+		<TD>
+			<!---header------------>
+			<TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+				<TR ROWSPAN="4" >
+					<TD align="center"  bgcolor="#DEE3F7" height=55 colspan="5"><FONT size="6" color="#31319C"><B>詳細設定メニュー</B></FONT>   
+					</TD>
+				</TR>
+				<TR bgcolor="#DEE3F7" >
+					<TD colspan="4">
+					</TD>
+					<TD width="12%" align="center" height="5">
+						<FONT size="2" color="#000000"><A href="P_quick.html">トップページへ戻る</A></FONT>
+					</TD>
+				</TR>
+ 			</TABLE>
+			<TABLE cellSpacing=0 cellPadding=0 width="100%" height="1" border=0 style="font-size: 2mm">
+  				<TBODY>
+  					<TR><TD bgColor="#B5AAFF">&nbsp; </TD></TR>
+				</TBODY>
+			</TABLE>
+			<!---end header------------>
+		</TD>
+		</TR>
+		<!-- This is Banner Cell End -->
+		
+		
+		<!-- This is the Content Cell Start -->
+		<TR>
+		<TD>
+			<!-- This is the Content Layout TABLE Start -->
+			<!-- Content Requres 1000 Pixels -->
+			<TABLE border=0 cellpadding="0" cellspacing="0" width="89%" align="center">
+			<!-- Left Navigator Layout Start -->
+			<TR>
+			<TD width="20%" valign="top">
+			
+				<!--menu list ------------------------------------------------------------------------------------------------>
+				<TABLE border=0 cellpadding="0" cellspacing="0" width="100%" align="left">
+					<TR>
+					<TD>
+						<TABLE border="1" bordercolor="#9CCFFF" cellpadding="2" cellspacing="0" width="100%">
+							<TR>
+							<TD align="left" bgcolor="#DEE3F7">
+								<IMG src="arrow0.gif" border=0>
+								<FONT size="2" color="#000000">詳細設定</FONT>
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgcolor="#EFEFEF">
+								&nbsp;&nbsp;
+								<IMG src="arrow0.gif" border=0>
+								<FONT size="2" color="#000000">有線・無線LAN共通</FONT>
+							</TD>
+							</TR>			
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Alan_ipdhcp.html">IPアドレス/DHCPサーバ</A>
+									</FONT>
+								</DIV>	
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Blan_share.html">有線⇔無線LAN間通信</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+				
+							<TR>
+							<TD align="left" bgcolor="#EFEFEF">
+								&nbsp;&nbsp;
+								<IMG src="arrow0.gif" border=0>
+								<FONT size="2" color="#000000">無線LANオプション</FONT>
+							</TD>
+							</TR>
+				
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Cwlan_options.html">基本設定</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+				
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Dwlan_macfilters.html">MACアドレスフィルタリング</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+				
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Ewlan_ssid.html">マルチSSID設定</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+				
+							<TR>
+							<TD align="left" bgcolor="#EFEFEF">
+								&nbsp;&nbsp;
+								<IMG src="arrow0.gif" border=0>
+								<FONT size="2" color="#000000">ルータ機能</FONT>
+							</TD>
+							</TR>
+				
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Erouter_portforward.html">ポート転送</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Frouter_upnp.html">UPnP</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Dmz.html">DMZ</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Frouter_IPV6.html">IPv6設定</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+							
+						<TR>
+						<TD align="left" bgcolor="#EFEFEF">
+							&nbsp;&nbsp;
+							<IMG src="arrow0.gif" border=0>
+							<FONT size="2" color="#000000">セキュリティ</FONT>
+						</TD>
+						</TR>
+<!-- Smile add, ipv6 filter, 20130222 -->						
+						<TR>
+						<TD align="left" bgColor="#FFFFFF">
+							<DIV id="listItem">
+								&nbsp;&nbsp;&nbsp;&nbsp;
+								<FONT size="2" color="#000000">
+								<IMG src="arrow0.gif">
+									<A href="packetfilter_menu.html">パケットフィルタ設定</A>
+								</FONT>
+							</DIV>
+						</TD>
+						</TR>
+							
+							
+				
+							<TR>
+							<TD align="left" bgcolor="#EFEFEF">
+								&nbsp;&nbsp;
+								<IMG src="arrow0.gif" border=0>
+								<FONT size="2" color="#000000">電話機能</FONT>
+							</TD>
+							</TR>
+				
+				            
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="./prefix.html">BBフォン市外局番設定</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+							
+				
+							<!--
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="hikari.html">光電話(N)／ひかり電話設定</A>									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+				
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="naisen.html">光電話(N)／ひかり電話内線設定</A>									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+							-->
+				
+							<TR>
+							<TD align="left" bgcolor="#DEE3F7">
+								<IMG src="arrow1.gif" border=0>
+								<FONT size="2" color="#000000">情報</FONT>
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Ginfo_configurations_content.html">設定情報一覧</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow1.gif">
+										<A href="P_Hinfo_dhcpclientslist.html">DHCPv4クライアント一覧</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="ipv6dhcp.html">DHCPv6クライアント一覧</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+					
+							<!--
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+									<A href="outgoingCalls.html">光電話(N)／ひかり電話発信履歴</A>									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+									<A href="incommingCalls.html">光電話(N)／ひかり電話着信履歴</A>									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+				
+							-->	
+							
+							<TR>
+								<TD align="left" bgColor="#FFFFFF">
+									<DIV id="listItem">
+										&nbsp;&nbsp;&nbsp;&nbsp;
+										<FONT size="2" color="#000000">
+										<IMG src="arrow0.gif">
+											<A href="log.html">システムログ</A>
+										</FONT>
+									</DIV>
+								</TD>
+								</TR>		
+				
+							<TR>
+							<TD align="left" bgcolor="#DEE3F7">
+								<IMG src="arrow0.gif" border=0>
+								<FONT size="2" color="#000000">保守</FONT>
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Imaintenace_loginpw.html">ログインパスワード</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+							
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="P_Wlan_stop.html">無線LAN機能の停止</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+				
+							<TR>
+							<TD align="left" bgColor="#FFFFFF">
+								<DIV id="listItem">
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<FONT size="2" color="#000000">
+									<IMG src="arrow0.gif">
+										<A href="resetPage.html">初期化</A>
+									</FONT>
+								</DIV>
+							</TD>
+							</TR>
+						</TABLE>
+				
+						<HR width="75%" color="#9CCFFF" noShade SIZE=3>
+						
+						<TABLE border="1" bordercolor="#9CCFFF" cellpadding="2" cellspacing="0" width="100%">
+							<TR>
+							<TD align="center" bgcolor="#DEE3F7">
+								<INPUT type="button" name="reboot" value="再起動" class="icon" style="width:100" onClick="javascript:AReboot()">
+								<INPUT type="hidden" name="Areboot" value="0">
+							</TD>
+							</TR>
+						</TABLE>
+					</TD>
+					</TR>
+				</TABLE>
+			<!--end menu list--------------------------------------------------------------------------------------------->
+		
+			<!-- Real Content Layout Start -->
+			<TD valign="top" width="80%">
+
+				<!--configure----------------------------------------------->
+				<DIV align="center">
+				<TABLE border=0 cellpadding="0" cellspacing="0" width="100%">
+						<TR>
+						<TD bgColor="#FFFFFF">
+					<TABLE border=0 cellpadding="0" cellspacing="0" width="100%">
+						<TR><TD align="center" bgcolor="#9CCFFF" >
+							<FONT color="#848484" size="3"><B>情報&nbsp;&nbsp;→&nbsp;&nbsp;</B></FONT>
+							<FONT color="#000000" size="3"><B>DHCPv4クライアント一覧</B></FONT>
+						</TD></TR>
+					</TABLE></TD></TR>
+					</TABLE></DIV>
+				<BR>
+				<DIV align="center">
+					<TABLE border=0 bordercolor="#9CCFFF" cellpadding="0" cellspacing="0" width="95%">
+						<TR>
+						<TD align="center" bgcolor="#BDE3E7">
+							<DIV align="left">
+							<FONT size="2" color="#000000">DHCPv4クライアント一覧</FONT></DIV>
+							<DIV align="right">
+							<TABLE border=0 cellpadding="2" cellspacing="2" width="98%">
+							
+								<TR>
+									   <TD align="center" valign="top" width="20%" bgcolor=#D6FFEF>
+								<DIV align="left">
+									   <FONT size="2">有線/無線LAN共通</FONT></DIV>
+								</TD>
+									   <TD align="right" width="80%" bgColor="#FFFFFF">
+								<DIV align="left">
+								<FONT size="2">								
+								<P><TEXTAREA rows="15" cols="76" name="infoarea" readonly="readonly"   tabindex="2" wrap="virtual" style="word-break:break-all;word-wrap:break-word"></TEXTAREA></P>
+			
+								<INPUT type="hidden" name="IP" value="">
+								<INPUT type="hidden" name="MAC" value="">
+								<INPUT type="hidden" name="WIP" value="">
+								<INPUT type="hidden" name="WMAC" value="">
+								<INPUT type="hidden" name="ReservedIP" value="">
+								<INPUT type="hidden" name="ReservedMAC" value="">
+								<INPUT type="hidden" name="tempip" value="">
+								</FONT></DIV>
+								</TD>
+							</TR>
+							</TABLE></DIV>
+			
+						</TABLE></DIV>
+					<BR><BR><BR>
+					
+					<DIV align="center"><FONT color="#848484">Copyright&copy; SoftBank All rights reserved.</FONT></DIV>
+					
+			
+							</TD></TR>
+					</TABLE>
+			<!--end configure confrim buttons--------------->
+		
+			</TD>
+			<!-- Real Content Layout End -->
+			
+			</TR>
+			</TABLE>
+			<!-- This is the Content Layout TABLE End -->
+		
+		</TD>
+		</TR>
+		<!-- This is the Content Cell End -->
+
+	</TABLE> 
+	<!-- Main Window Layout End -->
+
+</FORM>
+</BODY>
+</HTML>

@@ -1,1 +1,1 @@
-from .dhcp_clients import *
+from .dhcp_clients import get_dhcp_clients

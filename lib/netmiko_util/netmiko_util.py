@@ -21,6 +21,85 @@ from netmiko.exceptions import NetmikoAuthenticationException
 logger = logging.getLogger(__name__)
 
 
+class CiscoWlcHandler:
+
+    def __init__(self, ip:str, username:str, password:str) -> None:
+        self.ip = ip
+        self.username = username
+        self.password = password
+
+        # 暗黙のパラメータ
+        self.port = 22
+        self.device_type = 'cisco_wlc_ssh'
+        self.conn_timeout = 10    # paramiko default 10
+        self.banner_timeout = 15  # paramiko default 15
+
+        # ConnectionHandlerインスタンス
+        self.ch = None
+
+
+    def __enter__(self):
+        if self.ch is None:
+            self.connect()
+        return self
+
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        if self.ch is not None:
+            self.ch.disconnect()
+            self.ch = None
+
+
+    def connect(self):
+        if self.ch is None:
+            args = {
+                'ip': self.ip,
+                'port': self.port,
+                'username': self.username,
+                'password': self.password,
+                'device_type': 'cisco_wlc_ssh',
+                #
+                # pass to paramiko
+                #
+                'conn_timeout': self.conn_timeout,  # default 10
+                'banner_timeout': self.banner_timeout,  # default 15
+            }
+
+            try:
+                self.ch = ConnectHandler(**args)
+                return self.ch
+            except NetmikoAuthenticationException as e:
+                logger.error('authentication failed.')
+                raise e
+
+
+    def get_wlc_clients(self):
+
+        results = []
+
+        # show client summaryを叩いてクライアントのMACアドレス情報を取得
+        cmd_show_client_summary = 'show client summary'
+        output = self.ch.send_command(cmd_show_client_summary)
+
+        # 出力をパースしてクライアントリストを作成
+        client_list = parse_wlc_show_client_summary(output)
+
+        # MACアドレスを取り出して show client detail xx:xx:xx:xx:xx:xx コマンドを実行する
+        for client in client_list:
+            mac_address = client['mac_address']
+            cmd_show_client_detail = f'show client detail {mac_address}'
+
+            output = self.ch.send_command(cmd_show_client_detail)
+            print(output)
+            print('')
+
+            # パース
+            d = parse_wlc_show_client_detail(output)
+            results.append(d)
+
+        return results
+
+
 
 def parse_wlc_show_client_summary(output: str) -> list:
     """
@@ -92,7 +171,8 @@ def parse_wlc_show_client_detail(output: str):
         'device_type': re.compile(r'Device\s+Type\:(\s*)(\.)+\s+(?P<device_type>\S+)?(\s*)$', re.MULTILINE),
 
         # AP MAC Address................................... 70:ea:1a:84:16:c0
-        'ap_mac_address': re.compile(r'AP\s+MAC\s+Address(\s*)(\.)+\s+(?P<ap_mac_address>(?:[0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2})(\s*)$', re.MULTILINE),
+        'ap_mac_address':
+        re.compile(r'AP\s+MAC\s+Address(\s*)(\.)+\s+(?P<ap_mac_address>(?:[0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2})(\s*)$', re.MULTILINE),
 
         # AP Name.......................................... living-AP1815M
         'ap_name': re.compile(r'AP\s+Name(\s*)(\.)+\s+(?P<ap_name>.*)(\s*)$', re.MULTILINE),
@@ -125,65 +205,7 @@ def parse_wlc_show_client_detail(output: str):
             value = ''
         result[key] = value.strip()
 
-
     return result
-
-
-def create_connection_handler(ip, username, password):
-
-    args = {
-        'ip': ip,
-        'port': 22,
-        'username': username,
-        'password': password,
-        'device_type': 'cisco_wlc_ssh',
-        #
-        # pass to paramiko
-        #
-        'conn_timeout': 10,  # default 10
-        'banner_timeout': 15,  # default 15
-    }
-
-    try:
-        return ConnectHandler(**args)
-    except NetmikoAuthenticationException as e:
-        logger.error('authentication failed.')
-        raise e
-
-
-def get_wlc_clients(ip:str, username:str, password:str):
-
-    # 接続
-    try:
-        ch = create_connection_handler(ip, username, password)
-    except NetmikoAuthenticationException:
-        return 0
-
-    results = []
-
-    with ch:
-        # show client summaryを叩いてクライアントのMACアドレス情報を取得
-        cmd_show_client_summary = 'show client summary'
-        output = ch.send_command(cmd_show_client_summary)
-
-        # 出力をパースしてクライアントリストを作成
-        client_list = parse_wlc_show_client_summary(output)
-
-        # MACアドレスを取り出して show client detail xx:xx:xx:xx:xx:xx コマンドを実行する
-        for client in client_list:
-            mac_address = client['mac_address']
-            cmd_show_client_detail = f'show client detail {mac_address}'
-
-            output = ch.send_command(cmd_show_client_detail)
-            print(output)
-            print('')
-
-            # パース
-            d = parse_wlc_show_client_detail(output)
-            results.append(d)
-
-    return results
-
 
 
 if __name__ == '__main__':
@@ -197,7 +219,7 @@ if __name__ == '__main__':
     #
     # libディレクトリをパスに加える
     #
-    app_dir = os.path.join(os.path.dirname(__file__), '../..')
+    app_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
     lib_dir = os.path.join(app_dir, 'lib')
 
     if lib_dir not in sys.path:
@@ -209,39 +231,23 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--test', action='store_true')
-    parser.add_argument('--testbed',
-                        dest='testbed',
-                        help='testbed YAML file',
-                        type=str,
-                        default='home.yaml')
-    parser.add_argument('--device',
-                        dest='device',
-                        help='name of the device to connect',
-                        type=str,
-                        default='wlc')
     args, _ = parser.parse_known_args()
 
 
     def test_parse_wlc_show_client_summary():
-        path = os.path.join(os.path.dirname(__file__), 'show_client_summary.txt')
+        path = os.path.join(os.path.dirname(__file__),
+                            'show_client_summary.txt')
         with open(path) as f:
             cmd_output = f.read()
 
         client_list = parse_wlc_show_client_summary(cmd_output)
         # pprint(client_list)
 
+        # 先頭3
         assert {'ap_name': 'living-AP1815M', 'mac_address': '04:03:d6:d8:57:5f', 'protocol': '802.11n(2.4 GHz)'} in client_list
         assert {'ap_name': 'living-AP1815M', 'mac_address': '08:97:98:04:22:e4', 'protocol': '802.11n(2.4 GHz)'} in client_list
         assert {'ap_name': 'taka-AP1815I', 'mac_address': '20:df:b9:b4:bc:79', 'protocol': '802.11ac(5 GHz)'} in client_list
-        assert {'ap_name': 'living-AP1815M', 'mac_address': '26:67:ca:be:bc:c9', 'protocol': '802.11n(2.4 GHz)'} in client_list
-        assert {'ap_name': 'ayane-CAP702I', 'mac_address': '2e:14:db:b8:9b:d8', 'protocol': '802.11n(5 GHz)'} in client_list
-        assert {'ap_name': 'living-AP1815M', 'mac_address': '38:1a:52:5b:42:15', 'protocol': '802.11n(2.4 GHz)'} in client_list
-        assert {'ap_name': 'taka-AP1815I', 'mac_address': '3c:22:fb:7b:85:0e', 'protocol': '802.11ac(5 GHz)'} in client_list
-        assert {'ap_name': 'living-AP1815M', 'mac_address': '44:65:0d:da:2a:f5', 'protocol': '802.11n(2.4 GHz)'} in client_list
-        assert {'ap_name': 'taka-AP1815I', 'mac_address': '90:9a:4a:d6:bb:b9', 'protocol': '802.11n(2.4 GHz)'} in client_list
-        assert {'ap_name': 'taka-AP1815I', 'mac_address': 'a0:c9:a0:9a:7f:01', 'protocol': '802.11ac(5 GHz)'} in client_list
-        assert {'ap_name': 'living-AP1815M', 'mac_address': 'a4:5e:60:e4:1a:dd', 'protocol': '802.11ac(5 GHz)'} in client_list
-        assert {'ap_name': 'living-AP1815M', 'mac_address': 'c6:78:ad:69:2d:fd', 'protocol': '802.11n(2.4 GHz)'} in client_list
+        # 最後3
         assert {'ap_name': 'ayane-CAP702I', 'mac_address': 'ee:e7:80:e3:c3:b2', 'protocol': '802.11n(5 GHz)'} in client_list
         assert {'ap_name': 'taka-AP1815I', 'mac_address': 'f6:ff:cc:5f:51:68', 'protocol': '802.11ac(5 GHz)'} in client_list
         assert {'ap_name': 'taka-AP1815I', 'mac_address': 'fe:dd:b8:3f:de:59', 'protocol': '802.11ac(5 GHz)'} in client_list
@@ -249,7 +255,8 @@ if __name__ == '__main__':
 
 
     def test_parse_wlc_show_client_detail():
-        path = os.path.join(os.path.dirname(__file__), 'show_client_detail.txt')
+        path = os.path.join(os.path.dirname(__file__),
+                            'show_client_detail.txt')
         with open(path) as f:
             cmd_output = f.read()
 
@@ -275,9 +282,6 @@ if __name__ == '__main__':
         test_parse_wlc_show_client_detail()
         return 0
 
-    def run_schedule():
-        pass
-
 
     def main():
 
@@ -285,9 +289,15 @@ if __name__ == '__main__':
             test()
             return 0
 
-        inventory = get_inventory(testbed_filename=args.testbed, device_name=args.device)
+        # pyATSのテストベッドからwlcに関する情報を取得
+        inventory = get_inventory('home.yaml', 'wlc')
+        ip = inventory['ip']
+        username = inventory['username']
+        password = inventory['password']
 
-        clients_list = get_wlc_clients(inventory['ip'], inventory['username'], inventory['password'])
+        wlc = CiscoWlcHandler(ip, username, password)
+        with wlc:
+            clients_list = wlc.get_wlc_clients()
         pprint(clients_list)
         return 0
 

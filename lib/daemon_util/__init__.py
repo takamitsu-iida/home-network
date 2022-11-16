@@ -1,1 +1,1 @@
-from .daemon_util import DaemonUtil
+from .daemon_util import SingleDaemon

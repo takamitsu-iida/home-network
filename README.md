@@ -3,7 +3,7 @@
 
 ## 管理基盤のセットアップ
 
-`~/.pyats/pyats.conf` を作成して、暗号キーを記載する。ファイルのモードは600にする。
+`~/.pyats/pyats.conf` を作成して、暗号キーを記載する。ファイルのモードは600にします。
 
 ```bash
 [secrets]
@@ -14,27 +14,46 @@ string.key = ...
 
 ## python仮想環境
 
-Pythonの仮想環境を構築する。
+Pythonの仮想環境を構築します。
 
 ```bash
 python -m venv .venv
 ```
 
-direnvをインストール済みなら、.envrcはリポジトリに含まれるので以下のようにする。
+direnvをインストール済みなら、.envrcはリポジトリに含まれていますので、allowするだけです。
 
 ```bash
 direnv allow
 ```
 
-pythonのモジュールをインストールする。
+pythonのモジュールをインストールします。
 
 ```bash
 pip install -r requirements.txt
 ```
 
+### vscode
+
+`lib`ディレクトリにライブラリを置いていますので、そこへの参照をvscodeに追加設定しないと不便です。
+
+vscodeの設定画面で extra path を検索すると
+
+```text
+Python > Analysis: Extra Paths
+```
+
+という設定項目が出てきますので、「項目を追加」ボタンを押して
+
+```text
+lib/
+```
+
+を追加します。
+
+
 ### node.js
 
-WSL環境にnode.jsをインストールする手順はマイクロソフトのページに詳しい。
+WSL環境にnode.jsをインストールする手順はマイクロソフトのページに詳しいです。
 
 https://learn.microsoft.com/ja-jp/windows/dev-environment/javascript/nodejs-on-wsl
 

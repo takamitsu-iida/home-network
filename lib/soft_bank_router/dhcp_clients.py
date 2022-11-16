@@ -10,20 +10,6 @@ from datetime import datetime
 import requests
 from requests.auth import HTTPBasicAuth
 
-#
-# libディレクトリをパスに加える
-#
-app_dir = os.path.join(os.path.dirname(__file__), '../..')
-lib_dir = os.path.join(app_dir, 'lib')
-
-if lib_dir not in sys.path:
-    sys.path.append(lib_dir)
-
-# データベース操作関数 lib/db_util/db_util.py
-from db_util import insert_dhcp_clients
-
-# pyats操作関数 lib/pyats_util/pyats_util.py
-from pyats_util import get_inventory
 
 logger = logging.getLogger(__name__)
 
@@ -124,28 +110,13 @@ def scrape_html(html_content: str) -> list:
     return result_list
 
 
-def update_db():  ############# 引数にip, username, passwordを渡すように変更
-
-    # pyATSのテストベッドからソフトバンク光ルータに関する情報を取得
-    inventory = get_inventory('home.yaml', 'softbank-router')
-    if inventory is None:
-        return
-
-    ip = inventory.get('ip')
-    username = inventory.get('username')
-    password = inventory.get('password')
-
-    # 現在時刻
-    timestamp = datetime.now().timestamp()
+def get_dhcp_clients(ip:str, username:str, password:str) -> list:
 
     # HTMLを取得する
-    html_content = get_html(ip=ip, username=username, password=password)
+    html_content = get_html(ip, username, password)
 
     # 取得したHTMLをスクレイピング
-    dhcp_clients = scrape_html(html_content=html_content)
-
-    # データベースに格納
-    insert_dhcp_clients(dhcp_clients_list=dhcp_clients, timestamp=timestamp)
+    dhcp_clients = scrape_html(html_content)
 
     return dhcp_clients
 
@@ -153,42 +124,80 @@ def update_db():  ############# 引数にip, username, passwordを渡すよう�
 if __name__ == '__main__':
 
     import argparse
-    import time
     from pprint import pprint
 
-    import daemon
-    import schedule
+    #
+    # libディレクトリをパスに加える
+    #
+    app_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+    lib_dir = os.path.join(app_dir, 'lib')
+
+    if lib_dir not in sys.path:
+        sys.path.append(lib_dir)
+
+    # lib/db_util/db_util.py
+    from db_util import insert_dhcp_clients
+
+    # lib/pyats_util/pyats_util.py
+    from pyats_util import get_inventory
 
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(description='dhcp_clients.py')
-    parser.add_argument('-d',
-                        '--daemon',
-                        action='store_true',
-                        default=False,
-                        help='Daemon')
-
+    parser.add_argument('-t', '--test', action='store_true')
     args = parser.parse_args()
+
+    def test_scrape_html():
+        test_html = os.path.join(os.path.dirname(__file__), 'dhcp_clients.html')
+        with open(test_html) as f:
+            html_content = f.read()
+
+        dhcp_clients = scrape_html(html_content=html_content)
+
+        print('scraped dhcp clients')
+        pprint(dhcp_clients)
+
+        # 先頭の3個
+        assert {'ip': '192.168.122.106', 'mac': '28:84:FA:EA:5F:0C'} in dhcp_clients
+        assert {'ip': '192.168.122.107', 'mac': '04:03:D6:D8:57:5F'} in dhcp_clients
+        assert {'ip': '192.168.122.109', 'mac': '3C:22:FB:7B:85:0E'} in dhcp_clients
+
+        # 最後の3個
+        assert {'ip': '192.168.122.160', 'mac': '08:97:98:04:22:E4'} in dhcp_clients
+        assert {'ip': '192.168.122.172', 'mac': 'F6:FF:CC:5F:51:68'} in dhcp_clients
+        assert {'ip': '192.168.122.174', 'mac': '50:EB:F6:95:8B:37'} in dhcp_clients
+
+        print('test_scrape_html() passed')
+
+
+    def update_db(ip:str, username:str, password:str) -> list:
+
+        # 現在時刻
+        timestamp = datetime.now().timestamp()
+
+        # DHCPクライアントの情報を採取
+        dhcp_clients = get_dhcp_clients(ip, username, password)
+
+        # データベースに格納
+        insert_dhcp_clients(dhcp_clients_list=dhcp_clients, timestamp=timestamp)
+
+        return dhcp_clients
+
 
     def main():
 
-        if args.daemon:
+        if args.test:
+            test_scrape_html()
+            return 0
 
-            # 毎時update_db()を実行する
-            schedule.every(1).hours.do(update_db)
+        # pyATSのテストベッドからソフトバンク光ルータに関する情報を取得
+        inventory = get_inventory('home.yaml', 'softbank-router')
+        ip = inventory.get('ip')
+        username = inventory.get('username')
+        password = inventory.get('password')
 
-            # デーモンを作成して、
-            with daemon.DaemonContext(stdout=sys.stdout):
-                while True:
-                    schedule.run_pending()
-                    time.sleep(1)
-
-        else:
-            # データベースをアップデートして、
-            dhcp_clients = update_db()
-
-            # 戻り値を画面表示して終了
-            pprint(dhcp_clients)
+        dhcp_clients = get_dhcp_clients(ip, username, password)
+        pprint(dhcp_clients)
 
         return 0
 
