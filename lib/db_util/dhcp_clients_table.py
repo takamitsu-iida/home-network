@@ -18,8 +18,7 @@ DB_PATH = os.path.join(DB_DIR, 'db.json')
 TABLE_DHCP_CLIENTS = 'DHCP_CLIENTS'
 
 # 保管する履歴
-DEFAULT_DHCP_MAX_HISTORY = 720  # 1時間に1回実行して30日分
-
+DEFAULT_DHCP_MAX_HISTORY = 168   # 1時間に1回実行して7日分
 
 logger = logging.getLogger(__name__)
 
@@ -28,11 +27,12 @@ logger = logging.getLogger(__name__)
 #
 
 def insert_dhcp_clients(dhcp_clients_list:list, timestamp:float, max_history:int=DEFAULT_DHCP_MAX_HISTORY, table_name:str=TABLE_DHCP_CLIENTS):
-    """_summary_
+    """
+    DHCPクライアントの情報をテーブルに格納する
 
     {
-        'timestamp': float型 タイムスタンプ,
-        'doc_data': [ {'ip': a.b.c.d, 'mac': AA:BB:CC:DD:EE:FF}, {}, {}]
+        'timestamp': float型タイムスタンプ,
+        'doc_data': [ {'ip': a.b.c.d, 'mac': AA:BB:CC:DD:EE:FF}, {}, {}],
     }
 
     Args:
@@ -192,7 +192,9 @@ def get_dhcp_clients_diff(table_name:str=TABLE_DHCP_CLIENTS):
 
 if __name__ == '__main__':
 
+    import argparse
     import sys
+
     from pprint import pprint
 
     logging.basicConfig(level=logging.INFO)
@@ -248,10 +250,22 @@ if __name__ == '__main__':
         with TinyDB(DB_PATH) as db:
             db.drop_table(table_name)
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--status', action='store_true', help='show table status')
+    parser.add_argument('-d', '--diff', action='store_true', help='show table diff')
+    args, _ = parser.parse_known_args()
 
     def main():
-        pprint(get_dhcp_clients_dates())
-        # test_dhcp_clients_diff()
-        return 0
+        if args.status:
+            dates = get_dhcp_clients_dates()
+            print(f'number of entries: {len(dates)}')
+            pprint(get_dhcp_clients_dates())
+            return 0
+
+        if args.diff:
+            test_dhcp_clients_diff()
+            return 0
+
+        parser.print_help()
 
     sys.exit(main())

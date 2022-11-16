@@ -128,13 +128,22 @@ def get_wlc_clients_by_timestamp(timestamp:float, table_name:str=TABLE_WLC_CLIEN
 
 if __name__ == '__main__':
 
+    import argparse
     import sys
+
     from pprint import pprint
 
     logging.basicConfig(level=logging.INFO)
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--status', action='store_true', help='show table status')
+    args, _ = parser.parse_known_args()
+
     def main():
-        pprint(get_wlc_clients_dates())
-        return 0
+        if args.status:
+            pprint(get_wlc_clients_dates())
+            return 0
+
+        parser.print_help()
 
     sys.exit(main())
