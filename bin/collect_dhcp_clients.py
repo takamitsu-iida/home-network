@@ -39,6 +39,17 @@ from daemon_util import SingleDaemon
 logger = logging.getLogger(__name__)
 
 
+
+def update_db_func(ip: str, username: str, password: str) -> callable:
+
+    def _update_db():
+        timestamp = datetime.now().timestamp()
+        dhcp_clients = get_dhcp_clients(ip, username, password)
+        insert_dhcp_clients(dhcp_clients_list=dhcp_clients, timestamp=timestamp)
+
+    return _update_db
+
+
 def update_db(ip: str, username: str, password: str) -> list:
 
     # 現在時刻
@@ -53,7 +64,7 @@ def update_db(ip: str, username: str, password: str) -> list:
     return dhcp_clients
 
 
-def run_schedule(ip: str, username: str, password: str):
+def run_schedule(func: callable):
     """
     scheduleモジュールを利用して定期実行する
 
@@ -70,7 +81,7 @@ def run_schedule(ip: str, username: str, password: str):
     """
 
     # 毎時15分に実行
-    schedule.every().hour.at(':15').do(update_db, ip, username, password)
+    schedule.every().hour.at(':15').do(func)
 
     while True:
         try:
@@ -128,7 +139,7 @@ if __name__ == '__main__':
 
         if args.daemon:
             d = SingleDaemon(pid_dir=pid_dir, pid_file=pid_file)
-            d.start_daemon(run_schedule, ip, username, password)
+            d.start_daemon(run_schedule, update_db_func(ip, username, password))
             return 0
 
         dhcp_clients = get_dhcp_clients(ip, username, password)
