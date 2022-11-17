@@ -126,6 +126,44 @@ def get_wlc_clients_by_timestamp(timestamp:float, table_name:str=TABLE_WLC_CLIEN
         return table.get(q.timestamp == timestamp)
 
 
+def dump_wlc_clients(table_name:str=TABLE_WLC_CLIENTS):
+    docs = get_wlc_clients_documents(table_name=table_name)
+    try:
+        for doc in docs:
+            ts = doc['timestamp']  # float型 タイムスタンプ,
+            dt = datetime.fromtimestamp(ts)
+            print(dt.strftime("%Y-%m-%d %H:%M:%S"))
+            doc_data = doc['doc_data']  # [ {'mac_address': a.b.c.d, 'ap_name': ...}, {}, {}]
+            for d in doc_data:
+                pprint(d)
+
+    except (BrokenPipeError, IOError):
+        # lessにパイプしたときのBrokenPipeError: [Errno 32] Broken pipeを避ける
+        sys.stderr.close()
+    except KeyboardInterrupt:
+        pass
+    return 0
+
+
+def search_wlc_clients(mac_address:str, table_name:str=TABLE_WLC_CLIENTS):
+    # 全てのドキュメントを対象に探して、最初に見つけたものを返す
+    docs = get_wlc_clients_documents(table_name=table_name)
+    for doc in docs:
+        ts = doc['timestamp']  # float型 タイムスタンプ,
+        dt = datetime.fromtimestamp(ts)
+        print(dt.strftime("%Y-%m-%d %H:%M:%S"))
+
+        doc_data = doc['doc_data']  # [ {'mac_address': a.b.c.d, 'ap_name': ...}, {}, {}]
+        searched = list(filter(lambda d: d['mac_address'] == mac_address, doc_data))
+        if searched:
+            print('found')
+            return searched[0]
+        print('not found')
+
+
+    return None
+
+
 if __name__ == '__main__':
 
     import argparse
@@ -136,13 +174,21 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--status', action='store_true', help='show table status')
-    args, _ = parser.parse_known_args()
+    parser.add_argument('-d', '--dump', action='store_true', default=False, help='dump all data')
+    parser.add_argument('-s', '--search', dest='search', help='search mac address', type=str)
+    args = parser.parse_args()
 
     def main():
-        if args.status:
-            pprint(get_wlc_clients_dates())
+
+        if args.dump:
+            dump_wlc_clients()
             return 0
+
+        if args.search:
+            searched = search_wlc_clients(mac_address=args.search)
+            pprint(searched)
+            return 0
+
 
         parser.print_help()
 

@@ -107,7 +107,7 @@ def get_dhcp_clients_dates(table_name:str=TABLE_DHCP_CLIENTS):
 
 def get_dhcp_clients_documents(table_name:str=TABLE_DHCP_CLIENTS):
     """
-    全てのドキュメントをタイムスタンプでソートして返却
+    全てのドキュメントを新しい順にタイムスタンプでソートして返却
 
     Args:
         table_name (str, optional): テーブル名. Defaults to TABLE_DHCP_CLIENTS.

@@ -199,8 +199,25 @@ def get_device_intf_info(device_name:str):
     return get_device_documents(device_name, 'intf_info')
 
 
+def dump():
+    devices = ['c3560c-12pc-s', 'c2960cx-8pc']
+
+    try:
+        for device_name in devices:
+            docs = get_device_mac_address_table(device_name=device_name)
+            for d in docs:
+                pprint(d)
+    except (BrokenPipeError, IOError):
+        # lessにパイプしたときのBrokenPipeError: [Errno 32] Broken pipeを避ける
+        sys.stderr.close()
+    except KeyboardInterrupt:
+        pass
+    return 0
+
+
 if __name__ == '__main__':
 
+    import argparse
     import sys
     from pprint import pprint
 
@@ -228,8 +245,26 @@ if __name__ == '__main__':
     # main
     #
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '--test', action='store_true', default=False, help='test')
+    parser.add_argument('-d', '--dump', action='store_true', default=False, help='dump all data')
+    parser.add_argument('-s', '--search', dest='search', help='search mac address', type=str)
+    args = parser.parse_args()
+
     def main():
-        test_insert_device_data()
+        if args.test:
+            test_insert_device_data()
+            return 0
+
+        if args.dump:
+            dump()
+            return 0
+
+        if args.search:
+            pass
+
+
+        parser.print_help()
         return 0
 
     sys.exit(main())

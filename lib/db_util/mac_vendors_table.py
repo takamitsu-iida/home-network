@@ -32,6 +32,9 @@ def insert_mac_vendors(mac_vendors_list:list, timestamp:float, table_name:str=TA
     { 'macPrefix': '00:00:0C', 'vendorName': 'Cisco Systems, Inc', ... }
     { 'macPrefix': '98:86:8B', 'vendorName': 'Juniper Networks', ...}
 
+    正確にはこんな感じ
+    {'blockType': 'MA-L', 'lastUpdate': '2020/08/13', 'macPrefix': '90:9A:4A', 'private': False, 'vendorName': 'TP-LINK TECHNOLOGIES CO.,LTD.'}
+
     Args:
         mac_vendors_list (list): MACベンダーのdictデータのリスト
         timestamp (float): 実行した時点のタイムスタンプ
@@ -164,11 +167,11 @@ def dump_mac_vendors(table_name:str=TABLE_MAC_VENDORS):
 
 if __name__ == '__main__':
 
+    import argparse
     import sys
     from pprint import pprint
 
     logging.basicConfig(level=logging.INFO)
-
 
     def test_mac_vendors_table():
 
@@ -259,10 +262,28 @@ if __name__ == '__main__':
     # main
     #
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '--test', action='store_true', default=False, help='run test')
+    parser.add_argument('-d', '--dump', action='store_true', default=False, help='dump all data')
+    parser.add_argument('-s', '--search', dest='search', help='search mac address', type=str)
+    args = parser.parse_args()
+
     def main():
-        test_mac_vendors_table()
-        test_mac_vendors_search()
-        # dump_mac_vendors()
+        if args.test:
+            test_mac_vendors_table()
+            test_mac_vendors_search()
+            return 0
+
+        if args.dump:
+            dump_mac_vendors()
+            return 0
+
+        if args.search:
+            searched = search_mac_vendors(mac_address=args.search)
+            pprint(searched)
+            return 0
+
+        parser.print_help()
         return 0
 
     sys.exit(main())

@@ -1,5 +1,12 @@
 # 自宅ネットワーク環境
 
+自宅のネットワーク環境を調べるためのPythonスクリプト群です。
+
+つまり完全に自分専用です。
+
+ここでは将来の自分のためにメモを残しておきます。
+
+<br>
 
 ## 管理基盤のセットアップ
 
@@ -58,7 +65,6 @@ WSL環境にnode.jsをインストールする手順はマイクロソフトの�
 https://learn.microsoft.com/ja-jp/windows/dev-environment/javascript/nodejs-on-wsl
 
 
-
 <br><br>
 
 # MACアドレス調査
@@ -77,4 +83,14 @@ AP名taka-AP1815I (Ch 136)
 機能
 802.11ac (5GHz)空間ストリーム: 2
 Cisco Compatibleサポート対象(CCX v4)
+```
+
+
+### Catalystの設定変更
+
+MACアドレスの学習テーブルを定期的に採取するために、CatalystのMAC学習テーブルのエージングタイムを1時間に変更。
+
+```bash
+c2960cx-8pc(config)#mac address-table aging-time 3600
+c2960cx-8pc(config)#end
 ```
