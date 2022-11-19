@@ -39,7 +39,6 @@ from daemon_util import SingleDaemon
 logger = logging.getLogger(__name__)
 
 
-
 def update_db_func(ip: str, username: str, password: str) -> callable:
 
     def _update_db():
@@ -78,8 +77,8 @@ def run_schedule(func: callable):
         func (callable): 定期実行する関数
     """
 
-    # 毎時15分に実行
-    schedule.every().hour.at(':15').do(func)
+    # 毎時45分に実行
+    schedule.every().hour.at(':45').do(func)
 
     while True:
         try:

@@ -40,7 +40,7 @@ devices:
     os: iOS
     owner: ayane
     802.11ac:
-      mac: BC:83:854:CE:44:74
+      mac: BC:83:85:CE:44:74
       mac_vendor: Microsoft Corporation
       ip: 192.168.122.102
 
@@ -260,6 +260,20 @@ devices:
         - fe80::fcdd:b8ff:fe3f:de59
 
   -
+    device: Pixel 3 XL
+    description: キャリア契約なし、白色
+    os: android
+    owner: takamitsu
+    device_mac: 3C:28:6D:2F:d3:31
+    device_mac_vendor: Google, Inc.
+    802.11ac:
+      mac: E6:02:29:6F:AE:FE
+      mac_vendor: private
+      ip: 192.168.122.149
+      ipv6:
+        - fe80::e402:29ff:fe6f:aefe
+
+  -
     device: Pixel 4a
     description: ソフトバンク契約
     os: android
@@ -272,6 +286,16 @@ devices:
       mac: C6:78:AD:69:2D:FD
       mac_vendor: private
       ip: 192.168.122.121
+
+  -
+    device: Pixel 3
+    description: キャリア契約なし
+    os: android
+    owner: mayo
+    802.11ac:
+      mac: BE:99:E6:5E:E0:ED
+      mac_vendor: private
+      ip: 192.168.122.151
 
   -
     device: Ulefone Armor2
