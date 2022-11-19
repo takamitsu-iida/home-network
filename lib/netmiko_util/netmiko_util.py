@@ -159,41 +159,43 @@ def parse_wlc_show_client_detail(output: str):
 
     regexp_dict = {
         # Client MAC Address............................... 04:03:d6:d8:57:5f
-        'mac_address': re.compile(r'Client\s+MAC\s+Address(\s*)(\.)+\s+(?P<mac_address>(?:[0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2})(\s*)$', re.MULTILINE),
+        'mac_address': re.compile(r'Client MAC Address( *)(\.)+( +)(?P<mac_address>(?:[0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2})( *)$', re.MULTILINE),
 
         # Client Username ................................. N/A
-        'username': re.compile(r'Client\s+Username(\s*)(\.)+\s+(?P<username>\S+)(\s*)$', re.MULTILINE),
+        'username': re.compile(r'Client Username( *)(\.)+( +)(?P<username>\S+)( *)$', re.MULTILINE),
 
         # Hostname: .......................................
-        'hostname': re.compile(r'Hostname\:(\s*)(\.)+\s+(?P<hostname>\S+)?(\s*)$', re.MULTILINE),
+        'hostname': re.compile(r'Hostname:(\s*)(\.)+ +(?P<hostname>\S.*)$', re.MULTILINE),
 
         # Device Type: .................................... NintendoWII
-        'device_type': re.compile(r'Device\s+Type\:(\s*)(\.)+\s+(?P<device_type>\S+)?(\s*)$', re.MULTILINE),
+        # Device Type: .................................... iPad 6th Gen
+        # Device Type: .................................... iPhone 8
+        'device_type': re.compile(r'Device Type:( *)(\.)+( +)(?P<device_type>\S.*)?$', re.MULTILINE),
 
         # AP MAC Address................................... 70:ea:1a:84:16:c0
         'ap_mac_address':
-        re.compile(r'AP\s+MAC\s+Address(\s*)(\.)+\s+(?P<ap_mac_address>(?:[0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2})(\s*)$', re.MULTILINE),
+        re.compile(r'AP MAC Address( *)(\.)+( +)(?P<ap_mac_address>(?:[0-9a-fA-F]{2}\:){5}[0-9a-fA-F]{2})( *)$', re.MULTILINE),
 
         # AP Name.......................................... living-AP1815M
-        'ap_name': re.compile(r'AP\s+Name(\s*)(\.)+\s+(?P<ap_name>.*)(\s*)$', re.MULTILINE),
+        'ap_name': re.compile(r'AP Name( *)(\.)+( +)(?P<ap_name>\S.*)$', re.MULTILINE),
 
         # Client State..................................... Associated
-        'client_state': re.compile(r'Client\s+State(\s*)(\.)+\s+(?P<client_state>\S+)(\s*)$', re.MULTILINE),
+        'client_state': re.compile(r'Client State( *)(\.)+( +)(?P<client_state>\S.*)$', re.MULTILINE),
 
         # Wireless LAN Network Name (SSID)................. taka 11ng
-        'wireless_lan_network_name': re.compile(r'Wireless\s+LAN\s+Network\s+Name\s+\(SSID\)(\s*)(\.)+\s+(?P<wireless_lan_network_name>.*)(\s*)$', re.MULTILINE),
+        'wireless_lan_network_name': re.compile(r'Wireless LAN Network Name \(SSID\)( *)(\.)+( +)(?P<wireless_lan_network_name>\S.*)$', re.MULTILINE),
 
         # Connected For ................................... 4946 secs
-        'connected_for': re.compile(r'Connected\s+For(\s*)(\.)+\s+(?P<connected_for>\d+)\s+secs(\s*)$', re.MULTILINE),
+        'connected_for': re.compile(r'Connected For( *)(\.)+( +)(?P<connected_for>\d+)( +)secs( *)$', re.MULTILINE),
 
         # IP Address....................................... 192.168.122.107
-        'ip_address': re.compile(r'IP\s+Address(\s*)(\.)+\s+(?P<ip_address>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\s*)$', re.MULTILINE),
+        'ip_address': re.compile(r'IP Address( *)(\.)+( +)(?P<ip_address>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\s*)$', re.MULTILINE),
 
         # Gateway Address.................................. 192.168.122.1
-        'gateway_address': re.compile(r'Gateway\s+Address(\s*)(\.)+\s+(?P<gateway_address>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\s*)$', re.MULTILINE),
+        'gateway_address': re.compile(r'Gateway Address( *)(\.)+( +)(?P<gateway_address>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\s*)$', re.MULTILINE),
 
         # Netmask.......................................... 255.255.255.0
-        'netmask': re.compile(r'Netmask(\s*)(\.)+\s+(?P<netmask>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\s*)$', re.MULTILINE)
+        'netmask': re.compile(r'Netmask( *)(\.)+( +)(?P<netmask>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})( *)$', re.MULTILINE)
     }
 
     result = {}
@@ -229,14 +231,9 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--test', action='store_true')
-    args, _ = parser.parse_known_args()
-
 
     def test_parse_wlc_show_client_summary():
-        path = os.path.join(os.path.dirname(__file__),
-                            'show_client_summary.txt')
+        path = os.path.join(os.path.dirname(__file__), 'show_client_summary.txt')
         with open(path) as f:
             cmd_output = f.read()
 
@@ -244,36 +241,38 @@ if __name__ == '__main__':
         # pprint(client_list)
 
         # 先頭3
-        assert {'ap_name': 'living-AP1815M', 'mac_address': '04:03:d6:d8:57:5f', 'protocol': '802.11n(2.4 GHz)'} in client_list
+        assert {'ap_name': 'living-AP1815M', 'mac_address': '04:03:d6:d8:57:5f', 'protocol': '802.11ac(5 GHz)'} in client_list
         assert {'ap_name': 'living-AP1815M', 'mac_address': '08:97:98:04:22:e4', 'protocol': '802.11n(2.4 GHz)'} in client_list
         assert {'ap_name': 'taka-AP1815I', 'mac_address': '20:df:b9:b4:bc:79', 'protocol': '802.11ac(5 GHz)'} in client_list
         # 最後3
-        assert {'ap_name': 'ayane-CAP702I', 'mac_address': 'ee:e7:80:e3:c3:b2', 'protocol': '802.11n(5 GHz)'} in client_list
-        assert {'ap_name': 'taka-AP1815I', 'mac_address': 'f6:ff:cc:5f:51:68', 'protocol': '802.11ac(5 GHz)'} in client_list
-        assert {'ap_name': 'taka-AP1815I', 'mac_address': 'fe:dd:b8:3f:de:59', 'protocol': '802.11ac(5 GHz)'} in client_list
+        assert {'ap_name': 'ayane-CAP702I', 'mac_address': 'ee:e7:80:e3:c3:b2', 'protocol': '802.11n(5 GHz)'}
+        assert {'ap_name': 'taka-AP1815I', 'mac_address': 'f6:ff:cc:5f:51:68', 'protocol': '802.11ac(5 GHz)'}
+        assert {'ap_name': 'taka-AP1815I', 'mac_address': 'fe:dd:b8:3f:de:59', 'protocol': '802.11ac(5 GHz)'}
         print('test_parse_wlc_show_client_summary() passed')
 
 
     def test_parse_wlc_show_client_detail():
-        path = os.path.join(os.path.dirname(__file__),
-                            'show_client_detail.txt')
+        filename = 'show_client_detail.txt'
+        # filename = 'show_client_detail_eee780e3c3b2.txt'
+
+        path = os.path.join(os.path.dirname(__file__), filename)
         with open(path) as f:
             cmd_output = f.read()
 
         result = parse_wlc_show_client_detail(cmd_output)
-        # pprint(result)
+        pprint(result)
 
         assert result['ap_mac_address'] == '70:ea:1a:84:16:c0'
         assert result['ap_name'] == 'living-AP1815M'
         assert result['client_state'] == 'Associated'
-        assert result['connected_for'] == '6842'
-        assert result['device_type'] == 'NintendoWII'
+        assert result['connected_for'] == '44587'
+        assert result['device_type'] == 'iPad 6th Gen'
         assert result['gateway_address'] == '192.168.122.1'
-        assert result['ip_address'] == '192.168.122.107'
-        assert result['mac_address'] == '04:03:d6:d8:57:5f'
+        assert result['ip_address'] == '192.168.122.111'
+        assert result['mac_address'] == '2e:14:db:b8:9b:d8'
         assert result['netmask'] == '255.255.255.0'
         assert result['username'] == 'N/A'
-        assert result['wireless_lan_network_name'] == 'taka 11ng'
+        assert result['wireless_lan_network_name'] == 'taka 11ac'
         print('test_parse_wlc_show_client_detail() passed')
 
 
@@ -282,6 +281,10 @@ if __name__ == '__main__':
         test_parse_wlc_show_client_detail()
         return 0
 
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '--test', action='store_true')
+    args, _ = parser.parse_known_args()
 
     def main():
 

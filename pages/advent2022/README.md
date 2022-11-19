@@ -1,24 +1,21 @@
 （このページはAdvent Calendar 2022向けに記載したものです）
 
-# 自宅のネットワークに接続している端末のMACアドレスを調べてみた
+# 自宅のネットワークに接続している装置のMACアドレスを調べてみた
 
+テレワーク主体の働き方になってから自宅のネットワーク環境を随時強化しています。
+強化しているといっても設計書を書くほどのものではないですし、日ごろから管理に手間をかけているわけでもありません。
 
-テレワーク主体の働き方になってから、自宅のネットワーク環境を強化しているのですが、
-設計書を書くほどのものではないですし、管理の手間をかけているわけでもありません。
+正直いって何が繋がってるのか把握できてませんので <span style="font-size: 200%;">無法地帯</span> です。
 
-<br>
-
-はっきりいって <span style="font-size: 200%;">無法地帯</span> です。
-
-<br>
+自宅から漏れてる無線LANの電波を拾って接続されてたらアウトです。
 
 自宅のネットワークに何が接続しているのか、たまには調べてみようと思います。
 
 <br><br>
 
-## 自宅のネットワーク
+## 自宅のネットワーク環境
 
-こんな感じです。
+物理トポロジーはこんな感じです。
 
 ![topology](img/topology.svg)
 
@@ -26,27 +23,36 @@
 
 ソフトバンク光のルータ（光ＢＢユニット）にPoE対応のCat3560を接続して、そこから2台のAironetに給電しています。
 
-Cat3560の先にもう1台Cat2960がいて、その周辺がテレワーク環境になっています。
+Cat3560から有線LANを伸ばして別の部屋のCat2960に接続しています。その周辺がテレワーク環境です。
 
-特別なことは何もない、ごく普通の環境です。
+特別なことは何もない、ごく一般的な普通の環境です。
+
+無線LAN環境は2.4GHzを使う802.11gのSSIDと、5GHzを使う802.11a系のSSIDで分けています。
+802.11aが出始めの頃に購入した家庭用アクセスポイントがそのような設計しかできなかったのをいまだにひきづってます。
+
+（これは悪い無線LAN設計であることを後に痛感することになります）
 
 <br>
 
 ## DHCPサーバの情報を採取
 
-IPアドレスはソフトバンクのルータからDHCPで払いだされます。
+IPアドレスはソフトバンクのルータ（光ＢＢユニット）からDHCPで払いだされます。
 
-IPアドレスがなければ通信できませんので、DHCPサーバが払いだしているIPアドレスの情報がわかれば、接続している端末の多くは把握できそうです。
+DHCPサーバが払いだしているIPアドレスの情報がわかれば、接続している端末の多くは把握できそうです。
+
+光ＢＢユニットの管理画面です。
 
 ![DHCP](img/fig1.png)
 
-この情報を取りたいわけですが、ソフトバンク光のルータは機種が古いこともあって、APIでの情報採取はおろか、SSHでの接続もできません。
+この情報を採取したいわけですが、この機種は古いこともあってAPIでの情報採取はおろか、SSHでの接続もできません。
 
 <span style="font-size: 200%;">接続プロトコルはHTTP、認証はベーシック認証</span> です。HTTPSですらありません。
 
-仕方ないのでPythonのrequestsモジュールで該当ページに接続してスクレイピングすることにします。
+仕方ないのでPythonのrequestsモジュールで該当ページのURLに接続してスクレイピングすることにします。
 
-これでIPアドレスとMACアドレスの対応がわかりますので、あとはMACアドレスのベンダーコードをみて何かを推察してみます。
+たまにしか使わない装置もいるでしょうから一時間に１回、情報を採取してデータベースに情報を格納します。
+
+これでIPアドレスとMACアドレスの対応がわかりますので、あとはMACアドレスのベンダーコードをみて物が何かを推察してみます。
 
 <br>
 
@@ -54,81 +60,81 @@ IPアドレスがなければ通信できませんので、DHCPサーバが払�
 
 こちらのサイトからMACアドレスのベンダー情報をダウンロードさせていただきました。
 
-https://maclookup.app/downloads/json-database
+<p><a href="https://maclookup.app/downloads/json-database" target="_blank">https://maclookup.app/downloads/json-database</a></p>
 
-このMACアドレスのベンダーコードのJSONデータベースを使って、自宅LANにいるMACアドレスを検索してみました。
+このMACアドレスのベンダーコードのデータベースを使って、自宅LANにいるMACアドレスを検索してみました。
 
 その結果がこちら。
 
-| mac               | ip              | vendor                                 |
-|-------------------|-----------------|----------------------------------------|
-| 5E:54:72:B7:19:9F | 192.168.122.103 |                                        |
-| 28:84:FA:EA:5F:0C | 192.168.122.106 | SHARP Corporation                      |
-| 04:03:D6:D8:57:5F | 192.168.122.107 | Nintendo Co.,Ltd                       |
-| 3C:22:FB:7B:85:0E | 192.168.122.109 | Apple, Inc.                            |
-| 0C:D2:92:F9:0B:73 | 192.168.122.110 | Intel Corporate                        |
-| 2E:14:DB:B8:9B:D8 | 192.168.122.111 |                                        |
-| FE:DD:B8:3F:DE:59 | 192.168.122.112 |                                        |
-| 4C:34:88:93:80:87 | 192.168.122.113 | Intel Corporate                        |
-| 44:65:0D:DA:2A:F5 | 192.168.122.114 | Amazon Technologies Inc.               |
-| 68:84:7E:87:04:BE | 192.168.122.115 | FUJITSU LIMITED                        |
-| EE:E7:80:E3:C3:B2 | 192.168.122.116 |                                        |
-| 7E:87:0B:67:17:E2 | 192.168.122.118 |                                        |
-| 20:DF:B9:B4:BC:79 | 192.168.122.119 | Google, Inc.                           |
-| 38:1A:52:5B:42:15 | 192.168.122.156 | Seiko Epson Corporation                |
-| A4:5E:60:E4:1A:DD | 192.168.122.120 | Apple, Inc.                            |
-| C6:78:AD:69:2D:FD | 192.168.122.121 |                                        |
-| 12:87:66:76:E7:7D | 192.168.122.122 |                                        |
-| A0:C9:A0:9A:7F:01 | 192.168.122.130 | Murata Manufacturing Co., Ltd.         |
-| 90:9A:4A:D6:BB:B9 | 192.168.122.159 | TP-LINK TECHNOLOGIES CO.,LTD.          |
-| 08:97:98:04:22:E4 | 192.168.122.160 | COMPAL INFORMATION (KUNSHAN) CO., LTD. |
-| F6:FF:CC:5F:51:68 | 192.168.122.172 |                                        |
-| 50:EB:F6:95:8B:37 | 192.168.122.174 | ASUSTek COMPUTER INC.                  |
-| 90:B6:86:CF:B7:BA | 192.168.122.176 | Murata Manufacturing Co., Ltd.         |
-| 84:5C:F3:48:FF:30 | 192.168.122.169 | Intel Corporate                        |
-| 26:67:CA:BE:BC:C9 | 192.168.122.123 |                                        |
-| 54:3D:1F:FA:CB:6F | 192.168.122.145 |                                        |
-| AC:29:3A:C5:D7:8C | 192.168.122.146 | Apple, Inc.                            |
-| E6:02:29:6F:AE:FE | 192.168.122.149 |                                        |
+| mac               | ip              | vendor                                             |
+|-------------------|-----------------|----------------------------------------------------|
+| 90:9A:4A:D6:BB:B9 | 192.168.122.159 | TP-LINK TECHNOLOGIES CO.,LTD.                      |
+| 38:1A:52:5B:42:15 | 192.168.122.156 | Seiko Epson Corporation                            |
+| 28:84:FA:EA:5F:0C | 192.168.122.106 | SHARP Corporation                                  |
+| 04:03:D6:D8:57:5F | 192.168.122.107 | Nintendo Co.,Ltd                                   |
+| A0:C9:A0:9A:7F:01 | 192.168.122.130 | Murata Manufacturing Co., Ltd.                     |
+| 90:B6:86:CF:B7:BA | 192.168.122.176 | Murata Manufacturing Co., Ltd.                     |
+| BC:83:85:CE:44:74 | 192.168.122.102 | Microsoft Corporation                              |
+| 84:5C:F3:48:FF:30 | 192.168.122.169 | Intel Corporate                                    |
+| 4C:34:88:93:80:87 | 192.168.122.113 | Intel Corporate                                    |
+| 0C:D2:92:F9:0B:73 | 192.168.122.110 | Intel Corporate                                    |
+| 20:DF:B9:B4:BC:79 | 192.168.122.119 | Google, Inc.                                       |
+| 9C:5F:5A:92:94:27 | 192.168.122.142 | GUANGDONG OPPO MOBILE TELECOMMUNICATIONS CORP.,LTD |
+| 68:84:7E:87:04:BE | 192.168.122.115 | FUJITSU LIMITED                                    |
+| 08:97:98:04:22:E4 | 192.168.122.160 | COMPAL INFORMATION (KUNSHAN) CO., LTD.             |
+| 3C:22:FB:7B:85:0E | 192.168.122.109 | Apple, Inc.                                        |
+| A4:5E:60:E4:1A:DD | 192.168.122.120 | Apple, Inc.                                        |
+| AC:29:3A:C5:D7:8C | 192.168.122.146 | Apple, Inc.                                        |
+| 44:65:0D:DA:2A:F5 | 192.168.122.114 | Amazon Technologies Inc.                           |
+| 74:75:48:C6:25:06 | 192.168.122.144 | Amazon Technologies Inc.                           |
+| 50:EB:F6:95:8B:37 | 192.168.122.174 | ASUSTek COMPUTER INC.                              |
+| 5E:54:72:B7:19:9F | 192.168.122.103 |                                                    |
+| 2E:14:DB:B8:9B:D8 | 192.168.122.111 |                                                    |
+| FE:DD:B8:3F:DE:59 | 192.168.122.112 |                                                    |
+| EE:E7:80:E3:C3:B2 | 192.168.122.116 |                                                    |
+| 7E:87:0B:67:17:E2 | 192.168.122.118 |                                                    |
+| C6:78:AD:69:2D:FD | 192.168.122.121 |                                                    |
+| 12:87:66:76:E7:7D | 192.168.122.122 |                                                    |
+| 26:67:CA:BE:BC:C9 | 192.168.122.123 |                                                    |
+| BE:99:E6:5E:E0:ED | 192.168.122.151 |                                                    |
+| F6:FF:CC:5F:51:68 | 192.168.122.172 |                                                    |
+| 54:3D:1F:FA:CB:6F | 192.168.122.145 |                                                    |
+| E6:02:29:6F:AE:FE | 192.168.122.149 |                                                    |
 
-28個のMACアドレスのうち11個、すなわち３９％は製造元不明という結果でした。
+- total mac addresses: 32
+- unknown vendor: 12 (37.5)%
 
-製造元不明って・・・　これはいったいどういうことでしょう？
+32個のMACアドレスのうち12個は製造元不明という結果でした。
+
+それにしても<span style="font-size: 200%;">MACアドレスが製造元不明って・・・　これはいったいどういうことでしょう？</span>
 
 <br>
 
 ## ランダムMACアドレス
 
-最近のandroidやiOSは無線LANに接続する際にランダムなMACアドレスを使うんだそうです。
+最近のandroidやiOSは無線LANに接続する際にランダムなMACアドレスを使うそうです。
+スマホの設定画面を見ると確かにそう書いてあります。
 
 この辺りが参考になります。
 
-iPhone、iPad、iPod touch、Apple Watch でプライベート Wi-Fi アドレスを使う
+- Apple　<p><a href="https://support.apple.com/ja-jp/HT211227" target="_blank">iPhone、iPad、iPod touch、Apple Watch でプライベート Wi-Fi アドレスを使う</a></p>
 
-https://support.apple.com/ja-jp/HT211227
+- Android <p><a href="https://source.android.com/docs/core/connect/wifi-mac-randomization" target="_blank">MACアドレスランダム化の実装</a></p>
 
-MACアドレスランダム化の実装
+ランダムといっても無線LANに接続するたびに変わるわけではなく、接続先ごとに使うMACアドレスを決めたら変わることはありません。
 
-https://source.android.com/docs/core/connect/wifi-mac-randomization
-
-ランダムといっても無線LANに接続するたびに変わるわけではなく、接続先ごとに一度使うMACアドレスを決めたら変わることはないようです。
 このときに使われるMACアドレスは「プライベートMACアドレス」と呼ばれるものになります。
 
 <br>
 
 ## プライベートMACアドレスとは
 
-MACアドレスの先頭1オクテットはそのアドレスがどういう種別のものなのかを表す重要な部分です。
+MACアドレスの先頭1オクテットは、そのアドレスがどういう種別のものなのかを表す重要な部分です。
 
-```text
-bit7 bit6 bit5 bit4 bit3 bit2 bit1 bit0
-                                   0 = unicast
-                                   1 = multicast
-                               0     = globally unique
-                               1     = locally administered
-```
+![mac address](img/fig3.png)
 
-下一桁の部分は、そのMACアドレスがユニキャストなのか、マルチキャストなのかを表します。このビットが1だとマルチキャストです。
+先頭1オクテットをビットに展開したときの下一桁の部分は、そのMACアドレスがユニキャストなのか、マルチキャストなのかを表します。
+このビットが1だとマルチキャストです。
 
 つまり <span style="font-size: 200%;">先頭1オクテットが奇数の場合はマルチキャストMACアドレス</span> と言うことができます。
 
@@ -142,14 +148,9 @@ bit7 bit6 bit5 bit4 bit3 bit2 bit1 bit0
 
 先頭1オクテットが偶数の場合はユニキャストになりますが、さらにその中でも下二桁目のビットが1の場合はプライベートMACアドレスになります。
 
-ここが1ということは、先頭1オクテットの数字は2か6かAかEで終わることになります。
+![private mac](img/fig4.png)
 
-```text
-. . . . 0 0 1 0  = ?2
-. . . . 0 1 1 0  = ?6
-. . . . 1 0 1 0  = ?A
-. . . . 1 1 1 0  = ?E
-```
+ここが1ということは、先頭1オクテットの数字は2か6かAかEで終わることになります。
 
 先ほど製造元が不明だったMACアドレスを抜き出して整理するとこうなります。
 
@@ -165,14 +166,14 @@ bit7 bit6 bit5 bit4 bit3 bit2 bit1 bit0
 | E6:02:29:6F:AE:FE | 192.168.122.149 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
 | 54:3D:1F:FA:CB:6F | 192.168.122.145 | これは何？                                         |
 
-先頭1オクテットがEか2か6で終わっているものはプライベートMACアドレスなので、AndroidもしくはiOSの装置と思われます。
+先頭1オクテットがEか2か6で終わっているものはプライベートMACアドレスなので、AndroidもしくはiOSの装置と考えてよさそうです。
 
-って、10台もいるの？
+多いような気もしますが、家族4人で共有しているネットワークであることを思えばそんなもんかな、という気もします。
 
-どのMACがどのスマホなのかを調べたくなりますが、プライベートMACアドレスなので製造元すらわかりません。
+どのMACがどのスマホなのかを調べたくなりますが、プライベートMACアドレスでは製造元すらわかりません。
+さてどうしましょう。
 
 さらに、1個だけプライベートMACアドレスではないのに、製造元が不明なものがありますね。
-
 これは何だろう？　気持ち悪いですね。
 
 <br>
@@ -180,35 +181,35 @@ bit7 bit6 bit5 bit4 bit3 bit2 bit1 bit0
 ## MACアドレスのベンダー名だけでは分からない物はどうする？
 
 ベンダー名をみて物が何か類推できるものもあれば、そうでないものもあります。
-NintendoとかApple、FUJITSUなんかは分かりやすいです。心当たりあります。
 
-分かるもの
+NintendoとかApple、FUJITSUなんかは分かりやすいです。心当たりもあります。
 
-- Nintendo Co.,Ltd はSwitchもしくはWIIです。
-- Apple, Inc. はMacBookですね。2台あります。
-- Amazon Technologies Inc. はテレビのHDMIに差し込んでるやつかな。
-- FUJITSU LIMITED は会社のPCです。
-- Google, Inc. はGoogle Home Miniです。
-- Seiko Epson Corporation はプリンタだと思います。
+確実に分かるもの
+
+- SHARP Corporation はテレビです。有線LANで接続していますので間違いありません。
+- Nintendo Co.,Ltd は任天堂のSWITCHです。使ってなくても常時無線LANに接続しているんですね。アップデートのためかな。
+- Apple, Inc. のうち2台はMacBookです。日常的に使ってますので間違いありません。
+- FUJITSU LIMITED は会社のパソコンです。これも日常的に使ってますので間違いありません。
+- Google, Inc. はGoogle Home Miniです。GoogleはちゃんとOUIを持ってるんですね。
+- Seiko Epson Corporation はプリンタです。使っていなくても常時無線LANに接続しています。
 - TP-LINK TECHNOLOGIES CO.,LTD. は電源をスマホでON-OFFするやつです。
-- ASUSTek COMPUTER INC. は自作PCです。
+- ASUSTek COMPUTER INC. は自作PCです。日常的に使ってますのでこれも間違いありません。
 
 分からないもの
-
-- SHARP Corporation は何だろう？
-- Intel Corporate は漠然としすぎてわからないなぁ。複数あるし。
-- Murata Manufacturing Co., Ltd. は村田製作所ですね。物は想像つかないです。
-- COMPAL INFORMATION (KUNSHAN) CO., LTD. は何だろう？
+- Amazon Technologies Inc. はKindleかテレビのHDMIに差し込んでるやつのどっちかだと思うけど、正確にはわからないです。子供用にもう一台あるはず。
+- Intel Corporate は漠然としすぎてわからないです。複数あるし。
+- Murata Manufacturing Co., Ltd. は村田製作所ですね。複数ありますが物は何なのか想像つかないです。
+- COMPAL INFORMATION (KUNSHAN) CO., LTD. は何だろう？聞いたことない会社です。
 
 ということで<span style="font-size: 200%;">ベンダーコードだけで物を特定するのは困難</span>だということを改めて痛感しました。
 
-ところで自宅の無線LANに使っているAironetはMobility Expressという無線LANコントローラの機能を持っています。
+ところで自宅の無線LANに使っているAironetはMobility Expressという機能を持っていまして、無線LANコントローラを内臓しています。
 
 ![WLC](img/fig2.png)
 
-この画面の通り、接続している無線LAN端末のホスト名やOSの種類まで特定してくれています。
+この画面の通り接続している無線LAN端末のホスト名やOSの種類まで特定してくれています。
 
-仕組みはどうやってるのか分かりませんが、有益な情報なのでこの情報も採取して、分析に加えてみましょう。
+おそらくDHCPのやり取りを盗み見ることで分かる情報だと思いますが、たいへん有益な情報なのでこれも採取して分析に加えてみましょう。
 
 無線LANコントローラからAPIで情報を採取できるとよかったのですが、やり方が分かりませんでしたので、手っ取り早くPythonのNetmikoモジュールを使ってコマンドで採取してみます。
 
@@ -234,7 +235,7 @@ MAC Address       AP Name                        Slot Status        WLAN  Auth P
 7e:87:0b:67:17:e2 living-AP1815M                  1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
 ```
 
-さらに `show client detail <MACアドレス>` コマンドを使うとデバイスのタイプ（NintendoWII）等の詳細情報が手に入ります。
+さらに `show client detail <MACアドレス>` コマンドを使うとデバイスタイプ（この例ではNintendoWII）等の詳細情報が手に入ります。
 
 ```bash
 (Cisco Controller) >show client detail 04:03:d6:d8:57:5f
@@ -262,4 +263,149 @@ IP Address....................................... 192.168.122.107
 Gateway Address.................................. 192.168.122.1
 ```
 
-これら情報も付加して分析した結果がこちら。
+接続中の無線クライアントの情報しか表示できませんので、この情報も１時間に一回採取してデータベースに格納しておきます。
+
+その無線LANコントローラから得られる情報も付加して分析した結果がこちら。
+
+| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
+|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
+| 90:9A:4A:D6:BB:B9 | 192.168.122.159 | TP-LINK TECHNOLOGIES CO.,LTD.                      | Unclassified                    | N/A                      | taka-AP1815I   | taka 11ng |
+| 38:1A:52:5B:42:15 | 192.168.122.156 | Seiko Epson Corporation                            | Unclassified                    | N/A                      | living-AP1815M | taka 11ng |
+| 28:84:FA:EA:5F:0C | 192.168.122.106 | SHARP Corporation                                  |                                 |                          |                |           |
+| 04:03:D6:D8:57:5F | 192.168.122.107 | Nintendo Co.,Ltd                                   | NintendoWII                     | N/A                      | living-AP1815M | taka 11ac |
+| A0:C9:A0:9A:7F:01 | 192.168.122.130 | Murata Manufacturing Co., Ltd.                     | Android-Samsung-Galaxy-Phone-S8 | Galaxy-S8                | taka-AP1815I   | taka 11ac |
+| 90:B6:86:CF:B7:BA | 192.168.122.176 | Murata Manufacturing Co., Ltd.                     | Android                         | Galaxy-S6-edge           | taka-AP1815I   | taka 11ac |
+| BC:83:85:CE:44:74 | 192.168.122.102 | Microsoft Corporation                              | Microsoft-Workstation           | DESKTOP-DAONSME          | ayane-CAP702I  | taka 11ac |
+| 84:5C:F3:48:FF:30 | 192.168.122.169 | Intel Corporate                                    | Microsoft-Workstation           | DESKTOP-6AS7DS0          | living-AP1815M | taka 11ng |
+| 4C:34:88:93:80:87 | 192.168.122.113 | Intel Corporate                                    | Microsoft-Workstation           | mayo-PC                  | living-AP1815M | taka 11ac |
+| 0C:D2:92:F9:0B:73 | 192.168.122.110 | Intel Corporate                                    | Microsoft-Workstation           | NMV-CF-SV-2              | taka-AP1815I   | taka 11ac |
+| 20:DF:B9:B4:BC:79 | 192.168.122.119 | Google, Inc.                                       | Linux-Workstation               | Google-Home-Mini         | taka-AP1815I   | taka 11ac |
+| 9C:5F:5A:92:94:27 | 192.168.122.142 | GUANGDONG OPPO MOBILE TELECOMMUNICATIONS CORP.,LTD | Android                         | OPPO-Reno-A              | taka-AP1815I   | taka 11ac |
+| 68:84:7E:87:04:BE | 192.168.122.115 | FUJITSU LIMITED                                    |                                 |                          |                |           |
+| 08:97:98:04:22:E4 | 192.168.122.160 | COMPAL INFORMATION (KUNSHAN) CO., LTD.             | Unclassified                    | N/A                      | living-AP1815M | taka 11ng |
+| 3C:22:FB:7B:85:0E | 192.168.122.109 | Apple, Inc.                                        | OS_X-Workstation                | iida-macbook-pro         | taka-AP1815I   | taka 11ac |
+| A4:5E:60:E4:1A:DD | 192.168.122.120 | Apple, Inc.                                        | OS_X-Workstation                | iidamac2                 | living-AP1815M | taka 11ac |
+| AC:29:3A:C5:D7:8C | 192.168.122.146 | Apple, Inc.                                        | Apple-iPhone                    | iidataknoiPhone          | living-AP1815M | taka 11ac |
+| 44:65:0D:DA:2A:F5 | 192.168.122.114 | Amazon Technologies Inc.                           | Amazon Device                   | N/A                      | living-AP1815M | taka 11ng |
+| 74:75:48:C6:25:06 | 192.168.122.144 | Amazon Technologies Inc.                           | Amazon Device                   | N/A                      | taka-AP1815I   | taka 11ng |
+| 50:EB:F6:95:8B:37 | 192.168.122.174 | ASUSTek COMPUTER INC.                              |                                 |                          |                |           |
+| 5E:54:72:B7:19:9F | 192.168.122.103 |                                                    | iPhone12,8                      | N/A                      | taka-AP1815I   | taka 11ac |
+| 2E:14:DB:B8:9B:D8 | 192.168.122.111 |                                                    | iPad 6th Gen                    | N/A                      | living-AP1815M | taka 11ac |
+| FE:DD:B8:3F:DE:59 | 192.168.122.112 |                                                    | Android                         | Pixel-5                  | taka-AP1815I   | taka 11ac |
+| EE:E7:80:E3:C3:B2 | 192.168.122.116 |                                                    | iPhone 8                        | N/A                      | ayane-CAP702I  | taka 11ac |
+| 7E:87:0B:67:17:E2 | 192.168.122.118 |                                                    | iPhone12,8                      | N/A                      | living-AP1815M | taka 11ac |
+| C6:78:AD:69:2D:FD | 192.168.122.121 |                                                    | Unclassified                    | N/A                      | living-AP1815M | taka 11ng |
+| 12:87:66:76:E7:7D | 192.168.122.122 |                                                    | Android                         | Pixel-4a                 | living-AP1815M | taka 11ac |
+| 26:67:CA:BE:BC:C9 | 192.168.122.123 |                                                    | iPhone12,8                      | N/A                      | taka-AP1815I   | taka 11ng |
+| BE:99:E6:5E:E0:ED | 192.168.122.151 |                                                    | Android                         | Pixel-3                  | living-AP1815M | taka 11ac |
+| F6:FF:CC:5F:51:68 | 192.168.122.172 |                                                    | Android                         | N/A                      | taka-AP1815I   | taka 11ac |
+| 54:3D:1F:FA:CB:6F | 192.168.122.145 |                                                    | Android                         | android-9a1a18732678477a | living-AP1815M | taka 11ac |
+| E6:02:29:6F:AE:FE | 192.168.122.149 |                                                    |                                 |                          |                |           |
+
+これで明確になったものがあります。
+
+| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
+|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
+| A0:C9:A0:9A:7F:01 | 192.168.122.130 | Murata Manufacturing Co., Ltd.                     | Android-Samsung-Galaxy-Phone-S8 | Galaxy-S8                | taka-AP1815I   | taka 11ac |
+| 90:B6:86:CF:B7:BA | 192.168.122.176 | Murata Manufacturing Co., Ltd.                     | Android                         | Galaxy-S6-edge           | taka-AP1815I   | taka 11ac |
+
+ベンダーコードが村田製作所になっているのは古いスマホ（Galaxy S8とS6）でした。
+
+Galaxyって村田製作所のチップを使ってたんですね。知りませんでした。
+これらはカメラとして利用しています。
+
+| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
+|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
+| 44:65:0D:DA:2A:F5 | 192.168.122.114 | Amazon Technologies Inc.                           | Amazon Device                   | Amazon Device            | living-AP1815M | taka 11ng |
+| 74:75:48:C6:25:06 | 192.168.122.144 | Amazon Technologies Inc.                           | Amazon Device                   | Amazon Device            | taka-AP1815I   | taka 11ng |
+
+ベンダーコードがAmazonのものは、接続しているアクセスポイントで物を特定できました。
+
+リビングのアクセスポイント（living-AP1815M）にジョインしているのはテレビのHDMIにくっ付けてるFire TV Stickです。
+テレワーク環境のアクセスポイント（taka-AP1815I）にジョインしているのはKindleです。
+
+| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
+|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
+| 3C:22:FB:7B:85:0E | 192.168.122.109 | Apple, Inc.                                        | OS_X-Workstation                | iida-macbook-pro         | taka-AP1815I   | taka 11ac |
+| A4:5E:60:E4:1A:DD | 192.168.122.120 | Apple, Inc.                                        | OS_X-Workstation                | iidamac2                 | living-AP1815M | taka 11ac |
+| AC:29:3A:C5:D7:8C | 192.168.122.146 | Apple, Inc.                                        | Apple-iPhone                    | iidataknoiPhone          | living-AP1815M | taka 11ac |
+
+Appleのベンダーコードは2台あるMacbook proなのは分かっていたのですが、これでどっちがどのMACアドレスなのかわかりました。
+
+もう1台は古い古いiPhoneです。ランダムなMACアドレスを使うように仕様が変わる前のバージョンのiOSです。
+
+| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
+|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
+| 4C:34:88:93:80:87 | 192.168.122.113 | Intel Corporate                                    | Microsoft-Workstation           | mayo-PC                  | living-AP1815M | taka 11ac |
+| 84:5C:F3:48:FF:30 | 192.168.122.169 | Intel Corporate                                    | Microsoft-Workstation           | DESKTOP-6AS7DS0          | living-AP1815M | taka 11ng |
+| 0C:D2:92:F9:0B:73 | 192.168.122.110 | Intel Corporate                                    | Microsoft-Workstation           | NMV-CF-SV-2              | taka-AP1815I   | taka 11ac |
+
+Intelのベンダーコードは全部で3台あって、全てWindowsを搭載したノートパソコンでした。
+
+| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
+|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
+| 54:3D:1F:FA:CB:6F | 192.168.122.145 |                                                    | Android                         | android-9a1a18732678477a | living-AP1815M | taka 11ac |
+
+ベンダーコードが不明のこの装置。正体はスマホでした。
+中国のUlefoneという会社のArmor2という、日本では売ってないスマホです。
+魚群探知機のモニターとして使っていますので、釣りに行く前後で充電したりアプリのアップデートをしたり、といった際にネットワークに繋がります。
+
+それにしても勝手にMACアドレスのベンダーコードを使ってるのかな？　怪しさ満点です。
+
+
+| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
+|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
+| F6:FF:CC:5F:51:68 | 192.168.122.172 |                                                    | Android                         | Android                  | taka-AP1815I   | taka 11ac |
+
+このスマホも正体が分かりました。社給のスマホです。なんでこのスマホだけホスト名が不明なのかはわかりません。
+
+
+| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
+|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
+| 08:97:98:04:22:E4 | 192.168.122.160 | COMPAL INFORMATION (KUNSHAN) CO., LTD.             | Unclassified                    |                          | living-AP1815M | taka 11ng |
+
+そしてこのベンダーコード、COMPAL社の装置も正体が分かりました。
+リビングのアクセスポイントに2.4GHz 802.11ngで接続していることをヒントに探索した結果、Wear OS by Googleを搭載したスマートウォッチSkagen Flaster3でした。
+
+
+| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
+|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
+| C6:78:AD:69:2D:FD | 192.168.122.121 |                                                    | Unclassified                    |                          | living-AP1815M | taka 11ng |
+
+これ、Unclassifiedになっていますが、正体はPixel-4aでした。
+
+同じAndroidスマホでも802.11gにつなぐときと、802.11aにつなぐときで使うMACアドレスが変わります。
+
+ということで、最後に一つだけわからないのが残りました。
+
+| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
+|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
+| E6:02:29:6F:AE:FE | 192.168.122.149 |                                                    |                                 |                          |                |           |
+
+最大の困りごとは、これらが常時接続しているわけではなく、たまにしかネットワーク上に登場しないことです。
+
+<br>
+
+## 知らないMACアドレスがネットワーク上に現れたら通知してみる
+
+ここまでの調査は、DHCPサーバが払い出したIPアドレスとMACアドレスの対応情報と、無線LANコントローラが持っているデバイスに関する情報を定期的に採取して突き合わせる方法でした。
+これでだいぶ分かりましたので、ネットワーク上に未知のMACアドレスを検知したら通報する、という方法に切り替えます。
+
+
+
+
+
+
+
+
+# 考察
+
+- プライベートMACアドレスの利用が浸透してきている（android、iOS）
+- そのため無線LANに接続している端末をネットワークの観点で特定するのはむつかしい
+- SSIDを複数作るのは悪い設計
+- 同じスマホであっても、外から自宅に帰ってきたときに接続する無線LAN(SSID)によって、ネットワーク上に登場するMACアドレスが違ってしまう
+
+- ワイヤレスLANコントローラが見ているのはおそらくDHCPサーバとのやり取り
+- DHCPサーバは高機能なものを使ったほうが、デバイスの特定に役立つ
+- ご家庭用の機器はあまり履歴を残さないので、過去の時点で何がつながっていたかを調べるのはむつかしい
+- 定期的に情報を収集するサーバを立てておくといいかも

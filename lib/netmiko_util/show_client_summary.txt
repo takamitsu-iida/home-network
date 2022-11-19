@@ -1,25 +1,24 @@
 (Cisco Controller) >show client summary
 
-Number of Clients................................ 16
+Number of Clients................................ 15
 
 Number of EoGRE Clients.......................... 0
 
                                                                 RLAN/
 MAC Address       AP Name                        Slot Status        WLAN  Auth Protocol         Port Wired Tunnel  Role
 ----------------- ------------------------------ ---- ------------- ----- ---- ---------------- ---- ----- ------- ----------------
-04:03:d6:d8:57:5f living-AP1815M                  0   Associated     2    Yes   802.11n(2.4 GHz) 1    N/A   No      Local
+04:03:d6:d8:57:5f living-AP1815M                  1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
 08:97:98:04:22:e4 living-AP1815M                  0   Associated     2    Yes   802.11n(2.4 GHz) 1    N/A   No      Local
 20:df:b9:b4:bc:79 taka-AP1815I                    1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
-26:67:ca:be:bc:c9 living-AP1815M                  0   Associated     2    Yes   802.11n(2.4 GHz) 1    N/A   No      Local
-2e:14:db:b8:9b:d8 ayane-CAP702I                   1   Associated     1    Yes   802.11n(5 GHz)   1    N/A   No      Local
+2e:14:db:b8:9b:d8 living-AP1815M                  1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
 38:1a:52:5b:42:15 living-AP1815M                  0   Associated     2    Yes   802.11n(2.4 GHz) 1    N/A   No      Local
 3c:22:fb:7b:85:0e taka-AP1815I                    1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
 44:65:0d:da:2a:f5 living-AP1815M                  0   Associated     2    Yes   802.11n(2.4 GHz) 1    N/A   No      Local
-7e:87:0b:67:17:e2 living-AP1815M                  1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
+74:75:48:c6:25:06 taka-AP1815I                    0   Associated     2    Yes   802.11n(2.4 GHz) 1    N/A   No      Local
 90:9a:4a:d6:bb:b9 taka-AP1815I                    0   Associated     2    Yes   802.11n(2.4 GHz) 1    N/A   No      Local
+9c:5f:5a:92:94:27 taka-AP1815I                    1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
 a0:c9:a0:9a:7f:01 taka-AP1815I                    1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
 a4:5e:60:e4:1a:dd living-AP1815M                  1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
-c6:78:ad:69:2d:fd living-AP1815M                  0   Associated     2    Yes   802.11n(2.4 GHz) 1    N/A   No      Local
 ee:e7:80:e3:c3:b2 ayane-CAP702I                   1   Associated     1    Yes   802.11n(5 GHz)   1    N/A   No      Local
 f6:ff:cc:5f:51:68 taka-AP1815I                    1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
 fe:dd:b8:3f:de:59 taka-AP1815I                    1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local

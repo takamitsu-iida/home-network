@@ -2,8 +2,10 @@
 
 import logging
 import os
+import sys
 
 from datetime import datetime
+from pprint import pprint
 
 #
 # tinydb
@@ -97,6 +99,28 @@ def delete_device_documents(device_name:str, doc_type:str):
         table.remove( (q.device_name == device_name) & (q.doc_type == doc_type))
 
 
+def get_documents(doc_type:str):
+    """
+    ドキュメントタイプで検索し、タイムスタンプでソートして返却
+
+    Args:
+        doc_type (str): ドキュメントタイプ
+
+    Returns:
+        list: 見つかったドキュメントのリスト
+    """
+    q = Query()
+
+    with TinyDB(DB_PATH) as db:
+        table = db.table(TABLE_PYATS)
+        docs = table.search((q.doc_type == doc_type))
+
+    if docs:
+        return sorted(docs, key=lambda d: d['timestamp'], reverse=True)
+
+    return []
+
+
 def get_device_documents(device_name:str, doc_type:str):
     """
     デバイス名とドキュメントタイプで検索し、タイムスタンプでソートして返却
@@ -173,6 +197,19 @@ def get_device_mac_address_table(device_name:str):
     return get_device_documents(device_name, 'mac_address_table')
 
 
+def get_mac_address_table():
+    """
+    'mac_address_table' をタイムスタンプでソートして返却
+
+    Args:
+
+    Returns:
+        list: 見つかったドキュメントのリスト
+    """
+    return get_documents('mac_address_table')
+
+
+
 def insert_device_intf_info(device_name:str, intf_info:dict, timestamp:float, max_history=2):
     """
     学習したインタフェース情報をデータベースに保存する。
@@ -218,8 +255,6 @@ def dump():
 if __name__ == '__main__':
 
     import argparse
-    import sys
-    from pprint import pprint
 
     logging.basicConfig(level=logging.INFO)
 
@@ -248,7 +283,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--test', action='store_true', default=False, help='test')
     parser.add_argument('-d', '--dump', action='store_true', default=False, help='dump all data')
-    parser.add_argument('-s', '--search', dest='search', help='search mac address', type=str)
     args = parser.parse_args()
 
     def main():
@@ -259,10 +293,6 @@ if __name__ == '__main__':
         if args.dump:
             dump()
             return 0
-
-        if args.search:
-            pass
-
 
         parser.print_help()
         return 0

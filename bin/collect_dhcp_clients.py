@@ -75,9 +75,7 @@ def run_schedule(func: callable):
     schedule.every().day.at('12:10').do(dummy)         # 毎日12時10分時点で実行
 
     Args:
-        ip (str): 対象装置のIPアドレス
-        username (str): 対象装置のログインユーザ名
-        password (str): 対象装置のログインパスワード
+        func (callable): 定期実行する関数
     """
 
     # 毎時15分に実行

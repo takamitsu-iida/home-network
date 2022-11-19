@@ -1,0 +1,193 @@
+(Cisco Controller) >show client detail EE:E7:80:E3:C3:B2
+Client MAC Address............................... ee:e7:80:e3:c3:b2
+Client Username ................................. N/A
+Client Webauth Username ......................... N/A
+Hostname: .......................................
+Device Type: .................................... iPhone 8
+Version: ........................................ 14.4.2
+AP MAC Address................................... 0c:27:24:1c:84:80
+AP Name.......................................... ayane-CAP702I
+AP radio slot Id................................. 1
+Client State..................................... Associated
+User Authenticated by ........................... None
+Client User Group................................
+Client NAC OOB State............................. Access
+Wireless LAN Id.................................. 1
+Wireless LAN Network Name (SSID)................. taka 11ac
+Wireless LAN Profile Name........................ taka 11ac
+WLAN Profile check for roaming................... Disabled
+Hotspot (802.11u)................................ Not Supported
+Connected For ................................... 20056 secs
+BSSID............................................ 0c:27:24:1c:84:8f
+Channel.......................................... 128
+IP Address....................................... 192.168.122.116
+Gateway Address.................................. 192.168.122.1
+Netmask.......................................... 255.255.255.0
+IPv6 Address..................................... fe80::1818:a949:dbea:5ef0
+IPv6 Address..................................... 2400:2411:561:5b00:dd95:79aa:692:bbcd
+Association Id................................... 1
+Authentication Algorithm......................... Open System
+Reason Code...................................... 1
+Client IPSK-TAG.................................. N/A
+Status Code...................................... 0
+Session Timeout.................................. 0
+Client CCX version............................... No CCX support
+QoS Level........................................ Silver
+Avg data Rate.................................... 0
+Burst data Rate.................................. 0
+Avg Real time data Rate.......................... 0
+Burst Real Time data Rate........................ 0
+Avg Uplink data Rate............................. 0
+Burst Uplink data Rate........................... 0
+Avg Uplink Real time data Rate................... 0
+Burst Uplink Real Time data Rate................. 0
+802.1P Priority Tag.............................. disabled
+Security Group Tag............................... Unknown(0)
+KTS CAC Capability............................... No
+Qos Map Capability............................... No
+WMM Support...................................... Enabled
+  APSD ACs.......................................  BK  BE  VI  VO
+Current Rate..................................... m15 ss1
+Supported Rates.................................. 6.0,9.0,12.0,18.0,24.0,36.0,
+    ............................................. 48.0,54.0
+Mobility State................................... Local
+Mobility Move Count.............................. 0
+Security Policy Completed........................ Yes
+Policy Manager State............................. RUN
+Pre-auth IPv4 ACL Name........................... none
+Pre-auth IPv4 ACL Applied Status................. Unavailable
+Pre-auth IPv6 ACL Name........................... none
+Pre-auth IPv6 ACL Applied Status................. Unavailable
+Pre-auth Flex IPv4 ACL Name...................... none
+Pre-auth Flex IPv4 ACL Applied Status............ Unavailable
+Pre-auth Flex IPv6 ACL Name...................... none
+Pre-auth Flex IPv6 ACL Applied Status............ Unavailable
+Pre-auth redirect URL............................ none
+Audit Session ID................................. fd7aa8c0000005a5e4007763
+AAA Role Type.................................... none
+Acct Interim Interval............................ 0
+Local Policy Applied............................. none
+IPv4 ACL Name.................................... none
+AAA FlexConnect ACL Applied Status............... Unavailable
+IPv4 ACL Applied Status.......................... Unavailable
+IPv6 ACL Name.................................... none
+IPv6 ACL Applied Status.......................... Unavailable
+Post-auth Flex IPv6 ACL Name..................... none
+Post-auth Flex IPv6 ACL Applied Status........... Unavailable
+Layer2 ACL Name.................................. none
+Layer2 ACL Applied Status........................ Unavailable
+mDNS Status...................................... Disabled
+mDNS Profile Name................................ none
+No. of mDNS Services Advertised.................. 0
+Policy Type...................................... WPA2
+Authentication Key Management.................... FT-PSK
+Encryption Cipher................................ CCMP-128 (AES)
+Protected Management Frame ...................... No
+Management Frame Protection...................... No
+EAP Type......................................... Unknown
+FlexConnect Data Switching....................... Local
+FlexConnect Dhcp Status.......................... Local
+FlexConnect Vlan Based Central Switching......... No
+FlexConnect Authentication....................... Central
+FlexConnect Central Association.................. No
+FlexConnect VLAN NAME............................ Unavailable
+Quarantine VLAN.................................. 0
+Access VLAN...................................... 0
+Local Bridging VLAN.............................. 0
+Client Capabilities:
+      Radio Capability........................... 802.11ac-w2
+      CF Pollable................................ Not implemented
+      CF Poll Request............................ Not implemented
+      Short Preamble............................. Not implemented
+      PBCC....................................... Not implemented
+      Channel Agility............................ Not implemented
+      Listen Interval............................ 20
+      Fast BSS Transition........................ Implemented
+      11v BSS Transition......................... Not implemented
+Non-Operable Channels............................ None
+Non-Prefer Channels.............................. None
+Client Wifi Direct Capabilities:
+      WFD capable................................ No
+      Manged WFD capable......................... No
+      Cross Connection Capable................... No
+      Support Concurrent Operation............... No
+Fast BSS Transition Details:
+      Reassociation Timeout...................... 20
+      Total Preauth APs.......................... 0
+      Total SuccessFull Roam..................... 0
+DNS Server details:
+      DNS server IP ............................. 192.168.122.1
+      DNS server IP ............................. 0.0.0.0
+Assisted Roaming Prediction List details:
+
+
+ Client Dhcp Required:     False
+Allowed (URL)IP Addresses
+-------------------------
+
+AVC Profile Name: ............................... none
+OpenDns Profile Name: ........................... none
+Fastlane Client: ................................ No
+Max DSCP: ....................................... 0
+Nas Identifier: ................................. AIR-AP1815M-Q
+Client Statistics:
+      Number of Bytes Received................... 659325
+      Number of Bytes Sent....................... 2940650
+      Total Number of Bytes Sent................. 2940650
+      Total Number of Bytes Recv................. 659325
+      Number of Bytes Sent (last 90s)............ 172
+      Number of Bytes Recv (last 90s)............ 92
+      Number of Packets Received................. 5317
+      Number of Packets Sent..................... 4179
+      Number of Interim-Update Sent.............. 0
+      Number of EAP Id Request Msg Timeouts...... 0
+      Number of EAP Id Request Msg Failures...... 0
+      Number of EAP Request Msg Timeouts......... 0
+      Number of EAP Request Msg Failures......... 0
+      Number of EAP Key Msg Timeouts............. 0
+      Number of EAP Key Msg Failures............. 0
+      Number of Data Retries..................... 74
+      Number of RTS Retries...................... 0
+      Number of Duplicate Received Packets....... 0
+      Number of Decrypt Failed Packets........... 0
+      Number of Mic Failured Packets............. 0
+      Number of Mic Missing Packets.............. 0
+      Number of RA Packets Dropped............... 0
+      Number of Policy Errors.................... 0
+      Radio Signal Strength Indicator............ -57 dBm
+      Signal to Noise Ratio...................... 43 dB
+      Client Detected as Inactive................ No
+Client RBACL Statistics:
+      Number of RBACL Allowed Packets............ 0
+      Number of RBACL Denied Packets............. 0
+Client Rate Limiting Statistics:
+      Number of Data Packets Received............ 0
+      Number of Data Rx Packets Dropped.......... 0
+      Number of Data Bytes Received.............. 0
+      Number of Data Rx Bytes Dropped............ 0
+      Number of Realtime Packets Received........ 0
+      Number of Realtime Rx Packets Dropped...... 0
+      Number of Realtime Bytes Received.......... 0
+      Number of Realtime Rx Bytes Dropped........ 0
+      Number of Data Packets Sent................ 0
+      Number of Data Tx Packets Dropped.......... 0
+      Number of Data Bytes Sent.................. 0
+      Number of Data Tx Bytes Dropped............ 0
+      Number of Realtime Packets Sent............ 0
+      Number of Realtime Tx Packets Dropped...... 0
+      Number of Realtime Bytes Sent.............. 0
+      Number of Realtime Tx Bytes Dropped........ 0
+Nearby AP Statistics:
+      ayane-CAP702I(slot 1)
+        antenna0: 20057 secs ago................. -43 dBm
+        antenna1: 20057 secs ago................. -44 dBm
+Scan Report:
+--------------------
+  BSSID:......................................... 0c:27:24:1c:84:8f
+      RSSI:...................................... -57 dBm
+      ChannelNumber:............................. 128
+
+(Cisco Controller) >config paging enable
+
+
+(Cisco Controller) >

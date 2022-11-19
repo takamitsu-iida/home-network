@@ -34,6 +34,21 @@ def insert_wlc_clients(wlc_clients_list:list, timestamp:float, max_history:int=D
         'doc_data': [ {'mac_address': a.b.c.d, 'ap_name': ...}, {}, {}]
     }
 
+    {
+        'ap_mac_address': '00:a3:8e:15:f9:e0',
+        'ap_name': 'taka-AP1815I',
+        'client_state': 'Associated',
+        'connected_for': '12792',
+        'device_type': 'Android',
+        'gateway_address': '192.168.122.1',
+        'hostname': 'Pixel-5',
+        'ip_address': '192.168.122.112',
+        'mac_address': 'fe:dd:b8:3f:de:59',
+        'netmask': '255.255.255.0',
+        'username': 'N/A',
+        'wireless_lan_network_name': 'taka 11ac'
+    }
+
     Args:
         wlc_clients_list (list): doc_dataとして格納する配列
         timestamp (float): 採取した時刻のタイムスタンプ
