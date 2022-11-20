@@ -18,6 +18,27 @@ class SingleDaemon:
         self.pid_dir = pid_dir
         self.pid_file = pid_file
         self.pid_path = os.path.join(pid_dir, pid_file)
+        self.preserved_handlers = []
+
+
+    def add_presereved_handlers(self, handler):
+        """
+        with contextを抜けたときにloggingのハンドラが閉じられてしまうのを防止する
+
+        file_handler = logging.FileHandler(log_path, 'a+')
+        file_handler.setLevel(logging.INFO)
+        logger.addHandler(file_handler)
+
+        このようにして作成したハンドラが閉じられないようにする
+        d = SingleDaemon(pid_dir=pid_dir, pid_file=pid_file)
+        d.add_presereved_handlers(file_handler)  # ファイルハンドラを閉じないように指定
+        d.start_daemon(run_schedule, run_func())
+
+        Args:
+            handler (_type_): _description_
+        """
+        self.preserved_handlers.append(handler.stream.fileno())
+
 
     def start_daemon(self, func: callable, *args, **kwargs):
 
@@ -30,6 +51,7 @@ class SingleDaemon:
         context = daemon.DaemonContext(
             # stdout=sys.stdout,
             # stderr=sys.stderr,
+            files_preserve = self.preserved_handlers,
             umask=0o002,
             working_directory=self.pid_dir,  # 注意：pidファイルの作成場所に移動必要
             pidfile=pidfile)

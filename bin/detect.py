@@ -169,8 +169,8 @@ def run_func() -> callable:
                 # 'wireless_lan_network_name': 'taka 11ac'},
                 mac = d.get('mac_address')
                 mac = mac.upper()
-                logger.info(f'unknown mac detedted: {mac}')
                 if mac not in reported_mac:
+                    logger.info(f'unknown mac detedted: {mac}')
                     reported_mac.append(mac)
                     message = f'unknown device found.\n{pformat(d)}'
                     logger.error(message)
@@ -234,21 +234,9 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='detect unknown device')
     parser.add_argument('-t', '--test', action='store_true', help='test run')
-    parser.add_argument('-d',
-                        '--daemon',
-                        action='store_true',
-                        default=False,
-                        help='run as daemon')
-    parser.add_argument('-k',
-                        '--kill',
-                        action='store_true',
-                        default=False,
-                        help='kill running daemon')
-    parser.add_argument('-c',
-                        '--clear',
-                        action='store_true',
-                        default=False,
-                        help='clear junk pid file')
+    parser.add_argument('-d', '--daemon', action='store_true', default=False, help='run as daemon')
+    parser.add_argument('-k', '--kill', action='store_true', default=False, help='kill running daemon')
+    parser.add_argument('-c', '--clear', action='store_true', default=False, help='clear junk pid file')
     args = parser.parse_args()
 
     def main():
@@ -275,6 +263,7 @@ if __name__ == '__main__':
         if args.daemon:
             logger.info(f'{__file__} started')
             d = SingleDaemon(pid_dir=pid_dir, pid_file=pid_file)
+            d.add_presereved_handlers(file_handler)  # ファイルハンドラを閉じないように指定
             d.start_daemon(run_schedule, run_func())
             return 0
 
