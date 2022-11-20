@@ -23,7 +23,7 @@ if lib_dir not in sys.path:
     sys.path.append(lib_dir)
 
 # lib/db_util
-from db_util import insert_mac_vendors, get_mac_vendors_all, get_mac_vendors_timestamp, search_mac_vendors
+from db_util import insert_mac_vendors, get_mac_vendors_all, get_mac_vendors_timestamp, search_mac_vendors, search_list_of_dict
 
 # lib/mac_vendors_util
 from mac_vendors_util import get_mac_vendors_list, get_last_modified
@@ -56,12 +56,26 @@ def update_db():
 
     if do_download:
         # ダウンロードして
-        mac_vendors_list = get_mac_vendors_list(
-            requests_options=requests_options)
+        mac_vendors_list = get_mac_vendors_list(requests_options=requests_options)
+
+        # macPrefixキーの値でソートしてから
+        mac_vendors_list = sorted(mac_vendors_list, key=lambda x: x.get('macPrefix', ''))
 
         # データベースに格納する
-        insert_mac_vendors(mac_vendors_list=mac_vendors_list,
-                           timestamp=timestamp)
+        insert_mac_vendors(mac_vendors_list=mac_vendors_list, timestamp=timestamp)
+
+
+def search_mac_address(mac_address: str):
+    # データベースから全件を取得する
+    # これは'macPrefix'でソートされているはず
+    mac_vendors_list = get_mac_vendors_all()
+
+    if len(mac_address) < 8:
+        return None
+
+    searched = search_list_of_dict(mac_vendors_list, 'macPrefix', mac_address, exact_match=False)
+    return searched
+
 
 
 if __name__ == '__main__':
@@ -90,7 +104,16 @@ if __name__ == '__main__':
 
         if args.search:
             mac_address = args.search.upper()
+
+            # TinyDBの検索機能を使って検索する
+            print('search_mac_vendors')
             searched = search_mac_vendors(mac_address=mac_address)
+            print(searched)
+            print('')
+
+            # 全件取り出してからバイナリサーチで検索する
+            print('search_mac_address')
+            searched = search_mac_address(mac_address=mac_address)
             print(searched)
             return 0
 
@@ -99,6 +122,7 @@ if __name__ == '__main__':
             update_db()
             return 0
 
+        parser.print_help()
         return 0
 
     sys.exit(main())

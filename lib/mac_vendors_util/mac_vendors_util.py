@@ -4,7 +4,6 @@
 #
 # 参照
 # https://maclookup.app/downloads/json-database
-#
 
 import json
 import logging
@@ -77,13 +76,13 @@ def get_mac_vendors_list(url: str = URL, requests_options={}, save=False) -> lis
 
     data = r.json()
 
+    # pprint(data)
     #
     # [{"macPrefix":"00:00:0C",
     #   "vendorName":"Cisco Systems, Inc",
     #   "private":false,
     #   "blockType":"MA-L",
     #   "lastUpdate":"2015/11/17"},
-    #
 
     logger.info(f'{len(data)} mac vendors downloaded.')
 
@@ -100,6 +99,8 @@ def get_mac_vendors_list(url: str = URL, requests_options={}, save=False) -> lis
         with open(json_path, 'w') as f:
             json.dump(data, f, indent=4)
 
+    # このリストをmacPrefixキーの値でソートしてから返却する
+    # return sorted(data, key=lambda x: x.get('macPrefix', ''))
     return data
 
 
@@ -124,6 +125,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--dump', action='store_true')
+    parser.add_argument('-g', '--get', action='store_true')
     args, _ = parser.parse_known_args()
 
     def main():
@@ -138,8 +140,12 @@ if __name__ == '__main__':
                 pass
             return 0
 
-        # 引数なしでの実行は、サイトからダウンロードして、ファイルに保存
-        get_mac_vendors_list(requests_options={'timeout': 10}, save=True)
+        # --getはサイトからダウンロードして、ファイルに保存
+        if args.get:
+            get_mac_vendors_list(requests_options={'timeout': 10}, save=True)
+            return 0
+
+        parser.print_help()
         return 0
 
     sys.exit(main())

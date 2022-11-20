@@ -6,6 +6,7 @@ import re
 # dictフィルタ
 #
 
+
 def filter_func(key: str = '', query: str = '') -> callable:
     """
     辞書型を検索する関数を返却する（単一階層のみ）
@@ -84,10 +85,115 @@ def find_values(d: dict, k: str):
     if isinstance(d, list):
         for i in d:
             for x in find_values(i, k):
-               yield x
+                yield x
     elif isinstance(d, dict):
         if k in d:
             yield d[k]
         for j in d.values():
             for x in find_values(j, k):
                 yield x
+
+
+def search_list_of_dict(arr: list, k:str, v: str, exact_match=True) -> dict:
+    """
+    バイナリサーチで辞書型のリストを検索する、リストはkキーの値でソートされていることが前提
+
+    Args:
+        arr (list): 辞書型のリスト [{}, {}, {}...]
+        k (str): 辞書型のキー
+        v (str): kに対応する値
+        exact_match (bool, optional): 厳密に一致させるか、文字列を含めば一致とするか. Defaults to True.
+
+    Returns:
+        dict: 検索結果
+    """
+
+    n = len(arr)
+    left = 0
+    right = n - 1
+
+    while left <= right:
+        center = (left + right) // 2
+
+        if exact_match:
+            # 完全一致
+            if arr[center].get(k, '') == v:
+                return arr[center]
+            elif arr[center].get(k) < v:
+                left = center + 1
+            else:
+                right = center - 1
+        else:
+            # 文字列が含まれていれば一致と判断
+            if arr[center].get(k, '').find(v) == 0 or v.find(arr[center].get(k, '')) == 0:
+                return arr[center]
+            elif arr[center].get(k) < v:
+                left = center + 1
+            else:
+                right = center - 1
+
+    return None
+
+
+if __name__ == '__main__':
+
+    import sys
+
+    def test_binary_search():
+
+        # MACアドレスのベンダーコードのデータベースから適当に抽出
+        test_mac_vendors = [
+            {
+                "macPrefix": "00:00:0C",
+                "vendorName": "Cisco Systems, Inc",
+                "blockType": "MA-L",
+                "lastUpdate": "2015/11/17"
+            },
+            {
+                "macPrefix": "00:00:0E",
+                "vendorName": "FUJITSU LIMITED",
+                "blockType": "MA-L",
+                "lastUpdate": "2018/10/13"
+            },
+            {
+                "macPrefix": "00:00:1B",
+                "vendorName": "Novell, Inc.",
+                "blockType": "MA-L",
+                "lastUpdate": "2016/04/27"
+            },
+            {
+                "macPrefix": "1C:87:76:D",
+                "vendorName": "Qivivo",
+                "blockType": "MA-M",
+                "lastUpdate": "2016/02/05"
+            },
+            {
+                "macPrefix": "70:B3:D5:91:3",
+                "vendorName": "Shenzhen Riitek Technology Co.,Ltd",
+                "blockType": "MA-S",
+                "lastUpdate": "2016/02/18"
+            },
+            {
+                "macPrefix": "70:B3:D5:41:A",
+                "vendorName": "HYOSUNG Heavy Industries Corporation",
+                "blockType": "MA-S",
+                "lastUpdate": "2022/06/23"
+            },
+        ]
+
+        # これをソートする
+        test_mac_vendors = sorted(test_mac_vendors, key=lambda x: x.get('macPrefix', ''))
+
+        key = 'macPrefix'
+        for d in test_mac_vendors:
+            mac = d.get(key)
+            assert d == search_list_of_dict(test_mac_vendors, key, mac)
+
+        assert search_list_of_dict(test_mac_vendors, key, '00:00:0F') is None
+
+
+    def main():
+        test_binary_search()
+        return 0
+
+    sys.exit(main())
