@@ -9,7 +9,7 @@ import os
 import sys
 import time
 
-from pprint import pprint, pformat
+from pprint import pformat
 
 import schedule
 import yaml
@@ -35,59 +35,71 @@ from line_util import send_line_notify
 # lib/daemon_util/daemon_util.py
 from daemon_util import SingleDaemon
 
-app_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-log_dir = os.path.join(app_dir, 'log')
-os.makedirs(log_dir, exist_ok=True)
+# lib/db_util/dictfilter.py
+from db_util import find_values
 
 #
-# logging設定
+# logディレクトリ
 #
+app_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+app_name = os.path.splitext(os.path.basename(__file__))[0]
+log_dir = os.path.join(app_dir, 'log')
+log_file = app_name + '.log'
+log_path = os.path.join(log_dir, log_file)
+os.makedirs(log_dir, exist_ok=True)
 
 logger = logging.getLogger(__name__)
 
-logger.setLevel(logging.INFO)
-
-# ログをファイルに保存
-app_name = os.path.splitext(os.path.basename(__file__))[0]
-log_file = app_name + '.log'
-file_handler = logging.FileHandler(os.path.join(log_dir, log_file), 'a+')
-file_handler.setLevel(logging.INFO)
-logger.addHandler(file_handler)
+#
+# 既知デバイスのファイル
+#
+KNOWN_DEVICES_FILE = 'known_devices.yaml'
+KNOWN_DEVICES_PATH = os.path.join(app_dir, KNOWN_DEVICES_FILE)
 
 
-def load_yaml(file_path):
+def load_yaml(file_path: str) -> dict:
+    """
+    YAMLファイルを読み取って辞書型にして返却する
+
+    Args:
+        file_path (str): YAMLファイルのパス
+
+    Returns:
+        dict: 読み取ったデータ
+    """
     try:
         with open(file_path) as f:
             try:
                 d = yaml.safe_load(f)
+                return d
             except yaml.YAMLError as e:
                 logger.error(e)
-                return None
     except OSError as e:
         logger.error(e)
-        return None
-    return d
+    return None
 
 
-def get_known_mac_addresses(known_devices: dict):
-    devices = known_devices.get('devices', [])
-    mac_addresses = []
-    for device in devices:
-        if device.get('device_mac', None) is not None:
-            mac_addresses.append(device.get('device_mac'))
-        ether = device.get('ethernet', {})
-        if ether.get('mac', None) is not None:
-            mac_addresses.append(ether.get('mac'))
-        ac = device.get('802.11ac', {})
-        if ac.get('mac', None) is not None:
-            mac_addresses.append(ac.get('mac'))
-        ng = device.get('802.11ng', {})
-        if ng.get('mac', None) is not None:
-            mac_addresses.append(ng.get('mac'))
-    return mac_addresses
+def get_known_mac_addresses(known_device_file: str = KNOWN_DEVICES_PATH) -> list:
+    """
+    KNOWN_DEVICES_PATHに指定されたパスのYAMLファイルをロードして、'mac'キーの値をリストにして返却する
+
+    Args:
+        known_device_file (str, optional): YAMLファイルのパス. Defaults to KNOWN_DEVICES_PATH.
+
+    Returns:
+        list: 全ての'mac'キーの値をリストにして返却
+    """
+    # known_devices.yamlをロードする
+    known_devices = load_yaml(known_device_file)
+    if known_devices is None:
+        logger.error(f'known device not found in : {KNOWN_DEVICES_PATH}')
+        return []
+
+    # 辞書型の中にある'mac'キーの値を全て取り出して返却する
+    return list(find_values(known_devices, 'mac'))
 
 
-def detect_unknown_wlc_clients(wlc_clients: list, known_mac: list) -> list:
+def detect_unknown_wlc_clients(wlc_clients: list) -> list:
 
     # [{'ap_mac_address': '70:ea:1a:84:16:c0',
     # 'ap_name': 'living-AP1815M',
@@ -102,6 +114,9 @@ def detect_unknown_wlc_clients(wlc_clients: list, known_mac: list) -> list:
     # 'username': 'N/A',
     # 'wireless_lan_network_name': 'taka 11ac'},
 
+    # 既知のMACアドレスを調べる
+    known_mac = get_known_mac_addresses()
+
     unknown_mac = []
     for client in wlc_clients:
         mac = client.get('mac_address', None)
@@ -115,27 +130,29 @@ def detect_unknown_wlc_clients(wlc_clients: list, known_mac: list) -> list:
 
 def run_func() -> callable:
 
-    # known_devices.yamlをロードする
-    known_device = load_yaml(os.path.join(app_dir, 'known_devices.yaml'))
-    if known_device is None:
-        raise Exception('known device not found')
-    known_mac = get_known_mac_addresses(known_devices=known_device)
-
     # pyATSのテストベッドからWLCに関する情報を取得
     inventory = get_inventory('home.yaml', 'wlc')
     wlc_ip = inventory.get('ip')
     wlc_username = inventory.get('username')
     wlc_password = inventory.get('password')
+
+    # WLCを操作するハンドラをインスタンス化
     wlc = CiscoWlcHandler(wlc_ip, wlc_username, wlc_password)
 
+    # 一度通知したものはここに格納して、次からは発報しない
     reported_mac = []
 
-    # この関数を返す
+    # この関数を返却する
     def _run():
+        logger.info('connect to WLC')
+
+        # WLCに接続してクライアント情報を採取
         with wlc:
             wlc_clients = wlc.get_wlc_clients()
 
-        unknown_mac = detect_unknown_wlc_clients(wlc_clients=wlc_clients, known_mac=known_mac)
+        # 採取したクライアントのうち、未知のMACアドレスを取り出す
+        unknown_mac = detect_unknown_wlc_clients(wlc_clients=wlc_clients)
+
         if len(unknown_mac) > 0:
             for d in unknown_mac:
                 # {'ap_mac_address': '70:ea:1a:84:16:c0',
@@ -152,6 +169,7 @@ def run_func() -> callable:
                 # 'wireless_lan_network_name': 'taka 11ac'},
                 mac = d.get('mac_address')
                 mac = mac.upper()
+                logger.info(f'unknown mac detedted: {mac}')
                 if mac not in reported_mac:
                     reported_mac.append(mac)
                     message = f'unknown device found.\n{pformat(d)}'
@@ -166,7 +184,7 @@ def run_schedule(func: callable):
     scheduleモジュールを利用して定期実行する
 
     schedule.every(1).minutes.do(dummy, args, kwargs)  # 毎分実行
-    schedule.every(1).hours.do(dummy)                  # 毎時実行
+    schedule.every(1).hours.do(dummy, args, kwargs)    # 毎時実行
     schedule.every().hour.at(':30').do(dummy)          # 毎時30分時点で実行
     schedule.every().minute.at(':30').do(dummy)        # 毎分30秒時点で実行
     schedule.every().day.at('12:10').do(dummy)         # 毎日12時10分時点で実行
@@ -177,8 +195,8 @@ def run_schedule(func: callable):
         password (str): 対象装置のログインパスワード
     """
 
-    # 毎時10分に実行
-    schedule.every().hour.at(':10').do(func)
+    # 10分ごとに実行
+    schedule.every(10).minutes.do(func)
 
     while True:
         try:
@@ -196,11 +214,41 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
 
+    # ログレベル設定
+    logger.setLevel(logging.INFO)
+
+    # フォーマット
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+    # 標準出力へのハンドラ
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setFormatter(formatter)
+    stdout_handler.setLevel(logging.INFO)
+    logger.addHandler(stdout_handler)
+
+    # ログファイルのハンドラ
+    file_handler = logging.FileHandler(log_path, 'a+')
+    file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.INFO)
+    logger.addHandler(file_handler)
+
     parser = argparse.ArgumentParser(description='detect unknown device')
     parser.add_argument('-t', '--test', action='store_true', help='test run')
-    parser.add_argument('-d', '--daemon', action='store_true', default=False, help='run as daemon')
-    parser.add_argument('-k', '--kill', action='store_true', default=False, help='kill running daemon')
-    parser.add_argument('-c', '--clear', action='store_true', default=False, help='clear junk pid file')
+    parser.add_argument('-d',
+                        '--daemon',
+                        action='store_true',
+                        default=False,
+                        help='run as daemon')
+    parser.add_argument('-k',
+                        '--kill',
+                        action='store_true',
+                        default=False,
+                        help='kill running daemon')
+    parser.add_argument('-c',
+                        '--clear',
+                        action='store_true',
+                        default=False,
+                        help='clear junk pid file')
     args = parser.parse_args()
 
     def main():
@@ -225,6 +273,7 @@ if __name__ == '__main__':
             return 0
 
         if args.daemon:
+            logger.info(f'{__file__} started')
             d = SingleDaemon(pid_dir=pid_dir, pid_file=pid_file)
             d.start_daemon(run_schedule, run_func())
             return 0
