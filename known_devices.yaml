@@ -320,3 +320,16 @@ devices:
       ip: 192.168.122.172
       ipv6:
         - fe80::f4ff:ccff:fe5f:5168
+
+  -
+    device: Raspberry Pi 3B
+    description: ラズパイ
+    os: linux
+    owner: takamitsu
+    ethernet:
+      mac: B8:27:EB:AF:E6:51
+      mac_vendor: Raspberry Pi Foundation
+    802.11ng:
+      mac: B8:27:EB:FA:B3:04
+      mac_vendor: Raspberry Pi Foundation
+      ip: 192.168.122.177
