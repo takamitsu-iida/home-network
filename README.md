@@ -1,16 +1,14 @@
 # 自宅ネットワーク環境
 
-自宅のネットワーク環境を調べるためのPythonスクリプト群です。
+自宅のネットワーク環境を整備するためのツール群です。
 
-つまり完全に自分専用です。
-
-ここでは将来の自分のためにメモを残しておきます。
+つまりは完全に自分専用、ここにあるものはすべて、将来の自分のためのメモ書きです。
 
 <br>
 
 ## 管理基盤のセットアップ
 
-`~/.pyats/pyats.conf` を作成して、暗号キーを記載する。ファイルのモードは600にします。
+`~/.pyats/pyats.conf` を作成して暗号キーを記載します。ファイルのモードは600にしておきます。
 
 ```bash
 [secrets]
@@ -69,26 +67,23 @@ https://learn.microsoft.com/ja-jp/windows/dev-environment/javascript/nodejs-on-w
 
 # MACアドレス調査
 
+binディレクトリにある実行ファイルで調査します。
 
-```text
-MACアドレス a0:c9:a0:9a:7f:01
-SSID taka 11ac
-AP名taka-AP1815I (Ch 136)
-最も近いAP ayane-CAP702I(-84 dBm) living-AP1815M(-70 dBm)
-デバイスタイプ Android-Samsung-Galaxy-Phone-S8
-パフォーマンス信号強度: -38 dBm
-信号品質: 54 dB
-接続速度: 173 Mbps
-チャネル幅: 20 MHz
-機能
-802.11ac (5GHz)空間ストリーム: 2
-Cisco Compatibleサポート対象(CCX v4)
-```
+
+- collect_dhcp_clients.py
+- collect_mac_address_table.py
+- collect_mac_vendors.py
+- collect_wlc_clients.py
+- analyze.py
+- detect.py
+
+- show_testbed.py
+
 
 
 ### Catalystの設定変更
 
-MACアドレスの学習テーブルを定期的に採取するために、CatalystのMAC学習テーブルのエージングタイムを1時間に変更。
+MACアドレスの学習テーブルを定期的に採取するために、CatalystのMAC学習テーブルのエージングタイムを1時間に変更しています。
 
 ```bash
 c2960cx-8pc(config)#mac address-table aging-time 3600
