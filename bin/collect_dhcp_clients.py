@@ -95,21 +95,10 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(description='show dhcp clients')
-    parser.add_argument('-d',
-                        '--daemon',
-                        action='store_true',
-                        default=False,
-                        help='run as daemon')
-    parser.add_argument('-k',
-                        '--kill',
-                        action='store_true',
-                        default=False,
-                        help='kill running daemon')
-    parser.add_argument('-c',
-                        '--clear',
-                        action='store_true',
-                        default=False,
-                        help='clear junk pid file')
+    parser.add_argument('-d', '--daemon', action='store_true', default=False, help='run as daemon')
+    parser.add_argument('-k', '--kill', action='store_true', default=False, help='kill running daemon')
+    parser.add_argument('-c', '--clear', action='store_true', default=False, help='clear junk pid file')
+    parser.add_argument('-g', '--get', action='store_true', default=False, help='get dhcp clients info')
     args = parser.parse_args()
 
     def main():
@@ -139,9 +128,12 @@ if __name__ == '__main__':
             d.start_daemon(run_schedule, update_db_func(ip, username, password))
             return 0
 
-        dhcp_clients = get_dhcp_clients(ip, username, password)
-        pprint(dhcp_clients)
+        if args.get:
+            dhcp_clients = get_dhcp_clients(ip, username, password)
+            pprint(dhcp_clients)
+            return 0
 
+        parser.print_help()
         return 0
 
     sys.exit(main())

@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='download mac vendors database')
     parser.add_argument('-d', '--dump', action='store_true')
     parser.add_argument('-u', '--update', action='store_true')
     parser.add_argument('-s', '--search', dest='search', help='search MAC address', type=str)

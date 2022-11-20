@@ -168,25 +168,13 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='show mac address table')
     parser.add_argument('--testbed', dest='testbed', help='testbed YAML file', type=str, default='home.yaml')
-    parser.add_argument('-d',
-                        '--daemon',
-                        action='store_true',
-                        default=False,
-                        help='run as daemon')
-    parser.add_argument('-k',
-                        '--kill',
-                        action='store_true',
-                        default=False,
-                        help='kill running daemon')
-    parser.add_argument('-c',
-                        '--clear',
-                        action='store_true',
-                        default=False,
-                        help='clear junk pid file')
+    parser.add_argument('-d', '--daemon', action='store_true', default=False, help='run as daemon')
+    parser.add_argument('-k', '--kill', action='store_true', default=False, help='kill running daemon')
+    parser.add_argument('-c', '--clear', action='store_true', default=False, help='clear junk pid file')
+    parser.add_argument('-g', '--get', action='store_true', default=False, help='get mac address table info')
     args = parser.parse_args()
-
 
     def main():
 
@@ -211,15 +199,18 @@ if __name__ == '__main__':
             d.start_daemon(run_schedule, update_db_func(testbed_file))
             return 0
 
-        # pyATSでパースして
-        parsed = parse_mac_address_table(args.testbed)
+        if args.get:
+            # pyATSでパースして
+            parsed = parse_mac_address_table(args.testbed)
 
-        # MACアドレスの情報を抽出して
-        mac_address_list = get_mac_addresses(parsed)
+            # MACアドレスの情報を抽出して
+            mac_address_list = get_mac_addresses(parsed)
 
-        # 表示
-        pprint(mac_address_list)
+            # 表示
+            pprint(mac_address_list)
+            return 0
+
+        parser.print_help()
         return 0
-
 
     sys.exit(main())
