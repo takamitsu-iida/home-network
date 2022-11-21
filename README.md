@@ -94,12 +94,11 @@ c2960cx-8pc(config)#end
 
 ### Catalystの設定バックアップ
 
-2台のCatalystでstartup-configを互いにコピーしあうことで、バックアップとします。
+2台のCatalystでstartup-configを互いにコピーしあうことでバックアップします。
+万が一壊れても対向装置側にコンフィグが残っていれば安心です。
 
-pyATSを使って自動化しています。
+この作業はpyATSを使って自動化しています。
 
 ```bash
 bin/backup_catalyst_config.py
 ```
-
-Catalystの設定を書き換えることはまれなので、定期的に実行するよりも、気が向いたらこのコマンドを実行する、という感じです。
