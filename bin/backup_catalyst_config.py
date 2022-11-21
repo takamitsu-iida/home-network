@@ -38,7 +38,6 @@ def copy_startup_to_peer(local_device, remote_device):
     # connect
     local_device.connect()
 
-
     # scp startup_config to remote_device
     result = scp(local_device=local_device, local_path=local_path, remote_device_name=remote_device_name, remote_path=remote_path)
 
@@ -52,8 +51,6 @@ def copy_startup_to_peer(local_device, remote_device):
 if __name__ == '__main__':
 
     import argparse
-
-    from pprint import pprint
 
     logging.basicConfig(level=logging.INFO)
 
