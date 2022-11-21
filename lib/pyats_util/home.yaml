@@ -18,15 +18,23 @@
 ## supported platforms
 # https://pubhub.devnetcloud.com/media/unicon/docs/user_guide/supported_platforms.html
 
+
+# 注意
+# connectionsには必ずdefaultsを作成してviaを指定すること
+#
+# connections:
+#   defaults:
+#     via: ssh
+
 testbed:
   name: home network
 
   credentials:
     default:
-      username: 'cisco'
-      password: 'cisco'
+      username: 'cisco2'
+      password: 'cisco2'
     enable:
-      password: 'cisco'
+      password: 'cisco2'
 
 devices:
 
@@ -35,6 +43,14 @@ devices:
 
     os: ios
     type: switch
+
+    credentials:
+      default:
+        username: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+        password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+      enable:
+        password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+
     connections:
       defaults:
         class: 'unicon.Unicon'
@@ -44,12 +60,6 @@ devices:
         protocol: ssh
         ip: 192.168.122.254
         port: 22
-        credentials:
-          default:
-            username: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
-            password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
-          enable:
-            password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
         settings:
           GRACEFUL_DISCONNECT_WAIT_SEC: 1     # default 10
           POST_DISCONNECT_WAIT_SEC: 1         # default 10
@@ -81,6 +91,14 @@ devices:
 
     os: ios
     type: switch
+
+    credentials:
+      default:
+        username: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+        password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+      enable:
+        password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+
     connections:
       defaults:
         class: 'unicon.Unicon'
@@ -90,12 +108,6 @@ devices:
         protocol: ssh
         ip: 192.168.122.252
         port: 22
-        credentials:
-          default:
-            username: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
-            password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
-          enable:
-            password: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
         settings:
           GRACEFUL_DISCONNECT_WAIT_SEC: 1     # default 10
           POST_DISCONNECT_WAIT_SEC: 1         # default 10
@@ -116,7 +128,12 @@ devices:
 
   softbank-router:
     os: unknown
-    type: unknown
+
+    credentials:
+      default:
+        username: '%ENC{gAAAAABjbIhXCazd4ueYNQXgDw6deUa9i6Wro8PjRqD_ywyxgdtZ4g9Q-fr4RAphEl-GntZHiRrlgEy7nGf4CM5AswMTy9KOVA==}'
+        password: '%ENC{gAAAAABjbIhXCazd4ueYNQXgDw6deUa9i6Wro8PjRqD_ywyxgdtZ4g9Q-fr4RAphEl-GntZHiRrlgEy7nGf4CM5AswMTy9KOVA==}'
+
     connections:
       defaults:
         class: 'unicon.Unicon'
@@ -125,13 +142,15 @@ devices:
         protocol: http
         ip: 192.168.122.1
         port: 80
-        credentials:
-          default:
-            username: '%ENC{gAAAAABjbIhXCazd4ueYNQXgDw6deUa9i6Wro8PjRqD_ywyxgdtZ4g9Q-fr4RAphEl-GntZHiRrlgEy7nGf4CM5AswMTy9KOVA==}'
-            password: '%ENC{gAAAAABjbIhXCazd4ueYNQXgDw6deUa9i6Wro8PjRqD_ywyxgdtZ4g9Q-fr4RAphEl-GntZHiRrlgEy7nGf4CM5AswMTy9KOVA==}'
 
   wlc:
     os: linux
+
+    credentials:
+      default:
+        username: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
+        password: '%ENC{gAAAAABjbIi4_MyG56sBQzYn2TeJk_JshU6p9Fw_gpcg2Hv3HNUpRDuxjgnfpKg6rF7E0WOlLcslUJWoZztBzOGGIx-MMel7hQ==}'
+
     connections:
       defaults:
         class: 'unicon.Unicon'
@@ -140,10 +159,6 @@ devices:
         protocol: telnet
         ip: 192.168.122.253
         port: 23
-        credentials:
-          default:
-            username: '%ENC{gAAAAABjbIgYHFLs9xjmylDPv1uhGQ4KBIeTMRZ7oRD2XVhvq5uFh0O8_JoC6LyWvaLqDXnL_hXkf0_e1dh2EsiWnsWAnjgNZw==}'
-            password: '%ENC{gAAAAABjbIi4_MyG56sBQzYn2TeJk_JshU6p9Fw_gpcg2Hv3HNUpRDuxjgnfpKg6rF7E0WOlLcslUJWoZztBzOGGIx-MMel7hQ==}'
         arguments:
           learn_hostname: True
           prompt_recovery: True
@@ -151,6 +166,12 @@ devices:
   living-ap:
     os: ios
     platform: ap
+
+    credentials:
+      default:
+        username: '%ENC{gAAAAABjbIjLJ9FgUx30e1UVm6to6mVzCSYANcuuLNIiZ76jJ09-Kmp4HcHzhJIjAW60WNQ_27u4jeF9EEL_vHEAHB8wEQpXUA==}'
+        password: '%ENC{gAAAAABjbIjc2gj8tOgOYLSIzAqOnf-Y97cpRik7DT5wblcaR4msykf8JYQp9MUQRjnOkYj_PvlgxnlUvmulI-j1fVzc8xi4-w==}'
+
     connections:
       defaults:
         class: 'unicon.Unicon'
@@ -159,14 +180,16 @@ devices:
         protocol: ssh
         ip: 192.168.122.249
         port: 22
-        credentials:
-          default:
-            username: '%ENC{gAAAAABjbIjLJ9FgUx30e1UVm6to6mVzCSYANcuuLNIiZ76jJ09-Kmp4HcHzhJIjAW60WNQ_27u4jeF9EEL_vHEAHB8wEQpXUA==}'
-            password: '%ENC{gAAAAABjbIjc2gj8tOgOYLSIzAqOnf-Y97cpRik7DT5wblcaR4msykf8JYQp9MUQRjnOkYj_PvlgxnlUvmulI-j1fVzc8xi4-w==}'
 
   taka-ap:
     os: ios
     platform: ap
+
+    credentials:
+      default:
+        username: '%ENC{gAAAAABjbIjLJ9FgUx30e1UVm6to6mVzCSYANcuuLNIiZ76jJ09-Kmp4HcHzhJIjAW60WNQ_27u4jeF9EEL_vHEAHB8wEQpXUA==}'
+        password: '%ENC{gAAAAABjbIjc2gj8tOgOYLSIzAqOnf-Y97cpRik7DT5wblcaR4msykf8JYQp9MUQRjnOkYj_PvlgxnlUvmulI-j1fVzc8xi4-w==}'
+
     connections:
       defaults:
         class: 'unicon.Unicon'
@@ -175,14 +198,16 @@ devices:
         protocol: ssh
         ip: 192.168.122.248
         port: 22
-        credentials:
-          default:
-            username: '%ENC{gAAAAABjbIjLJ9FgUx30e1UVm6to6mVzCSYANcuuLNIiZ76jJ09-Kmp4HcHzhJIjAW60WNQ_27u4jeF9EEL_vHEAHB8wEQpXUA==}'
-            password: '%ENC{gAAAAABjbIjc2gj8tOgOYLSIzAqOnf-Y97cpRik7DT5wblcaR4msykf8JYQp9MUQRjnOkYj_PvlgxnlUvmulI-j1fVzc8xi4-w==}'
 
   ayane-ap:
     os: ios
     platform: ap
+
+    credentials:
+      default:
+        username: '%ENC{gAAAAABjbIjLJ9FgUx30e1UVm6to6mVzCSYANcuuLNIiZ76jJ09-Kmp4HcHzhJIjAW60WNQ_27u4jeF9EEL_vHEAHB8wEQpXUA==}'
+        password: '%ENC{gAAAAABjbIjc2gj8tOgOYLSIzAqOnf-Y97cpRik7DT5wblcaR4msykf8JYQp9MUQRjnOkYj_PvlgxnlUvmulI-j1fVzc8xi4-w==}'
+
     connections:
       defaults:
         class: 'unicon.Unicon'
@@ -191,13 +216,15 @@ devices:
         protocol: ssh
         ip: 192.168.122.247
         port: 22
-        credentials:
-          default:
-            username: '%ENC{gAAAAABjbIjLJ9FgUx30e1UVm6to6mVzCSYANcuuLNIiZ76jJ09-Kmp4HcHzhJIjAW60WNQ_27u4jeF9EEL_vHEAHB8wEQpXUA==}'
-            password: '%ENC{gAAAAABjbIjc2gj8tOgOYLSIzAqOnf-Y97cpRik7DT5wblcaR4msykf8JYQp9MUQRjnOkYj_PvlgxnlUvmulI-j1fVzc8xi4-w==}'
 
   atem-mini:
     os: unknown
+
+    credentials:
+      default:
+        username: ''
+        password: ''
+
     connections:
       defaults:
         via: https
@@ -205,13 +232,15 @@ devices:
         protocol: https
         ip: 192.168.122.240
         port: 443
-        credentials:
-          default:
-            username: ''
-            password: ''
 
   qnap-ts-220:
     os: unknown
+
+    credentials:
+      default:
+        username: '%ENC{gAAAAABjbIkW8QKaKdY7fj3At62HBCQV11Enlt3lu13GZ1KapMPNCmRO2kTsxuB1Ny8DM9RK1LBVT90pwoeC2-XrnS42rPNbKA==}'
+        password: '%ENC{gAAAAABjbIkMr7ZIarhyrmBnCWanHk_qnYnOtyKk4WGbvOw1XxGRtVQv6y8dTarMZgIrXveVrjo2aXJwAv9PaW2qnw4wDhKYew==}'
+
     connections:
       defaults:
         via: https
@@ -219,7 +248,3 @@ devices:
         protocol: https
         ip: 192.168.122.220
         port: 443
-        credentials:
-          default:
-            username: '%ENC{gAAAAABjbIkW8QKaKdY7fj3At62HBCQV11Enlt3lu13GZ1KapMPNCmRO2kTsxuB1Ny8DM9RK1LBVT90pwoeC2-XrnS42rPNbKA==}'
-            password: '%ENC{gAAAAABjbIkMr7ZIarhyrmBnCWanHk_qnYnOtyKk4WGbvOw1XxGRtVQv6y8dTarMZgIrXveVrjo2aXJwAv9PaW2qnw4wDhKYew==}'

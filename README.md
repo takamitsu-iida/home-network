@@ -2,7 +2,7 @@
 
 自宅のネットワーク環境を整備するためのツール群です。
 
-つまりは完全に自分専用、ここにあるものはすべて、将来の自分のためのメモ書きです。
+つまりは完全に自分専用、ここにあるものは将来の自分のためのメモ書きです。
 
 <br>
 
@@ -69,7 +69,6 @@ https://learn.microsoft.com/ja-jp/windows/dev-environment/javascript/nodejs-on-w
 
 binディレクトリにある実行ファイルで調査します。
 
-
 - collect_dhcp_clients.py
 - collect_mac_address_table.py
 - collect_mac_vendors.py
@@ -80,6 +79,7 @@ binディレクトリにある実行ファイルで調査します。
 - show_testbed.py
 
 
+<br>
 
 ### Catalystの設定変更
 
@@ -89,3 +89,17 @@ MACアドレスの学習テーブルを定期的に採取するために、Catal
 c2960cx-8pc(config)#mac address-table aging-time 3600
 c2960cx-8pc(config)#end
 ```
+
+<br>
+
+### Catalystの設定バックアップ
+
+2台のCatalystでstartup-configを互いにコピーしあうことで、バックアップとします。
+
+pyATSを使って自動化しています。
+
+```bash
+bin/backup_catalyst_config.py
+```
+
+Catalystの設定を書き換えることはまれなので、定期的に実行するよりも、気が向いたらこのコマンドを実行する、という感じです。

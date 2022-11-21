@@ -16,6 +16,14 @@
 ## supported platforms
 # https://pubhub.devnetcloud.com/media/unicon/docs/user_guide/supported_platforms.html
 
+
+# 注意
+# connectionsには必ずdefaultsを作成してviaを指定すること
+#
+# connections:
+#   defaults:
+#     via: ssh
+
 testbed:
   name: iida-pyats on eve-ng
 
