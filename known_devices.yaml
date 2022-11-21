@@ -56,7 +56,7 @@ devices:
 
   -
     device: Printer
-    description: リビングに設置
+    description: リビングに設置 EPSON EW-M752T
     os: unknown
     owner: mayo
     802.11ng:
@@ -74,7 +74,7 @@ devices:
       ip: 192.168.122.106
 
   -
-    device: Nintendo SWITCH
+    device: Nintendo Switch
     description: 任天堂スイッチ（ライトではない方）
     os: unknown
     owner: ayane
