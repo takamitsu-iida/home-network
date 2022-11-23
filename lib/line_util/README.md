@@ -38,3 +38,27 @@ https://notify-bot.line.me/ja/
     - トークルームは  1:1でLINE Notifyから通知を受け取る  を選択
 
     - 生成されたトークンを ~/.line_myapp にコピーペースト
+
+
+## メッセージを送信
+
+テキストメッセージなら簡単。
+
+get_access_token()で~/.line_myappに記述したトークンを取得して、POSTするだけ。
+
+```python
+
+def send_line_notify(message: str, requests_options={}):
+
+    URL = 'https://notify-api.line.me/api/notify'
+
+    access_token = get_access_token()
+
+    headers = {'Authorization': 'Bearer ' + access_token}
+
+    payload = {'message': message}
+
+    r = requests.post(URL, headers=headers, params=payload, **requests_options)
+
+    r.raise_for_status()
+```
