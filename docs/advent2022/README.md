@@ -120,7 +120,7 @@ DHCPサーバが払いだしているIPアドレスの情報がわかれば、�
 
 それにしても<span style="font-size: 200%;">MACアドレスが製造元不明って・・・　これはいったいどういうことでしょう？</span>
 
-<br>
+<br><br><br>
 
 ## ランダムMACアドレス
 
@@ -170,16 +170,16 @@ MACアドレスの先頭1オクテットは、そのアドレスがどういう�
 
 先ほど製造元が不明だったMACアドレスを抜き出して整理するとこうなります。
 
-| 5<span style="font-color: red;">E</span>:54:72:B7:19:9F | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
-| 2<span style="font-color: red;">E</span>:14:DB:B8:9B:D8 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
-| F<span style="font-color: red;">E</span>:DD:B8:3F:DE:59 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
-| E<span style="font-color: red;">E</span>:E7:80:E3:C3:B2 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
-| 7<span style="font-color: red;">E</span>:87:0B:67:17:E2 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
-| 1<span style="font-color: red;">2</span>:87:66:76:E7:7D | 先頭1オクテットが2で終わるのでプライベートMACアドレス |
-| C<span style="font-color: red;">6</span>:78:AD:69:2D:FD | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
-| F<span style="font-color: red;">6</span>:FF:CC:5F:51:68 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
-| 2<span style="font-color: red;">6</span>:67:CA:BE:BC:C9 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
-| E<span style="font-color: red;">6</span>:02:29:6F:AE:FE | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
+| 5E:54:72:B7:19:9F | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
+| 2E:14:DB:B8:9B:D8 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
+| FE:DD:B8:3F:DE:59 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
+| EE:E7:80:E3:C3:B2 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
+| 7E:87:0B:67:17:E2 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
+| 12:87:66:76:E7:7D | 先頭1オクテットが2で終わるのでプライベートMACアドレス |
+| C6:78:AD:69:2D:FD | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
+| F6:FF:CC:5F:51:68 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
+| 26:67:CA:BE:BC:C9 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
+| E6:02:29:6F:AE:FE | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
 | 54:3D:1F:FA:CB:6F | これは何？                                         |
 
 たしかに先頭1オクテットが E, 2, 6 で終わっています。これらはAndroidもしくはiOSと考えてよさそうです。
@@ -329,46 +329,49 @@ Gateway Address.................................. 192.168.122.1
 
 最初はなかなか情報が埋まらなかったのですが、１週間に渡りWLCから情報を採取し続けた結果、全てが明確になりました。
 
+<br>
 
-- A0:C9:A0:9A:7F:01 | Murata Manufacturing Co., Ltd. | Galaxy-S8
-- 90:B6:86:CF:B7:BA | Murata Manufacturing Co., Ltd. | Galaxy-S6-edge
+A0:C9:A0:9A:7F:01 | Murata Manufacturing Co., Ltd. | Galaxy-S8
+90:B6:86:CF:B7:BA | Murata Manufacturing Co., Ltd. | Galaxy-S6-edge
 
 ベンダーコードが村田製作所になっているのは古いスマホ（Galaxy S8とS6）でした。
 
 Galaxyって村田製作所のチップを使ってたんですね。知りませんでした。これらは主にカメラとして再利用しています。
 
+<br>
 
-
-- 44:65:0D:DA:2A:F5 | Amazon Technologies Inc. | living-AP1815M
-- 74:75:48:C6:25:06 | Amazon Technologies Inc. | taka-AP1815I
+44:65:0D:DA:2A:F5 | Amazon Technologies Inc. | living-AP1815M
+74:75:48:C6:25:06 | Amazon Technologies Inc. | taka-AP1815I
 
 ベンダーコードがAmazonのものは、接続しているアクセスポイントで物を特定できました。
 
 リビングのアクセスポイント（living-AP1815M）にジョインしているのはテレビのHDMIにくっ付けてるFire TV Stickです。
 テレワーク環境のアクセスポイント（taka-AP1815I）にジョインしているのはKindle PaperWhiteです。
 
+<br>
 
-- 3C:22:FB:7B:85:0E | Apple, Inc. | OS_X-Workstation | iida-macbook-pro
-- A4:5E:60:E4:1A:DD | Apple, Inc. | OS_X-Workstation | iidamac2
-- AC:29:3A:C5:D7:8C | Apple, Inc. | Apple-iPhone     | iidataknoiPhone
+3C:22:FB:7B:85:0E | Apple, Inc. | OS_X-Workstation | iida-macbook-pro
+A4:5E:60:E4:1A:DD | Apple, Inc. | OS_X-Workstation | iidamac2
+AC:29:3A:C5:D7:8C | Apple, Inc. | Apple-iPhone     | iidataknoiPhone
 
 Appleのベンダーコードのうち2台はMacbook proなのは分かっていたのですが、もう一台は古いiPhoneということが分かりました。
 ランダムなMACアドレスを使うように仕様が変わる前のバージョンのiOSで動いています。
 
 それにしても`iidataknoiPhone`ってひどいホスト名ですね。
 
+<br>
 
-
-- 84:5C:F3:48:FF:30 | Intel Corporate | Microsoft-Workstation | DESKTOP-6AS7DS0
-- 4C:34:88:93:80:87 | Intel Corporate | Microsoft-Workstation | mayo-PC
-- 0C:D2:92:F9:0B:73 | Intel Corporate | Microsoft-Workstation | NMV-CF-SV-2
+84:5C:F3:48:FF:30 | Intel Corporate | Microsoft-Workstation | DESKTOP-6AS7DS0
+4C:34:88:93:80:87 | Intel Corporate | Microsoft-Workstation | mayo-PC
+0C:D2:92:F9:0B:73 | Intel Corporate | Microsoft-Workstation | NMV-CF-SV-2
 
 Intelのベンダーコードは全部で3台ありますが全てWindowsを搭載したノートパソコンでした。
 
 パソコン用の無線LANのNICはIntel率が高いですね。
 
+<br>
 
-- 54:3D:1F:FA:CB:6F | Android | android-9a1a18732678477a
+54:3D:1F:FA:CB:6F | Android | android-9a1a18732678477a
 
 プライベートMACアドレスではないにもかかわらず製造元ベンダーコードが不明のこの装置。正体はスマホでした。
 
@@ -378,32 +381,41 @@ Intelのベンダーコードは全部で3台ありますが全てWindowsを搭�
 
 それにしても勝手にMACアドレスのベンダーコードを使ってるのかな？　怪しさ満点です。
 
+<br>
 
-- F6:FF:CC:5F:51:68 | Android
+F6:FF:CC:5F:51:68 | Android
 
-WLCの情報を付加してもAndroidということしかわからなかったこのこのプライベートMACは、社給のスマホでした。
+WLCの情報を付加してもAndroidということしかわからなかったこのこのプライベートMACの正体は社給のスマホでした。
 
-同じandroidでもホスト名が分かる場合と不明な場合で、何が違うのか分かりませんね。
+同じandroidでもホスト名が分かる場合と不明な場合で何が違うのか分かりませんね。
 
+新しいスマホほどWLCでも正体不明になる確率が高い傾向にあります。
 
-- 08:97:98:04:22:E4 | COMPAL INFORMATION (KUNSHAN) CO., LTD. | Unclassified
+<br>
+
+08:97:98:04:22:E4 | COMPAL INFORMATION (KUNSHAN) CO., LTD. | Unclassified
 
 聞いたこともないこのCOMPALという会社の装置、リビングのアクセスポイントに2.4GHz 802.11ngで接続していることをヒントに探索した結果、Wear OS by Googleを搭載したスマートウォッチSkagen Flaster3でした。
 
-- C6:78:AD:69:2D:FD | Unclassified
+
+<br>
+
+C6:78:AD:69:2D:FD | Unclassified
 
 WLCの情報でもUnclassifiedになってしまっていたの装置は正体はGoogleのスマホPixel-4aでした。
 
 自宅の環境は2.4GHzと5GHzで使うSSIDを分けていますので、同じAndroidスマホでも接続するSSIDによってMACアドレスが変わってしまいます。
 たまたま802.11ng側に繋がってしまった時の記録がこれでした。
 
-- E6:02:29:6F:AE:FE | 192.168.122.149 | Android | Pixel-3-XL
+<br>
 
-今回、一番発見するのが難しかったのがこれ。たまにしか電源を入れない古いスマホです。
+E6:02:29:6F:AE:FE | 192.168.122.149 | Android | Pixel-3-XL
+
+そして今回、一番発見するのが難しかったのがこれ。たまにしか電源を入れない古いスマホです。
 
 DHCPサーバがアドレスを払い出した記録はあるものの、無線LANコントローラではなかなか補足できずにいました。結局これの正体が判明するまで１週間かかりました。
 
-<br>
+<br><br><br>
 
 ## 知らないMACアドレスがネットワーク上に現れたらLINEに通知してみる
 
