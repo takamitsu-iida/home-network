@@ -24,7 +24,7 @@ if lib_dir not in sys.path:
     sys.path.append(lib_dir)
 
 # lib/pyats_util/pyats_util.py
-from pyats_util import get_inventory
+from pyats_util import get_testbed_from_file, get_inventory
 
 # lib/netmiko_util/netmiko_util.py
 from netmiko_util import CiscoWlcHandler
@@ -131,7 +131,8 @@ def detect_unknown_wlc_clients(wlc_clients: list) -> list:
 def run_func() -> callable:
 
     # pyATSのテストベッドからWLCに関する情報を取得
-    inventory = get_inventory('home.yaml', 'wlc')
+    testbed = get_testbed_from_file('home.yaml')
+    inventory = get_inventory(testbed, 'wlc')
     wlc_ip = inventory.get('ip')
     wlc_username = inventory.get('username')
     wlc_password = inventory.get('password')

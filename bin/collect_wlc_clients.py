@@ -28,7 +28,7 @@ if lib_dir not in sys.path:
 from db_util import insert_wlc_clients
 
 # lib/pyats_util/pyats_util.py
-from pyats_util import get_inventory
+from pyats_util import get_testbed_from_file, get_inventory
 
 # lib/netmiko_util/netmiko_util.py
 from netmiko_util import CiscoWlcHandler
@@ -101,12 +101,13 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--daemon', action='store_true', default=False, help='run as daemon')
     parser.add_argument('-k', '--kill', action='store_true', default=False, help='kill running daemon')
     parser.add_argument('-c', '--clear', action='store_true', default=False, help='clear junk pid file')
-    parser.add_argument('-g', '--get', action='store_true', default=False, help='get mac address table info')
+    parser.add_argument('-g', '--get', action='store_true', default=False, help='get wlc clients info')
     args = parser.parse_args()
 
     def main():
         # pyATSのテストベッドからWLCに関する情報を取得
-        inventory = get_inventory('home.yaml', 'wlc')
+        testbed = get_testbed_from_file('home.yaml')
+        inventory = get_inventory(testbed, 'wlc')
         ip = inventory.get('ip')
         username = inventory.get('username')
         password = inventory.get('password')

@@ -55,13 +55,13 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     # yapf: disable
-    parser = argparse.ArgumentParser(description='show mac address table')
+    parser = argparse.ArgumentParser(description='backup catalyst startup-config')
     parser.add_argument('--testbed', dest='testbed', help='testbed YAML file', type=str, default='home.yaml')
-    parser.add_argument('-s', '--scp', action='store_true', default=False, help='scp config')
+    parser.add_argument('-b', '--backup', action='store_true', default=False, help='backup startup-config each other')
     args = parser.parse_args()
     # yapf: enable
 
-    def run_scp():
+    def run_backup():
 
         testbed = get_testbed_from_file(args.testbed)
 
@@ -85,8 +85,8 @@ if __name__ == '__main__':
 
     def main():
 
-        if args.scp:
-            return run_scp()
+        if args.backup:
+            return run_backup()
 
         parser.print_help()
         return 0

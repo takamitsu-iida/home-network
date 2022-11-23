@@ -265,7 +265,8 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--dhcp', action='store_true', help='show mac from dhcp')
     parser.add_argument('-w', '--wlc', action='store_true', help='show mac from wlc')
     parser.add_argument('-c', '--catalyst', action='store_true', help='show mac from catalyst')
-    parser.add_argument('-s', '--search', dest='search', help='search mac address', type=str)
+    parser.add_argument('-s', '--search', dest='search', help='search mac address in catalyst mac table', type=str)
+
     args = parser.parse_args()
 
     def main():
@@ -298,6 +299,7 @@ if __name__ == '__main__':
             print(t)
             return 0
 
+        # テスト実装
         if args.search:
             history = search_mac_address_in_pyats(args.search)
             for hist in history:

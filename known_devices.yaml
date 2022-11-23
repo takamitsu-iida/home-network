@@ -14,6 +14,10 @@ devices:
       mac: 5E:54:72:B7:19:9F
       mac_vendor: private
       ip: 192.168.122.103
+    802.11ng:
+      mac: BA:97:90:3B:41:7A
+      mac_vendor: private
+      ip: 192.168.122.125
 
   -
     device: iPhone 8

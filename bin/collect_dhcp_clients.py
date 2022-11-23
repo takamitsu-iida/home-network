@@ -28,7 +28,7 @@ if lib_dir not in sys.path:
 from db_util import insert_dhcp_clients
 
 # lib/pyats_util/pyats_util.py
-from pyats_util import get_inventory
+from pyats_util import get_testbed_from_file, get_inventory
 
 # lib/soft_bank_router/dhcp_clients.py
 from soft_bank_router import get_dhcp_clients
@@ -104,7 +104,8 @@ if __name__ == '__main__':
     def main():
 
         # pyATSのテストベッドからソフトバンク光ルータに関する情報を取得
-        inventory = get_inventory('home.yaml', 'softbank-router')
+        testbed = get_testbed_from_file('home.yaml')
+        inventory = get_inventory(testbed, 'softbank-router')
         ip = inventory.get('ip')
         username = inventory.get('username')
         password = inventory.get('password')
