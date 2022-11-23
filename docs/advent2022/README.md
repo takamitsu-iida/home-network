@@ -17,7 +17,7 @@
 
 物理トポロジーはこんな感じです。
 
-![topology](advent2022/img/topology.png)
+![topology](img/topology.png)
 
 インターネットはソフトバンク光を契約しています。
 
@@ -36,7 +36,7 @@ Cat3560から有線LANを伸ばして別の部屋のCat2960に接続していま
 
 （これは悪い設計であることを後に痛感することになります）
 
-![WLAN](advent2022/img/fig5.png)
+![WLAN](img/fig5.png)
 
 <br>
 
@@ -48,7 +48,7 @@ DHCPサーバが払いだしているIPアドレスの情報がわかれば、�
 
 これ（↓）は光ＢＢユニットの管理画面です。
 
-![DHCP](advent2022/img/fig1.png)
+![DHCP](img/fig1.png)
 
 この情報を採取したいわけですが、機種が古いこともあってAPIでの情報採取はおろか、SSHでの接続もできません。
 
@@ -143,7 +143,7 @@ DHCPサーバが払いだしているIPアドレスの情報がわかれば、�
 
 MACアドレスの先頭1オクテットは、そのアドレスがどういう種別のものなのかを表す重要な部分です。
 
-![mac address](advent2022/img/fig3.png)
+![mac address](img/fig3.png)
 
 先頭1オクテットをビットに展開したときの下一桁の部分は、そのMACアドレスがユニキャストなのか、マルチキャストなのかを表します。
 このビットが1だとマルチキャストです。
@@ -164,7 +164,7 @@ MACアドレスの先頭1オクテットは、そのアドレスがどういう�
 
 先頭1オクテットが偶数の場合はユニキャストになりますが、さらにその中でも下二桁目のビットが1の場合はプライベートMACアドレスになります。
 
-![private mac](advent2022/img/fig4.png)
+![private mac](img/fig4.png)
 
 <span style="font-size: 200%;">先頭1オクテットの数字が 2 か 6 か A か E で終わる場合はプライベートMACアドレス</span> ということになります。
 
@@ -224,7 +224,7 @@ NintendoとかApple、FUJITSUなんかは分かりやすいです。心当たり
 
 無線LANコントローラはこの画面（↓）の通り、接続している無線LAN端末のホスト名やOSの種類まで特定してくれています。
 
-![WLC](advent2022/img/fig2.png)
+![WLC](img/fig2.png)
 
 おそらくDHCPのやり取りを盗み見ることで分かる情報だと思いますが、たいへん有益な情報なのでこれも採取して分析に加えてみましょう。
 
@@ -241,7 +241,7 @@ Number of EoGRE Clients.......................... 0
 
                                                                 RLAN/
 MAC Address       AP Name                        Slot Status        WLAN  Auth Protocol         Port Wired Tunnel  Role
------------------ ------------------------------ ---- ------------- ----- ---- ---------------- ---- ----- ------- ----------------
+----------------- ------------------------------ ---- ------------- ----- ---- ---------------- ---- ----- ------- ------
 04:03:d6:d8:57:5f living-AP1815M                  0   Associated     2    Yes   802.11n(2.4 GHz) 1    N/A   No      Local
 08:97:98:04:22:e4 living-AP1815M                  0   Associated     2    Yes   802.11n(2.4 GHz) 1    N/A   No      Local
 20:df:b9:b4:bc:79 taka-AP1815I                    1   Associated     1    Yes   802.11ac(5 GHz)  1    N/A   No      Local
@@ -430,13 +430,13 @@ DHCPサーバがアドレスを払い出した記録はあるものの、無線L
 
 #### １件目
 
-![LINE Screen Shot](advent2022/img/detect1.png)
+![LINE Screen Shot](img/detect1.png)
 
 ラズパイを無線LANにつないだ時に通知されました。ラズパイは普段は有線LANですが、無線LANにつないだことで検出されました。
 
 #### ２件目
 
-![LINE Screen Shot](advent2022/img/detect2.png)
+![LINE Screen Shot](img/detect2.png)
 
 通知があってからすぐにWLCの画面を確認したのですが、そのときにはすでにこのMACアドレスの端末はいなくなっていました。
 が、子供が帰ってきたタイミングで検知したので、推測はできました。
