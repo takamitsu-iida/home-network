@@ -61,7 +61,7 @@ DHCPサーバが払いだしているIPアドレスの情報がわかれば、�
 
 これでIPアドレスとMACアドレスの対応がわかりますので、あとはMACアドレスのベンダーコードをみて物が何かを推察してみます。
 
-> ソースコード https://github.com/takamitsu-iida/home-network/blob/main/bin/collect_dhcp_clients.py
+ソースコード [bin/collect_dhcp_clients.py](https://github.com/takamitsu-iida/home-network/blob/main/bin/collect_dhcp_clients.py)
 
 <br>
 
@@ -71,11 +71,11 @@ DHCPサーバが払いだしているIPアドレスの情報がわかれば、�
 
 <p><a href="https://maclookup.app/downloads/json-database" target="_blank">https://maclookup.app/downloads/json-database</a></p>
 
-> ソースコード https://github.com/takamitsu-iida/home-network/blob/main/bin/collect_mac_vendors.py
+ソースコード [bin/collect_mac_vendors.py](https://github.com/takamitsu-iida/home-network/blob/main/bin/collect_mac_vendors.py)
 
 このMACアドレスのベンダーコードのデータベースを使って、自宅LANにいるMACアドレスを検索してみました。
 
-> ソースコード https://github.com/takamitsu-iida/home-network/blob/main/bin/analyze.py
+ソースコード [bin/analyze.py](https://github.com/takamitsu-iida/home-network/blob/main/bin/analyze.py)
 
 その結果がこちら。
 
@@ -196,7 +196,7 @@ MACアドレスの先頭1オクテットは、そのアドレスがどういう�
 
 <br>
 
-## MACアドレスのベンダー名だけでは判断できない物はどうする？
+## MACアドレスのベンダー名だけでは判断できない物をどうする？
 
 ベンダー名をみて物が何か類推できるものもあれば、そうでないものもあります。
 
@@ -206,16 +206,16 @@ NintendoとかApple、FUJITSUなんかは分かりやすいです。心当たり
 
 - SHARP Corporation はテレビです。有線LANで接続していますので間違いありません。
 - Nintendo Co.,Ltd は任天堂のSWITCHです。使ってなくても常時無線LANに接続しているんですね。アップデートのためかな。
-- Apple, Inc. のうち2台はMacBookです。日常的に使ってますので間違いありません。
+- Apple, Inc. のうち2台はMacBook Proです。日常的に使ってますので間違いありません。
 - FUJITSU LIMITED は会社のパソコンです。これも日常的に使ってますので間違いありません。
 - Google, Inc. はGoogle Home Miniです。GoogleはちゃんとOUIを持ってるんですね。
 - Seiko Epson Corporation はプリンタです。使っていなくても常時無線LANに接続しています。
-- TP-LINK TECHNOLOGIES CO.,LTD. は電源をスマホでON-OFFするやつです。
+- TP-LINK TECHNOLOGIES CO.,LTD. は電源（コンセント）をスマホでON-OFFするやつです。
 - ASUSTek COMPUTER INC. は自作PCです。日常的に使ってますのでこれも間違いありません。
 
 分からないもの
 - Amazon Technologies Inc. はKindleかテレビのHDMIに差し込んでるやつのどっちかだと思うけど、正確にはわからないです。Kindleは子供用にもう一台あるはず。
-- Intel Corporate は漠然としすぎてわからないです。複数あるし。
+- Intel Corporate は漠然としすぎてわからないです。複数あるのでどれが何なのか。
 - Murata Manufacturing Co., Ltd. は村田製作所ですね。複数ありますが物は何なのか想像つかないです。
 - COMPAL INFORMATION (KUNSHAN) CO., LTD. は何だろう？聞いたことない会社です。
 
@@ -283,7 +283,8 @@ Gateway Address.................................. 192.168.122.1
 
 接続中の無線クライアントの情報しか表示できませんので、この情報も１時間に一回採取してデータベースに格納しておきます。
 
-> ソースコード https://github.com/takamitsu-iida/home-network/blob/main/bin/collect_wlc_clients.py
+ソースコード [bin/collect_wlc_clients](https://github.com/takamitsu-iida/home-network/blob/main/bin/collect_wlc_clients.py)
+
 
 <br>
 
@@ -426,7 +427,8 @@ DHCPサーバがアドレスを払い出した記録はあるものの、無線L
 
 しばらく運転してみて、何も見つからなければ自宅ネットワークは晴れて無法地帯ではないと言い切れるでしょう。
 
-> ソースコード https://github.com/takamitsu-iida/home-network/blob/main/bin/detect.py
+ソースコード [bin/detect.py](https://github.com/takamitsu-iida/home-network/blob/main/bin/detect.py)
+
 
 調査開始：　2022年11月19日（土）にデーモンとしてスクリプトを起動
 
