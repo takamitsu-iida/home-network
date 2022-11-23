@@ -129,9 +129,9 @@ DHCPサーバが払いだしているIPアドレスの情報がわかれば、�
 
 この辺りが参考になります。
 
-> Apple　<p><a href="https://support.apple.com/ja-jp/HT211227" target="_blank">iPhone、iPad、iPod touch、Apple Watch でプライベート Wi-Fi アドレスを使う</a></p>
+> Apple　<a href="https://support.apple.com/ja-jp/HT211227" target="_blank">iPhone、iPad、iPod touch、Apple Watch でプライベート Wi-Fi アドレスを使う</a>
 >
-> - Android <p><a href="https://source.android.com/docs/core/connect/wifi-mac-randomization" target="_blank">MACアドレスランダム化の実装</a></p>
+> Android <a href="https://source.android.com/docs/core/connect/wifi-mac-randomization" target="_blank">MACアドレスランダム化の実装</a>
 
 ランダムといっても無線LANに接続するたびに変わるわけではなく、接続先ごとに使うMACアドレスを決めたら変わることはありません。
 
@@ -153,9 +153,13 @@ MACアドレスの先頭1オクテットは、そのアドレスがどういう�
 代表的なマルチキャストMACドレスにはこのようなものがあります。
 
 例： 01:00:5E は先頭１オクテットが奇数なのでマルチキャスト(IPマルチキャスト)
+
 例： 01:00:0C は先頭１オクテットが奇数なのでマルチキャスト(Cisco独自 PVST/CDP/VTP/UDLD等)
+
 例： 01:80:C2 は先頭１オクテットが奇数なのでマルチキャスト(LLDPやBPDU)
+
 例： 01:1B-19 は先頭１オクテットが奇数なのでマルチキャスト(PTPv2 over Ethernet)
+
 例： 33:33-XX は先頭１オクテットが奇数なのでマルチキャスト(IPv6マルチキャスト)
 
 先頭1オクテットが偶数の場合はユニキャストになりますが、さらにその中でも下二桁目のビットが1の場合はプライベートMACアドレスになります。
@@ -166,17 +170,17 @@ MACアドレスの先頭1オクテットは、そのアドレスがどういう�
 
 先ほど製造元が不明だったMACアドレスを抜き出して整理するとこうなります。
 
-| 5E:54:72:B7:19:9F | 192.168.122.103 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
-| 2E:14:DB:B8:9B:D8 | 192.168.122.111 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
-| FE:DD:B8:3F:DE:59 | 192.168.122.112 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
-| EE:E7:80:E3:C3:B2 | 192.168.122.116 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
-| 7E:87:0B:67:17:E2 | 192.168.122.118 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
-| 12:87:66:76:E7:7D | 192.168.122.122 | 先頭1オクテットが2で終わるのでプライベートMACアドレス |
-| C6:78:AD:69:2D:FD | 192.168.122.121 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
-| F6:FF:CC:5F:51:68 | 192.168.122.172 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
-| 26:67:CA:BE:BC:C9 | 192.168.122.123 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
-| E6:02:29:6F:AE:FE | 192.168.122.149 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
-| 54:3D:1F:FA:CB:6F | 192.168.122.145 | これは何？                                         |
+| 5<span style="font-color: red;">E</span>:54:72:B7:19:9F | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
+| 2<span style="font-color: red;">E</span>:14:DB:B8:9B:D8 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
+| F<span style="font-color: red;">E</span>:DD:B8:3F:DE:59 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
+| E<span style="font-color: red;">E</span>:E7:80:E3:C3:B2 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
+| 7<span style="font-color: red;">E</span>:87:0B:67:17:E2 | 先頭1オクテットがEで終わるのでプライベートMACアドレス |
+| 1<span style="font-color: red;">2</span>:87:66:76:E7:7D | 先頭1オクテットが2で終わるのでプライベートMACアドレス |
+| C<span style="font-color: red;">6</span>:78:AD:69:2D:FD | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
+| F<span style="font-color: red;">6</span>:FF:CC:5F:51:68 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
+| 2<span style="font-color: red;">6</span>:67:CA:BE:BC:C9 | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
+| E<span style="font-color: red;">6</span>:02:29:6F:AE:FE | 先頭1オクテットが6で終わるのでプライベートMACアドレス |
+| 54:3D:1F:FA:CB:6F | これは何？                                         |
 
 たしかに先頭1オクテットが E, 2, 6 で終わっています。これらはAndroidもしくはiOSと考えてよさそうです。
 
@@ -326,83 +330,74 @@ Gateway Address.................................. 192.168.122.1
 最初はなかなか情報が埋まらなかったのですが、１週間に渡りWLCから情報を採取し続けた結果、全てが明確になりました。
 
 
-| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
-|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
-| A0:C9:A0:9A:7F:01 | 192.168.122.130 | Murata Manufacturing Co., Ltd.                     | Android-Samsung-Galaxy-Phone-S8 | Galaxy-S8                | taka-AP1815I   | taka 11ac |
-| 90:B6:86:CF:B7:BA | 192.168.122.176 | Murata Manufacturing Co., Ltd.                     | Android                         | Galaxy-S6-edge           | taka-AP1815I   | taka 11ac |
+- A0:C9:A0:9A:7F:01 | Murata Manufacturing Co., Ltd. | Galaxy-S8
+- 90:B6:86:CF:B7:BA | Murata Manufacturing Co., Ltd. | Galaxy-S6-edge
 
 ベンダーコードが村田製作所になっているのは古いスマホ（Galaxy S8とS6）でした。
 
 Galaxyって村田製作所のチップを使ってたんですね。知りませんでした。これらは主にカメラとして再利用しています。
 
 
-| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
-|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
-| 44:65:0D:DA:2A:F5 | 192.168.122.114 | Amazon Technologies Inc.                           | Amazon Device                   | N/A                      | living-AP1815M | taka 11ng |
-| 74:75:48:C6:25:06 | 192.168.122.144 | Amazon Technologies Inc.                           | Amazon Device                   | N/A                      | taka-AP1815I   | taka 11ng |
+
+- 44:65:0D:DA:2A:F5 | Amazon Technologies Inc. | living-AP1815M
+- 74:75:48:C6:25:06 | Amazon Technologies Inc. | taka-AP1815I
 
 ベンダーコードがAmazonのものは、接続しているアクセスポイントで物を特定できました。
 
 リビングのアクセスポイント（living-AP1815M）にジョインしているのはテレビのHDMIにくっ付けてるFire TV Stickです。
 テレワーク環境のアクセスポイント（taka-AP1815I）にジョインしているのはKindle PaperWhiteです。
 
-| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
-|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
-| 3C:22:FB:7B:85:0E | 192.168.122.109 | Apple, Inc.                                        | OS_X-Workstation                | iida-macbook-pro         | taka-AP1815I   | taka 11ac |
-| A4:5E:60:E4:1A:DD | 192.168.122.120 | Apple, Inc.                                        | OS_X-Workstation                | iidamac2                 | living-AP1815M | taka 11ac |
-| AC:29:3A:C5:D7:8C | 192.168.122.146 | Apple, Inc.                                        | Apple-iPhone                    | iidataknoiPhone          | living-AP1815M | taka 11ac |
+
+- 3C:22:FB:7B:85:0E | Apple, Inc. | OS_X-Workstation | iida-macbook-pro
+- A4:5E:60:E4:1A:DD | Apple, Inc. | OS_X-Workstation | iidamac2
+- AC:29:3A:C5:D7:8C | Apple, Inc. | Apple-iPhone     | iidataknoiPhone
 
 Appleのベンダーコードのうち2台はMacbook proなのは分かっていたのですが、もう一台は古いiPhoneということが分かりました。
-ランダムなMACアドレスを使うように仕様が変わる前のバージョンのiOSで動いています。それにしても`iidataknoiPhone`ってひどいホスト名ですね。
+ランダムなMACアドレスを使うように仕様が変わる前のバージョンのiOSで動いています。
 
-| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
-|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
-| 84:5C:F3:48:FF:30 | 192.168.122.169 | Intel Corporate                                    | Microsoft-Workstation           | DESKTOP-6AS7DS0          | living-AP1815M | taka 11ng |
-| 4C:34:88:93:80:87 | 192.168.122.113 | Intel Corporate                                    | Microsoft-Workstation           | mayo-PC                  | living-AP1815M | taka 11ac |
-| 0C:D2:92:F9:0B:73 | 192.168.122.110 | Intel Corporate                                    | Microsoft-Workstation           | NMV-CF-SV-2              | taka-AP1815I   | taka 11ac |
+それにしても`iidataknoiPhone`ってひどいホスト名ですね。
 
-Intelのベンダーコードは全部で3台ありますが全てWindowsを搭載したノートパソコンでした。パソコン用の無線LANのNICはIntel率が高いですね。
 
-| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
-|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
-| 54:3D:1F:FA:CB:6F | 192.168.122.145 |                                                    | Android                         | android-9a1a18732678477a | living-AP1815M | taka 11ac |
 
-ベンダーコードが不明のこの装置。正体はスマホでした。
+- 84:5C:F3:48:FF:30 | Intel Corporate | Microsoft-Workstation | DESKTOP-6AS7DS0
+- 4C:34:88:93:80:87 | Intel Corporate | Microsoft-Workstation | mayo-PC
+- 0C:D2:92:F9:0B:73 | Intel Corporate | Microsoft-Workstation | NMV-CF-SV-2
+
+Intelのベンダーコードは全部で3台ありますが全てWindowsを搭載したノートパソコンでした。
+
+パソコン用の無線LANのNICはIntel率が高いですね。
+
+
+- 54:3D:1F:FA:CB:6F | Android | android-9a1a18732678477a
+
+プライベートMACアドレスではないにもかかわらず製造元ベンダーコードが不明のこの装置。正体はスマホでした。
 
 中国のUlefoneという会社のArmor2という、日本では売ってないスマホです。
+
 魚群探知機のモニターとして使っていますので、釣りに行く前後で充電したりアプリのアップデートをしたり、といったときだけネットワークに繋がります。
 
 それにしても勝手にMACアドレスのベンダーコードを使ってるのかな？　怪しさ満点です。
 
 
-| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
-|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
-| F6:FF:CC:5F:51:68 | 192.168.122.172 |                                                    | Android                         | N/A                      | taka-AP1815I   | taka 11ac |
+- F6:FF:CC:5F:51:68 | Android
 
-このプライベートMACアドレスも正体が分かりました。社給のスマホです。同じandroidでもホスト名が分かる場合と不明な場合の違いは何だろうか？
+WLCの情報を付加してもAndroidということしかわからなかったこのこのプライベートMACは、社給のスマホでした。
 
-
-| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
-|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
-| 08:97:98:04:22:E4 | 192.168.122.160 | COMPAL INFORMATION (KUNSHAN) CO., LTD.             | Unclassified                    | N/A                      | living-AP1815M | taka 11ng |
-
-そしてこのベンダーコード、COMPAL社の装置も正体が分かりました。
-リビングのアクセスポイントに2.4GHz 802.11ngで接続していることをヒントに探索した結果、Wear OS by Googleを搭載したスマートウォッチSkagen Flaster3でした。
+同じandroidでもホスト名が分かる場合と不明な場合で、何が違うのか分かりませんね。
 
 
-| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
-|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
-| C6:78:AD:69:2D:FD | 192.168.122.121 |                                                    | Unclassified                    | N/A                      | living-AP1815M | taka 11ng |
+- 08:97:98:04:22:E4 | COMPAL INFORMATION (KUNSHAN) CO., LTD. | Unclassified
 
-これ、Unclassifiedになっていますが、正体はPixel-4aでした。
+聞いたこともないこのCOMPALという会社の装置、リビングのアクセスポイントに2.4GHz 802.11ngで接続していることをヒントに探索した結果、Wear OS by Googleを搭載したスマートウォッチSkagen Flaster3でした。
+
+- C6:78:AD:69:2D:FD | Unclassified
+
+WLCの情報でもUnclassifiedになってしまっていたの装置は正体はGoogleのスマホPixel-4aでした。
 
 自宅の環境は2.4GHzと5GHzで使うSSIDを分けていますので、同じAndroidスマホでも接続するSSIDによってMACアドレスが変わってしまいます。
 たまたま802.11ng側に繋がってしまった時の記録がこれでした。
 
-
-| mac               | ip              | vendor                                             | type                            | hostname                 | ap             | ssid      |
-|-------------------|-----------------|----------------------------------------------------|---------------------------------|--------------------------|----------------|-----------|
-| E6:02:29:6F:AE:FE | 192.168.122.149 |                                                    | Android                         | Pixel-3-XL               | taka-AP1815I   | taka 11ac |
+- E6:02:29:6F:AE:FE | 192.168.122.149 | Android | Pixel-3-XL
 
 今回、一番発見するのが難しかったのがこれ。たまにしか電源を入れない古いスマホです。
 
