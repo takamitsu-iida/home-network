@@ -167,6 +167,9 @@ class IosEmbeddedPacketCapture:
             device.disconnect()
 
 
+    def export_to_flash(self, device: object):
+        pass
+
 
     def retrieve_monitor_status(self, device: object, disconnect_on_finished=False) -> dict:
         if not device.is_connected():
