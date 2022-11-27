@@ -258,6 +258,49 @@ optional arguments:
 この順で表示される情報量が増えていきます。
 
 
+## Catalystでのパケットキャプチャ
+
+Embedded Packet Capture機能を使うとCatalyst単独でパケットをキャプチャできます。
+
+ただ、操作が面倒というか、どうやるのかすぐにわからなくなってしまうので、スクリプトにしておいた方が楽です。
+
+```bash
+(.venv) iida@s400win:~/git/home-network/bin$ ./capture_bootps.py --help
+usage: capture_bootps.py [-h] [-t TESTBED] [-d DEVICE] [-bc] [-bu] [-ac] [-au] [--start] [--stop] [--export] [--get] [--status]
+
+control embedded packet capture
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t TESTBED, --testbed TESTBED
+                        testbed YAML file
+  -d DEVICE, --device DEVICE
+                        device name
+  -bc, --build_config   build config
+  -bu, --build_unconfig
+                        build unconfig
+  -ac, --apply_config   apply config
+  -au, --apply_unconfig
+                        apply unconfig
+  --start               start monitor
+  --stop                start monitor
+  --export              export to flash memory
+  --get                 get pcap
+  --status              retrieve monitor status
+```
+
+- capture_bootps.py --apply_config
+- capture_bootps.py --start
+- capture_bootps.py --stop
+- capture_bootps.py --export
+- capture_bootps.py --get
+
+この順で実行します。
+
+これはプロセススイッチされるbootpsメッセージだけを対象にキャプチャしますが、他の通信をキャプチャしたい場合はスクリプトのソースコードを書き換える必要があります。
+
+マニュアルを確認しながら手作業でmonitorコマンドを打ち込むよりも、スクリプトに埋め込まれたパラメータを書き換えたほうが早いです。
+
 <br><br>
 
 # 機器の設定関連メモ

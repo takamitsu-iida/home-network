@@ -16,6 +16,34 @@ from netmiko.exceptions import NetmikoAuthenticationException
 logger = logging.getLogger(__name__)
 
 
+def transfer(device_info: dict, file_info: dict) -> dict:
+    """
+    Netmikoを使ったSCPファイル転送
+
+    Args:
+        device_info (dict): {'device_type': 'cisco_ios', 'host': ip, 'username': username, 'password': password }
+        file_info (dict): {'source_file': './abc.txt', 'dest_file': 'abc.txt', 'file_system': 'flash:', 'direction': 'put', 'overwrite_file': True }
+
+    Raises:
+        NetmikoAuthenticationException: _description_
+
+    Returns:
+        dict: SCP転送結果
+    """
+
+    # 対象機器にNetmikoで接続
+    try:
+        ch = ConnectHandler(**device_info)
+    except NetmikoAuthenticationException as e:
+        logger.error('authentication failed.')
+        raise NetmikoAuthenticationException(f'Failed in ConnectHandler(), Error: {str(e)}') from e
+
+    # そのチャネル上でSCPファイル転送する
+    transfer_result = file_transfer(ch, **file_info)
+
+    return transfer_result
+
+
 if __name__ == '__main__':
 
     import argparse
@@ -55,12 +83,6 @@ if __name__ == '__main__':
                 'password': password,
             }
 
-            try:
-                ch = ConnectHandler(**device_info)
-            except NetmikoAuthenticationException as e:
-                logger.error('authentication failed.')
-                raise NetmikoAuthenticationException(f'Failed in ConnectHandler(), Error: {str(e)}') from e
-
             file_info = {
                 'source_file': './abc.txt',
                 'dest_file': 'abc.txt',
@@ -69,8 +91,8 @@ if __name__ == '__main__':
                 'overwrite_file': True
             }
 
-            transfer_result = file_transfer(ch, **file_info)
-            pprint(transfer_result)
+            result = transfer(device_info=device_info, file_info=file_info)
+            pprint(result)
 
             return 0
 

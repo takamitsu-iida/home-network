@@ -34,6 +34,7 @@
 # キャプチャポイントとバッファの関連付け
 # monitor capture point associate POINT BUF
 
+
 import argparse
 import logging
 import os
@@ -51,11 +52,17 @@ if lib_dir not in sys.path:
     sys.path.append(lib_dir)
 
 # lib/pyats_util/pyats_util.py
-from pyats_util import get_testbed_from_file
+from pyats_util import get_testbed_from_file, get_inventory
 
 # lib/pyats_util/ios_embedded_packet_capture.py
 from pyats_util import IosEmbeddedPacketCapture
 
+# lib/netmiko_util/transfer.py
+from netmiko_util import transfer
+
+# ログディレクトリを（なければ）作成する
+log_dir = os.path.join(app_dir, 'log')
+os.makedirs(log_dir, exist_ok=True)
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +82,7 @@ if __name__ == '__main__':
     parser.add_argument('--start', action='store_true', default=False, help='start monitor')
     parser.add_argument('--stop', action='store_true', default=False, help='start monitor')
     parser.add_argument('--export', action='store_true', default=False, help='export to flash memory')
+    parser.add_argument('--get', action='store_true', default=False, help='get pcap')
     parser.add_argument('--status', action='store_true', default=False, help='retrieve monitor status')
     # yapf: enable
 
@@ -85,13 +93,20 @@ if __name__ == '__main__':
         try:
             testbed = get_testbed_from_file(args.testbed)
             uut = testbed.devices[args.device]
+            inventory = get_inventory(testbed=testbed, device_name=args.device)
         except:
             return -1
 
-        epc = IosEmbeddedPacketCapture('BUF', 'POINT')
-        epc.buffer_size = 2048
-        epc.max_size = 1518
-        epc.filter_name = 'CAPTURE-FILTER'
+        buffer_name = 'BUF'
+        point_name = 'POINT'
+        filter_name = 'CAPTURE-FILTER'
+        buffer_size = 2048
+        max_size = 1518
+
+        epc = IosEmbeddedPacketCapture(buffer_name=buffer_name, point_name=point_name)
+        epc.buffer_size = buffer_size
+        epc.max_size = max_size
+        epc.filter_name = filter_name
 
         if args.build_config:
             lines = epc.build_config()
@@ -123,15 +138,30 @@ if __name__ == '__main__':
             epc.export_to_flash(device=uut)
             return 0
 
+        if args.get:
+            device_info = {
+                'device_type': 'cisco_ios',
+                'host': inventory['ip'],
+                'username': inventory['username'],
+                'password': inventory['password']
+            }
+            file_info = {
+                'source_file': f'{buffer_name}.pcap',
+                'dest_file': f'{log_dir}/{buffer_name}.pcap',
+                'file_system': 'flash:',
+                'direction': 'get',
+                'overwrite_file': True
+            }
+            result = transfer(device_info=device_info, file_info=file_info)
+            pprint(result)
+            return 0
+
         if args.status:
             status = epc.retrieve_monitor_status(device=uut)
             print('='*10)
             pprint(status)
             print('='*10)
             return 0
-
-
-
 
         parser.print_help()
         return 0
