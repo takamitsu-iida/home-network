@@ -18,7 +18,10 @@ if lib_dir not in sys.path:
     sys.path.append(lib_dir)
 
 # lib/pyats_util/pyats_util.py
-from pyats_util import get_testbed_from_file, scp
+from pyats_util import get_testbed_from_file
+
+# lib/pyats_util/ios_scp.py
+from pyats_util import scp_dev_to_dev
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +42,7 @@ def copy_startup_to_peer(local_device, remote_device):
     local_device.connect()
 
     # scp startup_config to remote_device
-    result = scp(local_device=local_device, local_path=local_path, remote_device_name=remote_device_name, remote_path=remote_path)
+    result = scp_dev_to_dev(local_device=local_device, local_path=local_path, remote_device_name=remote_device_name, remote_path=remote_path)
 
     # disconnect
     if local_device.is_connected():
@@ -57,7 +60,7 @@ if __name__ == '__main__':
     # yapf: disable
     parser = argparse.ArgumentParser(description='backup catalyst startup-config')
     parser.add_argument('--testbed', dest='testbed', help='testbed YAML file', type=str, default='home.yaml')
-    parser.add_argument('-b', '--backup', action='store_true', default=False, help='backup startup-config each other')
+    parser.add_argument('-r', '--run', action='store_true', default=False, help='run backup startup-config each other')
     args = parser.parse_args()
     # yapf: enable
 
@@ -85,7 +88,7 @@ if __name__ == '__main__':
 
     def main():
 
-        if args.backup:
+        if args.run:
             return run_backup()
 
         parser.print_help()

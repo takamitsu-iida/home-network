@@ -167,8 +167,33 @@ class IosEmbeddedPacketCapture:
             device.disconnect()
 
 
-    def export_to_flash(self, device: object):
-        pass
+    def export_to_flash(self, device: object, filename: str =None, disconnect_on_finished=False):
+        status = self.retrieve_monitor_status(device=device, disconnect_on_finished=False)
+
+        if status['status'] == 'Active':
+            logger.error('skipped, can not export active buffer need to stop first')
+            return
+
+        if status['packets'] == 0:
+            logger.error('skipped, no captured packet')
+            return
+
+        if not filename:
+            filename = f'flash:{self.buffer_name}.pcap'
+
+        command = f'monitor capture buffer BUF export {filename}'
+
+        try:
+            output = device.execute(command)
+        except SubCommandFailure as e:
+            raise SubCommandFailure(
+                f'Failed in monitor capture, Error: {str(e)}') from e
+
+        if disconnect_on_finished and device.is_connected():
+            device.disconnect()
+
+        return output
+
 
 
     def retrieve_monitor_status(self, device: object, disconnect_on_finished=False) -> dict:
@@ -203,6 +228,7 @@ class IosEmbeddedPacketCapture:
 
         status['status'] = parsed_point.get('status')
         status['buffer'] = parsed_point.get('buffer')
+        status['packets'] = parsed_buffer.get('packets')
         status['associated_point'] = parsed_buffer.get('associated_point')
         status['configurations'] = parsed_point.get('configurations', []) + parsed_buffer.get('configurations', [])
 
@@ -247,12 +273,20 @@ class IosEmbeddedPacketCapture:
         # Configuration:となっている部分に既存の設定が入っているので、その行を取り出して返却する
         '''
 
-        # 行に分解する前にこの部分をマルチラインモードで取り出す
+        # パケット数をマルチラインモードで取り出す
+        # Buffer Size : 2097152 bytes, Max Element Size : 1518 bytes, Packets : 58
+        re_packets = re.compile(r'Buffer Size : \d+ bytes, Max Element Size : \d+ bytes, Packets : (?P<packets>\d+)', re.MULTILINE)
+        match = re_packets.search(output)  # 行頭からの検索ではないのでsearch()を使用
+        if match:
+            packets = match.group('packets')
+        else:
+            packets = 0
+
+        # キャプチャポイントとの関連をマルチラインモードで取り出す
         # Associated Capture Points:
         # Name : POINT, Status : Inactive
         re_associated = re.compile(r'Name : (?P<point>\S+), Status : (?P<status>\S+)', re.MULTILINE)
-
-        match = re_associated.search(output)  # 行頭からの検索ではないのでsearch()を使用
+        match = re_associated.search(output)
         if match:
             associated_point = match.group('point')
             status = match.group('status')
@@ -294,7 +328,8 @@ class IosEmbeddedPacketCapture:
             break
 
         result = {
-            'status': status,  # None or Inactive or Active
+            'status': status,
+            'packets': packets,
             'associated_point': associated_point,
             'configurations': configuration_list
         }
@@ -404,13 +439,6 @@ class IosEmbeddedPacketCapture:
         return d
 
 
-
-
-
-
-
-
-
 if __name__ == '__main__':
 
     import argparse
@@ -429,11 +457,11 @@ if __name__ == '__main__':
     parser.add_argument('-au', '--apply_unconfig', action='store_true', default=False, help='apply unconfig')
     parser.add_argument('--start', action='store_true', default=False, help='start monitor')
     parser.add_argument('--stop', action='store_true', default=False, help='start monitor')
+    parser.add_argument('--export', action='store_true', default=False, help='export to flash memory')
     parser.add_argument('-s', '--status', action='store_true', default=False, help='retrieve monitor status')
-
-    args = parser.parse_args()
     # yapf: enable
 
+    args = parser.parse_args()
 
     def main():
 
@@ -475,6 +503,9 @@ if __name__ == '__main__':
             epc.stop_capture(device=uut, disconnect_on_finished=True)
             return 0
 
+        if args.export:
+            epc.export_to_flash(device=uut)
+            return 0
 
         if args.status:
             status = epc.retrieve_monitor_status(device=uut)

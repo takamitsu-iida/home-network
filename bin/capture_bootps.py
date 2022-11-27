@@ -34,12 +34,12 @@
 # キャプチャポイントとバッファの関連付け
 # monitor capture point associate POINT BUF
 
+import argparse
 import logging
 import os
 import sys
 
-
-
+from pprint import pprint
 
 #
 # libディレクトリをパスに加える
@@ -53,85 +53,85 @@ if lib_dir not in sys.path:
 # lib/pyats_util/pyats_util.py
 from pyats_util import get_testbed_from_file
 
+# lib/pyats_util/ios_embedded_packet_capture.py
+from pyats_util import IosEmbeddedPacketCapture
+
+
 logger = logging.getLogger(__name__)
 
 
-
-
-
-
-
-__show_monitor_capture_buffer_output_1 = '''
-Capture Buffer BUF does not exist
-'''
-
-__show_monitor_capture_buffer_output_2 = '''
-Capture buffer BUF (circular buffer)
-Buffer Size : 2097152 bytes, Max Element Size : 1518 bytes, Packets : 6
-Allow-nth-pak : 0, Duration : 0 (seconds), Max packets : 0, pps : 0
-Associated Capture Points:
-Name : POINT, Status : Inactive
-Configuration:
-monitor capture buffer BUF size 2048 max-size 1518 circular
-monitor capture point associate POINT BUF
-monitor capture buffer BUF filter access-list CAPTURE-FILTER
-'''
-
-
-__show_monitor_capture_point_output_1 = '''
-Capture point POINT does not exist
-'''
-
-__show_monitor_capture_point_output_2 = '''
-c2960cx-8pc#show monitor capture point POINT
-Status Information for Capture Point POINT
-IPv4 Process
-Switch Path: IPv4 Process        , Capture Buffer: None
-Status : Inactive
-
-Configuration:
-monitor capture point ip process-switched POINT both
-'''
-
-__show_monitor_capture_point_output_3 = '''
-Status Information for Capture Point POINT
-IPv4 Process
-Switch Path: IPv4 Process        , Capture Buffer: BUF
-Status : Inactive
-
-Configuration:
-monitor capture point ip process-switched POINT both
-'''
-
-__show_monitor_capture_point_output_4 = '''
-Status Information for Capture Point POINT
-IPv4 Process
-Switch Path: IPv4 Process        , Capture Buffer: BUF
-Status : Active
-
-Configuration:
-monitor capture point ip process-switched POINT both
-'''
-
 if __name__ == '__main__':
-
-    import argparse
 
     logging.basicConfig(level=logging.INFO)
 
     # yapf: disable
     parser = argparse.ArgumentParser(description='control embedded packet capture')
     parser.add_argument('-t', '--testbed', dest='testbed', help='testbed YAML file', type=str, default='home.yaml')
-    parser.add_argument('-d', '--debug', action='store_true', default=False, help='debug parser func')
-    args = parser.parse_args()
+    parser.add_argument('-d', '--device', dest='device', help='device name', type=str, default='c2960cx-8pc')  # デフォルトはc2960cx-8pc
+    parser.add_argument('-bc', '--build_config', action='store_true', default=False, help='build config')
+    parser.add_argument('-bu', '--build_unconfig', action='store_true', default=False, help='build unconfig')
+    parser.add_argument('-ac', '--apply_config', action='store_true', default=False, help='apply config')
+    parser.add_argument('-au', '--apply_unconfig', action='store_true', default=False, help='apply unconfig')
+    parser.add_argument('--start', action='store_true', default=False, help='start monitor')
+    parser.add_argument('--stop', action='store_true', default=False, help='start monitor')
+    parser.add_argument('--export', action='store_true', default=False, help='export to flash memory')
+    parser.add_argument('--status', action='store_true', default=False, help='retrieve monitor status')
     # yapf: enable
 
-
+    args = parser.parse_args()
 
     def main():
 
-        if args.debug:
+        try:
+            testbed = get_testbed_from_file(args.testbed)
+            uut = testbed.devices[args.device]
+        except:
+            return -1
+
+        epc = IosEmbeddedPacketCapture('BUF', 'POINT')
+        epc.buffer_size = 2048
+        epc.max_size = 1518
+        epc.filter_name = 'CAPTURE-FILTER'
+
+        if args.build_config:
+            lines = epc.build_config()
+            print('\n'.join(lines))
             return 0
+
+        if args.build_unconfig:
+            lines = epc.build_unconfig()
+            print('\n'.join(lines))
+            return 0
+
+        if args.apply_config:
+            epc.apply_config(device=uut)
+            return 0
+
+        if args.apply_unconfig:
+            epc.apply_unconfig(device=uut)
+            return 0
+
+        if args.start:
+            epc.start_capture(device=uut, disconnect_on_finished=True)
+            return 0
+
+        if args.stop:
+            epc.stop_capture(device=uut, disconnect_on_finished=True)
+            return 0
+
+        if args.export:
+            epc.export_to_flash(device=uut)
+            return 0
+
+        if args.status:
+            status = epc.retrieve_monitor_status(device=uut)
+            print('='*10)
+            pprint(status)
+            print('='*10)
+            return 0
+
+
+
 
         parser.print_help()
         return 0

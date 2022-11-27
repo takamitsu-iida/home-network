@@ -218,22 +218,21 @@ if __name__ == '__main__':
 
     from pprint import pprint
 
-    #
-    # libディレクトリをパスに加える
-    #
+    # テスト用にpyATSのテストベッドからWLCのインベントリ情報を取りたいのでlibディレクトリをパスに加える
     app_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
     lib_dir = os.path.join(app_dir, 'lib')
-
     if lib_dir not in sys.path:
         sys.path.append(lib_dir)
 
-    from pyats_util import get_inventory
+    from pyats_util import get_testbed_from_file, get_inventory
 
     logging.basicConfig(level=logging.INFO)
 
-
     def test_parse_wlc_show_client_summary():
-        path = os.path.join(os.path.dirname(__file__), 'show_client_summary.txt')
+        filename = 'show_client_summary.txt'
+        outputs_dir = os.path.join(os.path.dirname(__file__), 'wlc_outputs')
+        path = os.path.join(outputs_dir, filename)
+
         with open(path) as f:
             cmd_output = f.read()
 
@@ -252,10 +251,10 @@ if __name__ == '__main__':
 
 
     def test_parse_wlc_show_client_detail():
-        filename = 'show_client_detail.txt'
-        # filename = 'show_client_detail_eee780e3c3b2.txt'
+        filename = 'show_client_detail.txt'  # 'show_client_detail_eee780e3c3b2.txt'
+        outputs_dir = os.path.join(os.path.dirname(__file__), 'wlc_outputs')
+        path = os.path.join(outputs_dir, filename)
 
-        path = os.path.join(os.path.dirname(__file__), filename)
         with open(path) as f:
             cmd_output = f.read()
 
@@ -275,33 +274,36 @@ if __name__ == '__main__':
         assert result['wireless_lan_network_name'] == 'taka 11ac'
         print('test_parse_wlc_show_client_detail() passed')
 
-
     def test():
         test_parse_wlc_show_client_summary()
         test_parse_wlc_show_client_detail()
         return 0
 
-
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--test', action='store_true')
+    parser.add_argument('-r', '--run', action='store_true')
     args, _ = parser.parse_known_args()
 
     def main():
 
         if args.test:
-            test()
+            return test()
+
+        if args.run:
+            # pyATSのテストベッドからwlcに関する情報を取得
+            testbed = get_testbed_from_file(testbed_filename='home.yaml')
+            inventory = get_inventory(testbed=testbed, device_name='wlc')
+            ip = inventory['ip']
+            username = inventory['username']
+            password = inventory['password']
+
+            wlc = CiscoWlcHandler(ip, username, password)
+            with wlc:
+                clients_list = wlc.get_wlc_clients()
+            pprint(clients_list)
             return 0
 
-        # pyATSのテストベッドからwlcに関する情報を取得
-        inventory = get_inventory('home.yaml', 'wlc')
-        ip = inventory['ip']
-        username = inventory['username']
-        password = inventory['password']
-
-        wlc = CiscoWlcHandler(ip, username, password)
-        with wlc:
-            clients_list = wlc.get_wlc_clients()
-        pprint(clients_list)
+        parser.print_help()
         return 0
 
     sys.exit(main())
