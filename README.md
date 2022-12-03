@@ -6,6 +6,14 @@
 
 ## ネットワーク構成図
 
+構成図はvscodeに拡張機能Draw.io Integrationをインストールして作成します。
+
+- src/nwdiagram.drawio
+
+ファイルメニュー→埋め込み→HTMLを選びます。ライトボックスを外してから「作成」します。
+
+生成されたHTMLを埋め込んだものがこれ。
+
 [ネットワーク構成図](https://takamitsu-iida.github.io/home-network/nwdiagram.html "ネットワーク構成図")
 
 <br>
