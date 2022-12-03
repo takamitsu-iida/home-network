@@ -4,6 +4,10 @@
 
 つまりは完全に自分専用、ここにあるものは将来の自分のためのメモ書きです。
 
+## ネットワーク構成図
+
+[ネットワーク構成図](https://takamitsu-iida.github.io/home-network/nwdiagram.html "ネットワーク構成図")
+
 <br>
 
 ## 管理基盤のセットアップ
