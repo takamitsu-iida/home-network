@@ -1,0 +1,46 @@
+<mxfile host="65bd71144e">
+    <diagram id="ztGDn7QXbJv8MlAnkrOr" name="MAC種別説明">
+        <mxGraphModel dx="1568" dy="1150" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+            <root>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-0"/>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-1" parent="UG9GHFH3TTyyhoc6lXUn-0"/>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-3" value="48ビットのMACアドレス" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" parent="UG9GHFH3TTyyhoc6lXUn-1" vertex="1">
+                    <mxGeometry x="120" y="110" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-4" value="&lt;u&gt;&lt;font color=&quot;#0000ff&quot;&gt;00&lt;/font&gt;&lt;/u&gt; : 00 : 00 : 00 : 00 : 00" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontFamily=Lucida Console;fontStyle=1" parent="UG9GHFH3TTyyhoc6lXUn-1" vertex="1">
+                    <mxGeometry x="120" y="140" width="280" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-8" value="&amp;nbsp;0 0 0 0&amp;nbsp; &amp;nbsp;0 0 &lt;u&gt;0&lt;/u&gt; &lt;u&gt;0&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Lucida Console;fontSize=20;strokeColor=#6c8ebf;align=left;fillColor=none;" parent="UG9GHFH3TTyyhoc6lXUn-1" vertex="1">
+                    <mxGeometry x="120" y="220" width="240" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-10" value="&amp;nbsp;0 ユニキャスト&lt;br style=&quot;font-size: 14px;&quot;&gt;&amp;nbsp;1 マルチキャスト" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Lucida Console;fontSize=14;strokeColor=none;align=left;fillColor=#dae8fc;" parent="UG9GHFH3TTyyhoc6lXUn-1" vertex="1">
+                    <mxGeometry x="360" y="280" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-13" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Lucida Console;fontSize=16;fontColor=#0000FF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="UG9GHFH3TTyyhoc6lXUn-1" source="UG9GHFH3TTyyhoc6lXUn-12" target="UG9GHFH3TTyyhoc6lXUn-10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-12" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Lucida Console;fontSize=16;fontColor=#0000FF;strokeColor=none;fillColor=none;" parent="UG9GHFH3TTyyhoc6lXUn-1" vertex="1">
+                    <mxGeometry x="323" y="230" width="20" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-14" value="&amp;nbsp;0 グローバル&lt;br style=&quot;font-size: 14px;&quot;&gt;&amp;nbsp;1 プライベート" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Lucida Console;fontSize=14;strokeColor=none;align=left;fillColor=#dae8fc;" parent="UG9GHFH3TTyyhoc6lXUn-1" vertex="1">
+                    <mxGeometry x="360" y="350" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-17" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=-0.005;entryY=0.27;entryDx=0;entryDy=0;entryPerimeter=0;fontFamily=Lucida Console;fontSize=16;fontColor=#0000FF;exitX=0.49;exitY=0.967;exitDx=0;exitDy=0;exitPerimeter=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="UG9GHFH3TTyyhoc6lXUn-1" source="UG9GHFH3TTyyhoc6lXUn-16" target="UG9GHFH3TTyyhoc6lXUn-14" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-16" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Lucida Console;fontSize=16;fontColor=#0000FF;strokeColor=none;fillColor=none;" parent="UG9GHFH3TTyyhoc6lXUn-1" vertex="1">
+                    <mxGeometry x="299" y="230" width="20" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-21" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Lucida Console;fontSize=16;fontColor=#0000FF;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="UG9GHFH3TTyyhoc6lXUn-1" source="UG9GHFH3TTyyhoc6lXUn-19" target="UG9GHFH3TTyyhoc6lXUn-20" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-19" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Lucida Console;fontSize=16;fontColor=#0000FF;strokeColor=none;fillColor=none;" parent="UG9GHFH3TTyyhoc6lXUn-1" vertex="1">
+                    <mxGeometry x="116" y="145" width="30" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="UG9GHFH3TTyyhoc6lXUn-20" value="" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Lucida Console;fontSize=16;fontColor=#0000FF;strokeColor=none;fillColor=none;" parent="UG9GHFH3TTyyhoc6lXUn-1" vertex="1">
+                    <mxGeometry x="116" y="220" width="30" height="40" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

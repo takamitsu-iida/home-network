@@ -75,6 +75,21 @@ bin/show_testbed.py
 
 <br><br>
 
+## プロトコルハンドラ
+
+ブラウザのリンクをクリックしたときのハンドラはレジストリの変更が必要です。
+
+```bash
+iida@s400win:~/git/home-network$ tree registry/
+registry/
+├── win10_64bit_teraterm_ssh.reg
+└── win10_64bit_teraterm_telnet.reg
+```
+
+vscodeでregistryフォルダを右クリックして、「Explorerで表示 Shift + Alt + R」を選択します。
+レジストリファイルをダブルクリックして反映した後、PCを再起動すると、TeraTERMが起動します。
+
+
 # MACアドレス調査
 
 binディレクトリにある実行ファイルで調査します。
