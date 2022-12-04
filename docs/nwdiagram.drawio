@@ -190,7 +190,7 @@
                     </mxCell>
                 </UserObject>
                 <UserObject label="Wireless LAN Controller" link="https://192.168.122.253" id="130">
-                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Lucida Console;fontSize=12;strokeColor=none;fillColor=#dae8fc;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Lucida Console;fontSize=12;strokeColor=none;fillColor=#dae8fc;align=left;verticalAlign=top;" parent="1" vertex="1">
                         <mxGeometry x="763.5899999999999" y="-2190.58" width="200.82" height="29.16" as="geometry"/>
                     </mxCell>
                 </UserObject>
