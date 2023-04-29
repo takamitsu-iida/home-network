@@ -8,13 +8,26 @@
 
 構成図はvscodeに拡張機能Draw.io Integrationをインストールして作成します。
 
-- src/nwdiagram.drawio
+- src/nwdiagram.drawio.svg
+
+<br>
+
+### HTMLファイルに取り込むには
 
 ファイルメニュー→埋め込み→HTMLを選びます。ライトボックスを外してから「作成」します。
 
 生成されたHTMLを埋め込んだものがこれ。
 
 [ネットワーク構成図](https://takamitsu-iida.github.io/home-network/nwdiagram.html "ネットワーク構成図")
+
+<br>
+
+### マークダウンに張り込むには
+
+拡張子を.drawio.svgにしておけばvscodeの中で絵を編集しつつ、そのファイルをそのままSVGとしても利用できますので、イメージとして取り込めます。
+
+![構成図](src/nwdiagram.drawio.svg)
+
 
 <br>
 
@@ -27,6 +40,22 @@
 
 string.representer = pyats.utils.secret_strings.FernetSecretStringRepresenter
 string.key = ...
+```
+
+> 参考
+>
+> https://pubhub.devnetcloud.com/media/pyats/docs/utilities/secret_strings.html
+
+macosの場合、インストールされているOpenSSHのバージョンが新しいため、CatalystとのSSH接続には工夫が必要です。
+
+`~/.ssh/config` に次の設定を加えておきます。
+
+```
+Host *
+    HostkeyAlgorithms +ssh-rsa
+    KexAlgorithms +diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
+    Ciphers +aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc,aes128-ctr,aes192-ctr,aes256-ctr
+    StrictHostKeyChecking no
 ```
 
 ## python仮想環境
@@ -67,12 +96,6 @@ lib/
 
 を追加します。
 
-
-### node.js
-
-WSL環境にnode.jsをインストールする手順はマイクロソフトのページに詳しいです。
-
-https://learn.microsoft.com/ja-jp/windows/dev-environment/javascript/nodejs-on-wsl
 
 ## インベントリの設置場所
 
@@ -388,6 +411,8 @@ sampler mysampler
 !
 !
 ```
+
+<br>
 
 ## Catalystの設定バックアップ
 
