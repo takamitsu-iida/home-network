@@ -8,7 +8,7 @@
 
 構成図はvscodeに拡張機能Draw.io Integrationをインストールして作成します。
 
-- src/nwdiagram.drawio.svg
+- docs/nwdiagram.drawio.svg
 
 <br>
 
@@ -26,7 +26,7 @@
 
 拡張子を.drawio.svgにしておけばvscodeの中で絵を編集しつつ、そのファイルをそのままSVGとしても利用できますので、イメージとして取り込めます。
 
-![構成図](src/nwdiagram.drawio.svg)
+![構成図](docs/nwdiagram.drawio.svg)
 
 
 <br>
