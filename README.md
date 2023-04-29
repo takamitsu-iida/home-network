@@ -8,8 +8,6 @@
 
 構成図はvscodeに拡張機能Draw.io Integrationをインストールして作成します。
 
-- docs/nwdiagram.drawio.svg
-
 <br>
 
 ### HTMLファイルに取り込むには
@@ -26,8 +24,9 @@
 
 拡張子を.drawio.svgにしておけばvscodeの中で絵を編集しつつ、そのファイルをそのままSVGとしても利用できますので、イメージとして取り込めます。
 
-![構成図](docs/nwdiagram.drawio.svg)
+<br>
 
+![構成図](docs/nwdiagram.drawio.svg)
 
 <br>
 
@@ -361,7 +360,6 @@ MACアドレスの学習テーブルを定期的に採取するために、Catal
 
 ```bash
 c2960cx-8pc(config)#mac address-table aging-time 3600
-c2960cx-8pc(config)#end
 ```
 
 ## Netflow Liteの設定
@@ -390,7 +388,7 @@ flow record myrecord
 !
 !
 flow exporter myexporter
- destination 192.168.122.230
+ destination 192.168.122.200
  source Vlan1
  transport udp 9996
  template data timeout 60
@@ -417,6 +415,7 @@ sampler mysampler
 ## Catalystの設定バックアップ
 
 2台のCatalystでstartup-configを互いにコピーしあうことでバックアップします。
+
 万が一壊れても対向装置側にコンフィグが残っていれば安心です。
 
 この作業はpyATSを使って自動化しています。
@@ -424,14 +423,13 @@ sampler mysampler
 - bin/backup_catalyst_config.py
 
 ```bash
-(.venv) iida@s400win:~/git/home-network$ bin/backup_catalyst_config.py
-usage: backup_catalyst_config.py [-h] [--testbed TESTBED] [-b]
+iida@mac-mini home-network % bin/backup_catalyst_config.py
+usage: backup_catalyst_config.py [-h] [--testbed TESTBED] [-r]
 
 backup catalyst startup-config
 
 optional arguments:
   -h, --help         show this help message and exit
   --testbed TESTBED  testbed YAML file
-  -b, --backup       backup startup-config each other
-(.venv) iida@s400win:~/git/home-network$
+  -r, --run          run backup startup-config each other
 ```
