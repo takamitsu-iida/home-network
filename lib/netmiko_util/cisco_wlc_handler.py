@@ -23,10 +23,11 @@ logger = logging.getLogger(__name__)
 
 class CiscoWlcHandler:
 
-    def __init__(self, ip:str, username:str, password:str) -> None:
+    def __init__(self, ip:str, username:str, password:str, log_stdout=True) -> None:
         self.ip = ip
         self.username = username
         self.password = password
+        self.log_stdout = log_stdout
 
         # 暗黙のパラメータ
         self.port = 22
@@ -62,7 +63,8 @@ class CiscoWlcHandler:
                 # pass to paramiko
                 #
                 'conn_timeout': self.conn_timeout,  # default 10
-                'banner_timeout': self.banner_timeout,  # default 15
+                'banner_timeout': self.banner_timeout,  # default 15,
+                'verbose': False
             }
 
             try:
@@ -90,8 +92,9 @@ class CiscoWlcHandler:
             cmd_show_client_detail = f'show client detail {mac_address}'
 
             output = self.ch.send_command(cmd_show_client_detail)
-            print(output)
-            print('')
+            if self.log_stdout:
+                print(output)
+                print('')
 
             # パース
             d = parse_wlc_show_client_detail(output)

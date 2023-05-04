@@ -101,6 +101,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--daemon', action='store_true', default=False, help='run as daemon')
     parser.add_argument('-k', '--kill', action='store_true', default=False, help='kill running daemon')
     parser.add_argument('-c', '--clear', action='store_true', default=False, help='clear junk pid file')
+    parser.add_argument('-s', '--silent', action='store_true', default=False, help='supress device log to stdout')
     parser.add_argument('-g', '--get', action='store_true', default=False, help='get wlc clients info')
     args = parser.parse_args()
 
@@ -131,10 +132,27 @@ if __name__ == '__main__':
             d.start_daemon(run_schedule, update_db_func(ip, username, password))
             return 0
 
+        logger.addHandler(logging.NullHandler())
+
         if args.get:
-            with CiscoWlcHandler(ip, username, password) as wlc:
+            # コマンド出力を画面表示するかどうか
+            log_stdout = True if args.silent is False else False
+
+            if log_stdout is False:
+                # デフォルトで動いているparamiko.transportロガーを停止
+                paramiko_logger = logging.getLogger('paramiko.transport')
+                paramiko_logger.disabled = True
+
+            with CiscoWlcHandler(ip, username, password, log_stdout=log_stdout) as wlc:
                 wlc_clients = wlc.get_wlc_clients()
-            pprint(wlc_clients)
+
+                # 表示
+                if log_stdout:
+                    pprint(wlc_clients)
+                else:
+                    import json
+                    print(json.dumps(wlc_clients))
+
             return 0
 
         parser.print_help()
