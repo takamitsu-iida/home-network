@@ -211,7 +211,11 @@ if __name__ == '__main__':
             mac_address_list = get_mac_addresses(parsed)
 
             # 表示
-            pprint(mac_address_list)
+            if log_stdout:
+                pprint(mac_address_list)
+            else:
+                import json
+                print(json.dumps(mac_address_list))
             return 0
 
         parser.print_help()
