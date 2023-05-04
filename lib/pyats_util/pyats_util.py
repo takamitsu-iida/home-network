@@ -89,11 +89,11 @@ def get_inventory(testbed: Testbed, device_name: str):
     return d
 
 
-def parse_command(dev, command: str):
+def parse_command(dev, command: str, log_stdout=True):
     # connect
     if not dev.is_connected():
         try:
-            dev.connect()
+            dev.connect(log_stdout=log_stdout)
         except (TimeoutError, StateMachineError, ConnectionError) as e:
             logger.error(str(e))
             return None

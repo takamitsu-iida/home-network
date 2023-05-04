@@ -113,7 +113,7 @@ def get_mac_addresses(parse_result:dict):
     return result_list
 
 
-def parse_mac_address_table(testbed_file:str):
+def parse_mac_address_table(testbed_file:str, log_stdout=True):
 
     # テストベッドのデバイス一覧を取得
     devices = get_testbed_devices(testbed_file)
@@ -126,7 +126,7 @@ def parse_mac_address_table(testbed_file:str):
         if dev.type != 'switch':
             continue
 
-        parsed = parse_command(dev, 'show mac address-table')
+        parsed = parse_command(dev, 'show mac address-table', log_stdout=log_stdout)
         if parsed is not None:
             result[name] = parsed
 
@@ -173,6 +173,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--daemon', action='store_true', default=False, help='run as daemon')
     parser.add_argument('-k', '--kill', action='store_true', default=False, help='kill running daemon')
     parser.add_argument('-c', '--clear', action='store_true', default=False, help='clear junk pid file')
+    parser.add_argument('-s', '--silent', action='store_true', default=False, help='supress pyats device log to stdout')
     parser.add_argument('-g', '--get', action='store_true', default=False, help='get mac address table info')
     args = parser.parse_args()
 
@@ -200,8 +201,11 @@ if __name__ == '__main__':
             return 0
 
         if args.get:
+            # pyATSの接続状況を画面表示するかどうか
+            log_stdout = True if args.silent is False else False
+
             # pyATSでパースして
-            parsed = parse_mac_address_table(args.testbed)
+            parsed = parse_mac_address_table(args.testbed, log_stdout=log_stdout)
 
             # MACアドレスの情報を抽出して
             mac_address_list = get_mac_addresses(parsed)
