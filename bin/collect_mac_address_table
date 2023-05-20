@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+(cd /Users/iida/git/home-network; source .venv/bin/activate; bin/collect_mac_address_table.py -g -s $@; deactivate)
