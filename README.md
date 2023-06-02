@@ -30,6 +30,27 @@
 
 <br>
 
+## DHCP IPアドレス
+
+192.168.122.100〜199をDHCPの範囲とします。
+
+APIを利用したり、pingでの死活監視で都合がいいように、一部のMACアドレスは固定で払い出します。
+
+> 参考
+>
+> TP-LINKのHS105はIPアドレスを指定しないとAPI操作できないので、固定IPが必要です。
+>
+> SwitchBotはIPアドレスを指定しなくてもAPI操作できるため、ping監視しないのであれば固定IPは不要です。
+
+ソフトバンク光のルータで設定できる固定アドレスは8個まで。また、設定を変更するたびに再起動が必要になります。
+
+- 192.168.122.199 90:9A:4A:D6:BB:B9 TP-LINK HS105
+- 192.168.122.198 50:EB:F6:95:8B:37 S400
+- 192.168.122.197 68:84:7E:87:04:BE Lifebook S937
+- 192.168.122.196 3C:22:FB:7B:85:0E Macbook Pro
+
+<br>
+
 ## 管理基盤のセットアップ
 
 `~/.pyats/pyats.conf` を作成して暗号キーを記載します。ファイルのモードは600にしておきます。
@@ -433,3 +454,42 @@ optional arguments:
   --testbed TESTBED  testbed YAML file
   -r, --run          run backup startup-config each other
 ```
+
+<br>
+
+## WLCの設定
+
+- APのLEDが眩しいので停止する
+
+WLCにSSHでログインして、以下を設定してsave configする。
+
+```
+config ap led-state disable all
+save config
+```
+
+もちろんAPごとに設定もできる。
+
+```
+(Cisco Controller) >show ap led-state all
+
+Global Led State: Disabled
+
+AP Name             Led State
+------------------  -------------------
+taka-AP1815I             Disabled
+SPARE_CAP702I_0c68.03a0.0402       Disabled
+ayane-CAP702I            Disabled
+living-AP1815M           Disabled
+```
+
+全てdisableなので、APの名前を指定してenableにすればよい。
+
+```
+config ap led-state enable taka-AP1815I
+config ap led-state enable ayane-CAP702I
+config ap led-state enable SPARE_CAP702I_0c68.03a0.0402
+save config
+```
+
+<br>

@@ -6,67 +6,71 @@ devices:
     description: ソフトバンク契約のiPhone SE
     os: iOS
     owner: rian
-    802.11ng:
+    taka 11ng:
       mac: 26:67:CA:BE:BC:C9
       mac_vendor: private
-      ip: 192.168.122.123
-    802.11ac:
+    taka 11ac:
       mac: 5E:54:72:B7:19:9F
       mac_vendor: private
-      ip: 192.168.122.103
-    #802.11ng:
-    #  mac: BA:97:90:3B:41:7A
-    #  mac_vendor: private
-    #  ip: 192.168.122.125
+
+  - device: iPhone SE 2nd Gen
+    description: Rian ソフトバンク契約のiPhone SE
+    taka 11ng:
+      mac: aa:76:17:0a:33:2e
+      mac_vendor: private
+    taka 11ac:
+      mac: 26:0e:d2:a9:b2:0f
+      mac_vendor: private
 
   -
     device: iPhone 8
     description: キャリア契約なし
     os: iOS
     owner: ayane
-    802.11ac:
+    taka 11ac:
       mac: EE:E7:80:E3:C3:B2
       mac_vendor: private
-      ip: 192.168.122.116
+
+  - device: iPhone 8
+    description: たぶんayane
+    taka 11ac:
+      mac: 56:c3:18:e2:e3:8e
+      mac_vendor: private
 
   -
-    device: iPhone SE
+    device: iPhone SE 2nd Gen
     description: ソフトバンク契約のiPhone SE
     os: iOS
     owner: ayane
-    802.11ac:
+    taka 11ac:
       mac: 7E:87:0B:67:17:E2
       mac_vendor: private
-      ip: 192.168.122.118
 
   -
     device: Surface
     os: iOS
     owner: ayane
-    802.11ac:
+    taka 11ac:
       mac: BC:83:85:CE:44:74
       mac_vendor: Microsoft Corporation
-      ip: 192.168.122.102
 
   -
     device: tp-link HS105
     description: ミニスマートWi-Fiプラグ
     os: unknown
     owner: takamitsu
-    802.11ng:
+    taka 11ng:
       mac: 90:9A:4A:D6:BB:B9
       mac_vendor: TP-LINK TECHNOLOGIES CO.,LTD.
-      ip: 192.168.122.102
 
   -
     device: Printer
     description: リビングに設置 EPSON EW-M752T
     os: unknown
     owner: mayo
-    802.11ng:
+    taka 11ng:
       mac: 38:1A:52:5B:42:15
       mac_vendor: Seiko Epson Corporation
-      ip: 192.168.122.130
 
   -
     device: Aquos
@@ -75,86 +79,86 @@ devices:
     ethernet:
       mac: 28:84:FA:EA:5F:0C
       mac_vendor: SHARP Corporation
-      ip: 192.168.122.106
 
   -
     device: Nintendo Switch
     description: 任天堂スイッチ（ライトではない方）
     os: unknown
     owner: ayane
-    802.11ac:
+    taka 11ac:
       mac: 04:03:D6:D8:57:5F
       mac_vendor: Nintendo Co.,Ltd
-      ip: 192.168.122.107
+
+  - device: Nintendo Switch Lite
+    description: 任天堂スイッチライト
+    ethernet:
+      mac: 98:41:5c:33:d4:35
+      mac_vendor: Nintendo
 
   -
     device: Galaxy S8
     description: キャリア契約なし、SIMフリー化済、USBをHDMIに変換してATEM miniに接続しているカメラ
     os: android
     owner: takamitsu
-    802.11ac:
+    taka 11ac:
       mac: A0:C9:A0:9A:7F:01
       mac_vendor: Murata Manufacturing Co., Ltd.
-      ip: 192.168.122.133
 
   -
     device: Galaxy S6 edge
     description: キャリア契約なし、SIMフリー化済、白、バッテリー交換済み
     os: android
     owner: takamitsu
-    802.11ac:
+    taka 11ac:
       mac: 90:B6:86:CF:B7:BA
       mac_vendor: Murata Manufacturing Co., Ltd.
-      ip: 192.168.122.176
 
   -
     device: mayo-PC
     description: FMVノートパソコン
     os: Windows
     owner: mayo
-    802.11ac:
+    taka 11ac:
       mac: 4C:34:88:93:80:87
       mac_vendor: Intel Corporate
-      ip: 192.168.122.120
 
   -
     device: DESKTOP-6AS7DS0
     description: DELLノートパソコン
     os: Windows
     owner: rian
-    802.11ng:
+    taka 11ng:
       mac: 84:5C:F3:48:FF:30
       mac_vendor: Intel Corporate
-      ip: 192.168.122.127
+    taka 11ac:
+      mac: 84:5C:F3:48:FF:30
+      mac_vendor: Intel Corporate
 
   -
     device: NMV-CF-SV-2
     description: Lets note
     os: Windows
-    802.11ac:
+    taka 11ac:
       mac: 0C:D2:92:F9:0B:73
       mac_vendor: Intel Corporate
-      ip: 192.168.122.110
 
   -
     device: Google Home Mini
     description: テレワーク環境に設置、TP-Linkのスマートプラグで電源ON/OFF
     os: unknown
     owner: takamitsu
-    802.11ac:
+    taka 11ac:
       mac: 20:DF:B9:B4:BC:79
       mac_vendor: Google, Inc.
-      ip: 192.168.122.103
 
   -
     device: OPPO Reno A
     description: 楽天モバイルで契約していたスマホ、キャリア契約なし
     os: android
     owner: takamitsu
-    802.11ac:
+    taka 11ac:
       mac: 9C:5F:5A:92:94:27
       mac_vendor: GUANGDONG OPPO MOBILE TELECOMMUNICATIONS CORP.,LTD
-      ip: 192.168.122.142
 
   -
     device: FMV LIFEBOOK S937/S FMVS09001 R9802401
@@ -164,8 +168,7 @@ devices:
     ethernet:
       mac: 68:84:7E:87:04:BE
       mac_vendor: FUJITSU LIMITED
-      ip: 192.168.122.115
-    802.11ac:
+    taka 11ac:
       mac: 40:74:E0:EC:7D:A9
       mac_vendor: Intel Corporate
 
@@ -174,60 +177,54 @@ devices:
     description: スマートウォッチ 802.11gしかサポートしていない
     os: Wear OS by Google
     owner: mayo
-    802.11ng:
+    taka 11ng:
       mac: 08:97:98:04:22:E4
       mac_vendor: COMPAL INFORMATION (KUNSHAN) CO., LTD.
-      ip: 192.168.122.160
 
   -
     device: iida-macbook-pro
     description: テレワーク環境で利用
     os: macOS
     owner: takamitsu
-    802.11ac:
+    taka 11ac:
       mac: 3C:22:FB:7B:85:0E
       mac_vendor: Apple, Inc.
-      ip: 192.168.122.123
 
   -
     device: iidamac2
     description: リビングで利用
     os: macOS
     owner: takamitsu
-    802.11ac:
+    taka 11ac:
       mac: A4:5E:60:E4:1A:DD
       mac_vendor: Apple, Inc.
-      ip: 192.168.122.108
 
   -
     device: iidatakanoiPhone
     description: 古いiPhoneなのでプライベートMACアドレスを利用しない
     os: iOS
     owner: takamitsu
-    802.11ac:
+    taka 11ac:
       mac: AC:29:3A:C5:D7:8C
       mac_vendor: Apple, Inc.
-      ip: 192.168.122.146
 
   -
     device: Fire TV Stick
     description: テレビのHDMI端子に接続
     os: Fire OS
     owner: takamitsu
-    802.11ng:
+    taka 11ng:
       mac: 44:65:0D:DA:2A:F5
       mac_vendor: Amazon Technologies Inc.
-      ip: 192.168.122.101
 
   -
     device: Kindle Paperwhite
     description: Kindle Paperwhite 第7世代 G090 G105 5247 0P5N
     os: Kindle 5.14.0.1
     owner: takamitsu
-    802.11ng:
+    taka 11ng:
       mac: 74:75:48:C6:25:06
       mac_vendor: Amazon Technologies Inc.
-      ip: 192.168.122.116
 
   -
     device: s400win
@@ -237,17 +234,24 @@ devices:
     ethernet:
       mac: 50:EB:F6:95:8B:37
       mac_vendor: ASUSTek COMPUTER INC.
-      ip: 192.168.122.174
 
   -
     device: iPad 6th Gen
     description: 寝室で使っている無印iPad
     os: iOS
     owner: takamitsu
-    802.11ac:
+    taka 11ac:
       mac: 2E:14:DB:B8:9B:D8
       mac_vendor: private
-      ip: 192.168.122.113
+
+  -
+    device: iPad
+    description: iPad pro
+    os: iOS
+    owner: ayane
+    taka 11ac:
+      mac: ea:7c:f3:d9:b6:62
+      mac_vendor: private
 
   -
     device: Pixel 5
@@ -256,12 +260,14 @@ devices:
     owner: takamitsu
     device_mac: F8:1A:2B:31:C3:6F
     device_mac_vendor: Google, Inc.
-    802.11ac:
+    taka 11ac:
       mac: FE:DD:B8:3F:DE:59
       mac_vendor: private
-      ip: 192.168.122.109
       ipv6:
         - fe80::fcdd:b8ff:fe3f:de59
+    test-taka-11ac:
+      mac: fa:90:2e:27:16:bd
+      mac_vendor: private
 
   -
     device: Pixel 3 XL
@@ -270,10 +276,9 @@ devices:
     owner: takamitsu
     device_mac: 3C:28:6D:2F:d3:31
     device_mac_vendor: Google, Inc.
-    802.11ac:
+    taka 11ac:
       mac: E6:02:29:6F:AE:FE
       mac_vendor: private
-      ip: 192.168.122.149
       ipv6:
         - fe80::e402:29ff:fe6f:aefe
 
@@ -282,34 +287,30 @@ devices:
     description: ソフトバンク契約
     os: android
     owner: mayo
-    802.11ac:
+    taka 11ac:
       mac: 12:87:66:76:E7:7D
       mac_vendor: private
-      ip: 192.168.122.115
-    802.11ng:
+    taka 11ng:
       mac: C6:78:AD:69:2D:FD
       mac_vendor: private
-      ip: 192.168.122.105
 
   -
     device: Pixel 3
     description: キャリア契約なし
     os: android
     owner: mayo
-    802.11ac:
+    taka 11ac:
       mac: BE:99:E6:5E:E0:ED
       mac_vendor: private
-      ip: 192.168.122.151
 
   -
     device: Ulefone Armor2
     description: Deeperのモニター用スマホ、キャリア契約なし、オレンジ色
     os: android
     owner: takamitsu
-    802.11ac:
+    taka 11ac:
       mac: 54:3D:1F:FA:CB:6F
       mac_vendor: unknown
-      ip: 192.168.122.145
 
   -
     device: F-51B
@@ -318,10 +319,9 @@ devices:
     owner: takamitsu
     device_mac: 18:18:8b:41:8a:2c
     device_mac_vendor: FCNT LMITED
-    802.11ac:
+    taka 11ac:
       mac: F6:FF:CC:5F:51:68
       mac_vendor: private
-      ip: 192.168.122.111
       ipv6:
         - fe80::f4ff:ccff:fe5f:5168
 
@@ -333,20 +333,16 @@ devices:
     ethernet:
       mac: B8:27:EB:AF:E6:51
       mac_vendor: Raspberry Pi Foundation
-    802.11ng:
+    taka 11ng:
       mac: B8:27:EB:FA:B3:04
       mac_vendor: Raspberry Pi Foundation
-      ip: 192.168.122.177
 
   -
-    device: SwitchBot
-    description: スイッチボット
-    owner: takamitsu
-    ethernet:
-    802.11ng:
+    device: Switchbot
+    description: テレワーク環境用
+    taka 11ng:
       mac: 70:04:1D:82:EC:8C
       mac_vendor: Espressif Inc
-      ip: 192.168.122.164
 
   - device: 光ルータ
     description: ソフトバンク光のルータ
@@ -355,33 +351,63 @@ devices:
       mac_vendor: HonHaiPr
       ip: 192.168.122.1
 
-  - device: living-CAP702I
-    description:
+  - device: AIR-AP1815M-Q-K9
+    description: living
     ethernet:
       mac: a8:b4:56:f3:62:68
       mac_vendor: Cisco Systems
+      ip: 192.168.122.249
 
-  - device: 予備のCAP702i
-    description: 2023年05月21日キャプチャで発見
+  - device: AIR-AP1815I-Q-K9
+    description: taka
+    ethernet:
+      mac: 00:2c:c8:8b:60:b8
+      mac_vendor: Cisco Systems
+      ip: 192.168.122.248
+
+  - device: AIR-CAP702I-Q-K9
+    description: ayane
+    ethernet:
+      mac: 0c:68:03:a0:03:b0
+      mac_vendor: Cisco Systems
+      ip: 192.168.122.247
+
+  - device: AIR-CAP702I-Q-K9
+    description: 予備のCAP702i
     ethernet:
       mac: 0c:68:03:a0:04:02
       mac_vendor: Cisco Systems
-      ip: 192.168.122.162
 
   - device: Kindle Fire
     description: Rianの青いカバーのKindle
-    802.11ng:
+    taka 11ng:
       mac: dc:54:d7:a1:d5:ff
       mac_vendor: Amazon Tech
-      ip: 192.168.122.156
 
-
-  - device: 不明、リアンのChromebookか？
-    description: 2023年05月21日キャプチャで発見
-    ethernet:
+  - device: VS-FKD200-W
+    description: 電話の子機
+    taka 11ng:
       mac: b0:ee:45:68:d0:e9
-      mac_vendor: AzureWave Tech Inc
-      ip: 192.168.122.122
+      mac_vendor: AzureWave Technology
+
+  - device: ドアホン
+    description: たぶん
+    taka 11ng:
+      mac: b8:20:8e:1b:78:e8
+      mac_vendor: Panasonic Connect
+
+  - device: S400上のUbuntu
+    description: Hyper-vのマシンは00:15:5dを使う
+    ethernet:
+      mac: 00:15:5d:7a:75:26
+      mac_vendor: Microsoft Corp
+
+  - device: Galaxy A7
+    description: 2023年05月21日キャプチャで発見
+    taka 11ac:
+      mac: b4:1a:1d:a0:9e:86
+      mac_vendor: private
+
 
 
   #########################################
@@ -389,122 +415,18 @@ devices:
   - device: 不明
     description: 2023年05月21日キャプチャで発見
     ethernet:
+      mac: d4:1b:81:86:7d:b3
+      mac_vendor: Chongqing Fugui Electronics
+
+  - device: 不明
+    description: 2023年05月21日キャプチャで発見
+    ethernet:
       mac: 02:3b:0d:9e:74:ff
       mac_vendor: private
 
-  - device: 不明、ayane-CAP702iにいる
-    description: 2023年05月21日キャプチャで発見
-    ethernet:
-      mac: 56:c3:18:e2:e3:8e
-      mac_vendor: private
 
   - device: 不明
-    description: 2023年05月21日キャプチャで発見
-    ethernet:
-      mac: b8:20:8e:1b:78:e8
-      mac_vendor: Panasonic Connect
-      ip: 192.168.122.110
-
-
-  - device: 不明
-    description: 2023年05月21日キャプチャで発見
-    ethernet:
-      mac: 98:41:5c:33:d4:35
-      mac_vendor: Nintendo
-      ip: 192.168.122.128
-
-  - device: 不明
-    description: 2023年05月21日キャプチャで発見
-    ethernet:
-      mac: b4:1a:1d:a0:9e:86
-      mac_vendor: private
-      ip: 192.168.122.136
-
-  - device: 不明
-    description: 2023年05月21日キャプチャで発見
+    description: 20230522発見
     ethernet:
       mac: 00:a5:54:c5:67:19
       mac_vendor: Intel
-      ip: 192.168.122.140
-
-  - device: 不明
-    description: 2023年05月21日キャプチャで発見
-    ethernet:
-      mac: 00:15:5d:7a:75:26
-      mac_vendor: Microsoft Corp
-      ip: 192.168.122.141
-
-  - device: 不明
-    description: 2023年05月21日キャプチャで発見
-    ethernet:
-      mac: d4:1b:81:86:7d:b3
-      mac_vendor: Chongqing Fugui Electronics
-      ip: 192.168.122.149
-
-  - device: 不明
-    description: 2023年05月21日キャプチャで発見
-    ethernet:
-      mac: aa:76:17:0a:33:2e
-      mac_vendor: ？
-      ip: 192.168.122.163
-
-
-
-
-#IPアドレス:  192.168.122.101        MACアドレス:  44:65:0d:da:2a:f5
-#IPアドレス:  192.168.122.102        MACアドレス:  90:9a:4a:d6:bb:b9
-#IPアドレス:  192.168.122.103        MACアドレス:  20:df:b9:b4:bc:79
-#IPアドレス:  192.168.122.105        MACアドレス:  c6:78:ad:69:2d:fd
-#IPアドレス:  192.168.122.106        MACアドレス:  28:84:fa:ea:5f:0c
-#IPアドレス:  192.168.122.174        MACアドレス:  50:eb:f6:95:8b:37
-#IPアドレス:  192.168.122.108        MACアドレス:  a4:5e:60:e4:1a:dd
-#IPアドレス:  192.168.122.109        MACアドレス:  fe:dd:b8:3f:de:59
-
-#不明
-#IPアドレス:  192.168.122.110        MACアドレス:  b8:20:8e:1b:78:e8
-
-#IPアドレス:  192.168.122.111        MACアドレス:  f6:ff:cc:5f:51:68
-#IPアドレス:  192.168.122.113        MACアドレス:  2e:14:db:b8:9b:d8
-#IPアドレス:  192.168.122.115        MACアドレス:  12:87:66:76:e7:7d
-#IPアドレス:  192.168.122.116        MACアドレス:  74:75:48:c6:25:06
-#IPアドレス:  192.168.122.118        MACアドレス:  7e:87:0b:67:17:e2
-#IPアドレス:  192.168.122.120        MACアドレス:  4c:34:88:93:80:87
-
-#不明
-#IPアドレス:  192.168.122.122        MACアドレス:  b0:ee:45:68:d0:e9
-
-#IPアドレス:  192.168.122.123        MACアドレス:  3c:22:fb:7b:85:0e
-#IPアドレス:  192.168.122.127        MACアドレス:  84:5c:f3:48:ff:30
-
-#不明
-#IPアドレス:  192.168.122.128        MACアドレス:  98:41:5c:33:d4:35
-
-#IPアドレス:  192.168.122.130        MACアドレス:  38:1a:52:5b:42:15
-#IPアドレス:  192.168.122.133        MACアドレス:  a0:c9:a0:9a:7f:01
-
-#不明
-#IPアドレス:  192.168.122.136        MACアドレス:  b4:1a:1d:a0:9e:86
-
-#不明
-#IPアドレス:  192.168.122.140        MACアドレス:  00:a5:54:c5:67:19
-
-#不明
-#IPアドレス:  192.168.122.141        MACアドレス:  00:15:5d:7a:75:26
-
-#不明
-#IPアドレス:  192.168.122.149        MACアドレス:  d4:1b:81:86:7d:b3
-
-#不明
-#IPアドレス:  192.168.122.156        MACアドレス:  dc:54:d7:a1:d5:ff
-
-#不明
-#IPアドレス:  192.168.122.157        MACアドレス:  02:3b:0d:9e:74:ff
-
-#不明
-#IPアドレス:  192.168.122.161        MACアドレス:  56:c3:18:e2:e3:8e
-
-#不明
-#IPアドレス:  192.168.122.162        MACアドレス:  0c:68:03:a0:04:02
-
-#不明
-#IPアドレス:  192.168.122.163        MACアドレス:  aa:76:17:0a:33:2e
