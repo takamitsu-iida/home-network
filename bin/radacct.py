@@ -335,15 +335,15 @@ def radacct_parse_file(path: Path) -> list:
                 continue
             d[key] = value
 
-        # Acct-Session-Idキーを持たないものは、通常とは違うアカウンティングログなので無視する
-        if 'Acct-Session-Id' not in d:
+        # Acct-Unique-Session-Idキーを持たないものは、通常とは違うアカウンティングログなので無視する
+        if 'Acct-Unique-Session-Id' not in d:
             continue
 
         # 配列に格納する
         parsed_list.append(d)
 
     # 'Acct-Session-Id' キーの値でソートしておく
-    parsed_list.sort(key=lambda x: x['Acct-Session-Id'])
+    parsed_list.sort(key=lambda x: x['Acct-Unique-Session-Id'])
 
     return parsed_list
 
