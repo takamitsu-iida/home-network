@@ -459,16 +459,16 @@ optional arguments:
 
 ## WLCの設定
 
-- APのLEDが眩しいので停止する
+- APのLEDが眩しいので停止します
 
-WLCにSSHでログインして、以下を設定してsave configする。
+WLCにSSHでログインして、以下を設定してsave configします。
 
 ```
 config ap led-state disable all
 save config
 ```
 
-もちろんAPごとに設定もできる。
+もちろんAPごとにも設定できます。
 
 ```
 (Cisco Controller) >show ap led-state all
@@ -483,7 +483,7 @@ ayane-CAP702I            Disabled
 living-AP1815M           Disabled
 ```
 
-全てdisableなので、APの名前を指定してenableにすればよい。
+この場合、全てdisableになっている状態なので、APの名前を指定してenableにします。
 
 ```
 config ap led-state enable taka-AP1815I
@@ -493,3 +493,63 @@ save config
 ```
 
 <br>
+
+## batfishをインストール
+
+Dockerを使うため、M2チップのmacminiよりもWindowsを使った方が便利です。
+
+WindowsにDocker Desktopをインストールします。
+
+> 参考
+>
+> https://docs.docker.jp/docker-for-windows/install.html
+
+アプリを開いて、歯車のマークをクリック、Resourceをクリック、WSL INTEGRATIONをクリックします。
+
+使いたいWSLのディストリビューションにチェックを入れます。
+
+これでWSLのターミナルでdockerコマンドが使えるようになります。
+
+WSLのターミナルでallinoneイメージをpullします。
+
+```
+docker pull batfish/allinone
+```
+
+ポート8888はJupyter Notebook用です。
+
+```
+docker run -d -p 8888:8888 -p 9996:9996 -p 9997:9997 --name batfish batfish/allinone
+```
+
+Jupyter Notebookにログインするためのトークンを表示します。
+
+```
+docker exec -it batfish bash -c "jupyter notebook list"
+```
+
+例
+
+```
+iida@s400win:~$ docker exec -it batfish bash -c "jupyter notebook list"
+Currently running servers:
+http://0.0.0.0:8888/?token=174447dedfc4d71f38d76b2331214a790d453837def8fec5 :: /notebooks
+```
+
+0.0.0.0の部分はlocalhostに置き換えます。
+
+Jupyter Notebookを操作すると、何となく使い方が分かってきます。
+
+Pythonでプログラムを書くならJupyterよりもVSCodeを使った方が便利です。
+
+その場合はbatfishイメージをpullして使います。
+
+```
+docker pull batfish/batfish
+```
+
+起動します。
+
+```
+docker run -d -p 9996:9996 -p 9997:9997 --name batfish batfish/batfish
+```
