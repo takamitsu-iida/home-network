@@ -459,6 +459,24 @@ optional arguments:
 
 ## WLCの設定
 
+> 参考 Mobility Expressのバージョンアップ
+>
+> https://community.cisco.com/t5/-/-/ta-p/3946119
+
+> 参考
+>
+> バージョン8.10.185.0で動作させています（2023年8月時点）
+
+Mobility Expressとして動作しているコントローラ役のアクセスポイントは、全機種のAPソフトウェアを内包しているわけではありません。
+外部のTFTPサーバ上でzipを解凍しておき、そこへのリンクを設定します。
+
+GUIでは以下をたどります。
+- 左メニューの管理を展開
+- 左メニューのソフトウェア・アップデートをクリック
+
+転送モードは`TFTP`を選択、IPアドレスは`192.168.122.220`を入力（このアドレスはQNAP）、ファイルパスは`/AIR-AP1815-K9-ME-8-10-185-0/`を入力します。
+
+
 - APのLEDが眩しいので停止します
 
 WLCにSSHでログインして、以下を設定してsave configします。
@@ -489,6 +507,21 @@ living-AP1815M           Disabled
 config ap led-state enable taka-AP1815I
 config ap led-state enable ayane-CAP702I
 config ap led-state enable SPARE_CAP702I_0c68.03a0.0402
+save config
+```
+
+- 古いAP接続対策
+
+> 参考
+>
+> Field Notice: FN - 63942 - Wireless Lightweight Access Points and WLAN Controllers Fail to Create CAPWAP Connections Due to Certificate Expiration - Software Upgrade Recommended
+>
+> https://www.cisco.com/c/en/us/support/docs/field-notices/639/fn63942.html
+
+以下の設定をCLIで入れておきます。
+
+```
+config ap cert-expiry-ignore mic enable
 save config
 ```
 
