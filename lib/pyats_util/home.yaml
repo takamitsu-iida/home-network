@@ -119,7 +119,6 @@ devices:
             - term width 0
           init_config_commands: []
 
-
   #
   # pyatsでは接続しない装置
   #
@@ -143,6 +142,26 @@ devices:
         ip: 192.168.122.1
         port: 80
 
+
+  # 202607 Aruba AP515/AP505を導入
+  iap:
+    os: linux
+    credentials:
+      default:
+        #username: '%ENC{gAAAAABqYWxpTg5gNly0VT1HCVWYG4BXfhILHt2qTjctnUew4_bSRv9d6iMieLtm85W3K6zvNnMu0-lnc03KHFo9BJYKk6P8Cg==}'
+        #password: '%ENC{gAAAAABqYWx_LHDxgzThla7MJZ7SUc6mpO_5gA0hmwvHiMVV4Ogfxn8HOfw6PN38sZJHpWe93MJVp18x_nkBZso55jepLCxjDg==}'
+        username: admin
+        password: password
+    connections:
+      defaults:
+        class: 'unicon.Unicon'
+        via: cli
+      cli:
+        protocol: ssh
+        ip: 192.168.122.245
+        port: 22
+
+  # 202607 Aruba AP515にリプレース
   wlc:
     os: linux
 
@@ -163,6 +182,8 @@ devices:
           learn_hostname: True
           prompt_recovery: True
 
+  # 202607 Aruba AP515にリプレース
+  # Netmikoで接続
   living-ap:
     os: ios
     platform: ap
@@ -181,6 +202,8 @@ devices:
         ip: 192.168.122.249
         port: 22
 
+  # 202607 Aruba AP515にリプレース
+  # Netmikoで接続
   taka-ap:
     os: ios
     platform: ap
@@ -199,6 +222,8 @@ devices:
         ip: 192.168.122.248
         port: 22
 
+  # 202607 Aruba AP505にリプレース
+  # Netmikoで接続
   ayane-ap:
     os: ios
     platform: ap

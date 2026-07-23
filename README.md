@@ -120,13 +120,55 @@ lib/
 ## インベントリの設置場所
 
 IPアドレスと接続に必要なユーザ名・パスワード等の情報はpyATSのテストベッド形式で `lib/pyats_util/home.yaml` に記述しています。
-ユーザ名とパスワードは `pyats secret` コマンドで暗号化済みです。複合するためには `~/.pyats/pyats.conf ` ファイルが必要です。
+ユーザ名とパスワードは `pyats secret` コマンドで暗号化済みです。復号するためには `~/.pyats/pyats.conf ` ファイルが必要です。
 
 あの装置の接続パスワードってなんだっけ？　となりがちなので、その場合は以下のスクリプトでテストベッドを復号化して表示します。
 
 ```bash
 bin/show_testbed.py
 ```
+
+> [!NOTE]
+>
+> 暗号化するには `pyats secret encode` を使います。
+>
+> ```bash
+> pyats secret encode --help
+> Usage:
+>   pyats secret encode [options]
+>
+> Description:
+>   Encodes a plaintext string into an encoded form. By default, it will ask to
+>   input password as prompt(Recommended).
+>   Instead, `--string` can be given with plaintext password.
+>
+>   The encoding used may be changed by specifying the pyats configuration:
+>   [secrets] string.representer = representer_module.representer_class
+>
+>   Otherwise, a default cipher encoding is used.
+>
+>   The encoding may be personalized by using the pyats configuration:
+>   [secrets] string.key = <generated_key>
+>
+>   where <generated_key> refers to the key generated with the "pyats secret keygen"
+>   command.
+>
+>   If specified, --prefix selects other representers defined in the pyats
+>   configuration.  The following keys are expected to be present:
+>   [secrets] <prefix>.representer
+>   [secrets] <prefix>.key
+>
+> Encode Options:
+>   --string [string]     String to encode (Optional)
+>   --prefix [prefix]     Cfg prefix to use (Optional)
+> ```
+>
+> 復号化するには、こうします。
+>
+> ```bash
+> pyats secret decode 復号化する文字列
+> ```
+
 
 <br><br>
 
@@ -288,8 +330,8 @@ CatalystのMAC学習テーブルを使ってそれらデバイスのMACアドレ
 - bin/collect_mac_address_table.py
 
 ```bash
-(.venv) iida@s400win:~/git/home-network$ bin/collect_mac_address_table.py
-usage: collect_mac_address_table.py [-h] [--testbed TESTBED] [-d] [-k] [-c] [-g]
+(.venv) iida@mac-mini home-network % bin/collect_mac_address_table.py
+usage: collect_mac_address_table.py [-h] [--testbed TESTBED] [-d] [-k] [-c] [-s] [-g]
 
 show mac address table
 
@@ -299,8 +341,8 @@ optional arguments:
   -d, --daemon       run as daemon
   -k, --kill         kill running daemon
   -c, --clear        clear junk pid file
-  -g, --get          get mac address table info
-```
+  -s, --silent       supress pyats device log to stdout
+  -g, --get          get mac address table info```
 
 ## 分析
 
