@@ -208,7 +208,23 @@ if __name__ == '__main__':
                 print()
 
             result = parse_iap_show_clients(output)
-            json.dump(result, sys.stdout, indent=4, ensure_ascii=False)
+            clients = result.get('clients', [])
+            json.dump(clients, sys.stdout, indent=4, ensure_ascii=False)
+            # {
+            #     "name": "android_f9caac6b1bedab65",
+            #     "ip_address": "192.168.122.124",
+            #     "mac_address": "b0:ee:45:68:d0:e9",
+            #     "os": "Android",
+            #     "essid": "taka 11ng",
+            #     "access_point": "ap02-aruba-515",
+            #     "channel": "11",
+            #     "type": "GN",
+            #     "role": "taka 11ng",
+            #     "ipv6_address": "2400:2411:561:5b00:b2ee:45ff:fe68:d0e9",
+            #     "signal": "42(good)",
+            #     "speed_mbps": "65(good)"
+            # }
+
             return 0
 
         parser.print_help()
