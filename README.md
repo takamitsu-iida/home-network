@@ -499,11 +499,19 @@ optional arguments:
 
 <br>
 
-## WLCの設定
+## WLCの設定(Obsoleted)
+
+> [!NOTE]
+>
+> 2026年7月 AironetからArubaにリプレース
+
+<br>
 
 > 参考 Mobility Expressのバージョンアップ
 >
 > https://community.cisco.com/t5/-/-/ta-p/3946119
+
+<br>
 
 > 参考
 >
@@ -568,3 +576,23 @@ save config
 ```
 
 <br>
+
+### Arubaの設定
+
+2026年7月にAironetからArubaに入れ替えました。
+
+Aruba Instant APモードでクラスタ化しています。
+
+IAPモードでは、APに設定するIPアドレスの他に、バーチャルコントローラーに使うIPアドレスが必要です。
+
+デフォルトで無線上でのブロードキャスト・マルチキャストに制限がかけられています。
+その状態で困るのはプリンタの通信です。
+
+Arubaの場合、AirGroupというのを設定します。
+
+- 設定→サービスを辿ってAirGroupの設定を開きます
+- **Bonjourを有効化** をチェック
+- **DLNAを有効化** をチェック
+- **ゲスト Bonjour マルチキャストの有効化** をチェック
+- **モビリティドメイン全体で AirGroup を有効化** をチェック
+- **+** ボタンを押して **_pdl-datastream._tcp** を追加
